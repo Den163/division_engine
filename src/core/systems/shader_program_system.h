@@ -5,5 +5,6 @@
 namespace ShaderProgramSystem
 {
 void init(singleton_registry& singletonRegistry);
+void update(singleton_registry& singletonRegistry);
 void cleanup(singleton_registry& singletonRegistry);
 }

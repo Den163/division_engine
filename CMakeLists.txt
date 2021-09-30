@@ -26,8 +26,7 @@ link_directories(${CMAKE_SOURCE_DIR}/libs/glfw)
 if (NOT DEFINED ENV{GLSL_LANG_VALIDATOR_COMP})
     message(FATAL_ERROR
             "Add environment variable GLSL_LANG_VALIDATOR_COMP with path to glslangValidator compiler"
-            "(including executable). If it's not works try to reboot the system"
-            )
+            "(including executable). If it's not works try to reboot the system")
 endif ()
 
 set(SHADER_SOURCES
@@ -78,11 +77,11 @@ set(SOURCES
     src/core/components/rendered_frame_state.h
     src/core/components/renderer_config.h
     src/core/components/window_config.h
-    src/core/systems/render_tick_system.cpp
-    src/core/systems/render_tick_system.h
+    src/core/systems/pre_render_tick_system.cpp
+    src/core/systems/pre_render_tick_system.h
     src/core/systems/vsync_system.cpp
     src/core/systems/vsync_system.h
-)
+    src/core/systems/post_render_tick_system.cpp src/core/systems/post_render_tick_system.h)
 
 add_executable(gl_ui ${SOURCES})
 add_dependencies(gl_ui shaders)

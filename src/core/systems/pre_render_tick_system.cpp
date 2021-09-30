@@ -1,4 +1,4 @@
-#include "render_tick_system.h"
+#include "pre_render_tick_system.h"
 
 #include <chrono>
 
@@ -9,13 +9,13 @@
 
 #include <iostream>
 
-void RenderTickSystem::init(singleton_registry& engineData)
+void PreRenderTickSystem::init(singleton_registry& engineData)
 {
     auto& renderer = engineData.emplace<RendererState>();
     renderer.shouldUpdate = false;
 }
 
-void RenderTickSystem::update(singleton_registry& engineData)
+void PreRenderTickSystem::update(singleton_registry& engineData)
 {
     const auto& rendererConfig = engineData.get<RendererConfig>();
 
@@ -30,7 +30,7 @@ void RenderTickSystem::update(singleton_registry& engineData)
     renderer.shouldUpdate = frameData.deltaTimeSeconds >= deltaTimeToUpdate;
 }
 
-void RenderTickSystem::cleanup(singleton_registry& engineData)
+void PreRenderTickSystem::cleanup(singleton_registry& engineData)
 {
 
 }

@@ -2,7 +2,7 @@
 
 #include "../../utils/singleton_registry.h"
 
-namespace RenderTickSystem
+namespace PreRenderTickSystem
 {
 void init(singleton_registry& engineData);
 void update(singleton_registry& engineData);

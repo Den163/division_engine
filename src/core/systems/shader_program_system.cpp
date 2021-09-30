@@ -7,25 +7,12 @@
 
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 #include "../../utils/file_utils.h"
 #include "../components/gl_shader_program.h"
-
-static const std::vector<float> positions {
-    -0.8f, -0.8f, 0.0f,
-    0.8f, -0.8f, 0.0f,
-    0.0f, 0.8f, 0.0f
-};
-
-static const std::vector<float> colors {
-    1.0f, 0.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 1.0f
-};
 
 static constexpr const char* SPIR_V_EXT_ = ".spv";
 
@@ -50,12 +37,12 @@ struct CompiledShaderInfo
 
 static std::vector<ShaderInputInfo> collectShaderFileInfos();
 static GLuint compileSingleShader(const ShaderInputInfo& shaderInfo);
-static void drawTestData(singleton_registry& singletonRegistry);
+static void throwLinkError(GLuint programHandle);
 
 void ShaderProgramSystem::init(singleton_registry& singletonRegistry)
 {
     auto& programComponent = singletonRegistry.emplace<GLShaderProgram>();
-    auto& programHandle = programComponent.shaderProgramHandle;
+    auto& programHandle = programComponent.handle;
 
     programHandle = glCreateProgram();
     if (!programHandle) throw std::runtime_error {"Failed to create a program object"};
@@ -78,20 +65,15 @@ void ShaderProgramSystem::init(singleton_registry& singletonRegistry)
 
     GLint linkStatus;
     glGetProgramiv(programHandle, GL_LINK_STATUS, &linkStatus);
+
     if (linkStatus)
     {
         glUseProgram(programHandle);
-        drawTestData(singletonRegistry);
-        return;
     }
-
-    GLint linkErrorLength;
-    glGetProgramiv(programHandle, GL_INFO_LOG_LENGTH, &linkErrorLength);
-    std::string error(static_cast<size_t>(linkErrorLength), ' ');
-    glGetProgramInfoLog(programHandle, linkErrorLength, &linkErrorLength, error.data());
-    error.resize(linkErrorLength);
-
-    throw std::runtime_error {"Failed to link a shader program. Info log: \n" + error};
+    else
+    {
+        throwLinkError(programHandle);
+    }
 }
 
 static std::vector<ShaderInputInfo> collectShaderFileInfos()
@@ -112,7 +94,6 @@ static std::vector<ShaderInputInfo> collectShaderFileInfos()
         }
 
         auto preExtension = file.stem().extension().string();
-
         if (extensionToShaderTypeMap.count(preExtension) == 0)
         {
             throw std::runtime_error {"Unknown shader extension: " + preExtension};
@@ -157,41 +138,26 @@ static GLuint compileSingleShader(const ShaderInputInfo& shaderInfo)
         };
 }
 
-static void drawTestData(singleton_registry& singletonRegistry)
+static void throwLinkError(GLuint programHandle)
 {
-    auto& programComponent = singletonRegistry.get<GLShaderProgram>();
-    auto& vaoHandle = programComponent.vertexArrayObject;
+    GLint linkErrorLength;
+    glGetProgramiv(programHandle, GL_INFO_LOG_LENGTH, &linkErrorLength);
+    std::string error(static_cast<size_t>(linkErrorLength), ' ');
+    glGetProgramInfoLog(programHandle, linkErrorLength, &linkErrorLength, error.data());
+    error.resize(linkErrorLength);
 
-    GLuint vboHandles[2];
-    glGenBuffers(2, vboHandles);
-    GLuint positionBufferHandle = vboHandles[0];
-    GLuint colorBufferHandle = vboHandles[1];
+    throw std::runtime_error {"Failed to link a shader program. Info log: \n" + error};
+}
 
-    glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
-    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(positions.size()), positions.data(), GL_STATIC_DRAW);
+void ShaderProgramSystem::update(singleton_registry& singletonRegistry)
+{
 
-    glBindBuffer(GL_ARRAY_BUFFER, colorBufferHandle);
-    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(colors.size()), colors.data(), GL_STATIC_DRAW);
-
-    glGenVertexArrays(1, &vaoHandle);
-    glBindVertexArray(vaoHandle);
-
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-
-    glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-
-    glBindBuffer(GL_ARRAY_BUFFER, colorBufferHandle);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-
-    glBindVertexArray(vaoHandle);
 }
 
 void ShaderProgramSystem::cleanup(singleton_registry& singletonRegistry)
 {
     const auto& shaderProgram = singletonRegistry.get<GLShaderProgram>();
-    glDeleteProgram(shaderProgram.shaderProgramHandle);
+    glDeleteProgram(shaderProgram.handle);
 
     singletonRegistry.erase<GLShaderProgram>();
 }

@@ -5,7 +5,8 @@
 #include "systems/shader_program_system.h"
 #include "systems/window_system.h"
 #include "systems/input_system.h"
-#include "systems/render_tick_system.h"
+#include "systems/post_render_tick_system.h"
+#include "systems/pre_render_tick_system.h"
 #include "systems/render_system.h"
 #include "systems/vsync_system.h"
 
@@ -37,28 +38,29 @@ static void init(singleton_registry& engineData)
     windowConfig.height = 480;
 
     WindowSystem::init(engineData);
-    RenderTickSystem::init(engineData);
+    ShaderProgramSystem::init(engineData);
+    PreRenderTickSystem::init(engineData);
     RenderSystem::init(engineData);
+    PostRenderTickSystem::init(engineData);
     VSyncSystem::init(engineData);
     InputSystem::init();
 
 #ifdef PRINT_OPENGL_INFO
     DebugUtils::printRendererInfo();
 #endif
-
-    ShaderProgramSystem::init(engineData);
 }
 
 static void mainLoop(singleton_registry& engineData)
 {
     do
     {
-        RenderTickSystem::update(engineData);
+        PreRenderTickSystem::update(engineData);
 
         const auto& renderState = engineData.get<RendererState>();
         if (renderState.shouldUpdate)
         {
             RenderSystem::update(engineData);
+            PostRenderTickSystem::update(engineData);
             VSyncSystem::update(engineData);
         }
 
@@ -77,7 +79,7 @@ static void cleanup(singleton_registry& engineData)
     ShaderProgramSystem::cleanup(engineData);
     VSyncSystem::cleanup(engineData);
     RenderSystem::cleanup(engineData);
-    RenderTickSystem::cleanup(engineData);
+    PreRenderTickSystem::cleanup(engineData);
     WindowSystem::cleanup(engineData);
 }
 
