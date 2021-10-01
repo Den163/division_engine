@@ -5,29 +5,38 @@ set(CMAKE_CXX_STANDARD 17)
 include(FetchContent)
 
 FetchContent_Declare(
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG release-1.11.0
+)
+
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+FetchContent_Declare(
         glm
         GIT_REPOSITORY https://github.com/g-truc/glm.git
         GIT_TAG 0.9.9.8
 )
+FetchContent_MakeAvailable(glm)
 
 FetchContent_Declare(
         EnTT
         GIT_REPOSITORY https://github.com/skypjack/entt.git
         GIT_TAG v3.8.1
 )
-
-FetchContent_MakeAvailable(glm)
 FetchContent_MakeAvailable(EnTT)
 
 include_directories(${CMAKE_SOURCE_DIR}/libs/glad/include)
 include_directories(${CMAKE_SOURCE_DIR}/libs/glfw/include)
 link_directories(${CMAKE_SOURCE_DIR}/libs/glfw)
 
-if (NOT DEFINED ENV{GLSL_LANG_VALIDATOR_COMP})
+if(NOT DEFINED ENV{GLSL_LANG_VALIDATOR_COMP})
     message(FATAL_ERROR
             "Add environment variable GLSL_LANG_VALIDATOR_COMP with path to glslangValidator compiler"
             "(including executable). If it's not works try to reboot the system")
-endif ()
+endif()
 
 set(SHADER_SOURCES
     basic.vert
@@ -36,7 +45,7 @@ set(SHADER_SOURCES
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/shaders)
 
-foreach (SHADER IN LISTS SHADER_SOURCES)
+foreach(SHADER IN LISTS SHADER_SOURCES)
     set(SHADER_INPUT ${CMAKE_SOURCE_DIR}/shaders/${SHADER})
     set(SHADER_OUTPUT ${CMAKE_BINARY_DIR}/shaders/${SHADER}.spv)
 
@@ -48,12 +57,11 @@ foreach (SHADER IN LISTS SHADER_SOURCES)
     )
 
     list(APPEND SHADERS_OUTPUTS ${SHADER_OUTPUT})
-endforeach ()
+endforeach()
 
 add_custom_target(shaders DEPENDS ${SHADERS_OUTPUTS})
 
-set(SOURCES
-    main.cpp
+set(GL_UI_SOURCES
     libs/glad/src/gl.c
     src/utils/debug_utils.cpp
     src/utils/debug_utils.h
@@ -74,15 +82,23 @@ set(SOURCES
     src/core/components/glfw_window_data.h
     src/core/components/window_state.h
     src/core/components/renderer_state.h
-    src/core/components/rendered_frame_state.h
     src/core/components/renderer_config.h
     src/core/components/window_config.h
     src/core/systems/pre_render_tick_system.cpp
     src/core/systems/pre_render_tick_system.h
     src/core/systems/vsync_system.cpp
     src/core/systems/vsync_system.h
-    src/core/systems/post_render_tick_system.cpp src/core/systems/post_render_tick_system.h)
+    src/utils/singleton_group.h src/utils/singleton_view.h src/core/systems/profile_updates_system.cpp src/core/systems/profile_updates_system.h src/core/components/profile_update_data.h src/utils/math.cpp src/utils/math.h)
 
-add_executable(gl_ui ${SOURCES})
+set(GL_UI_LIBS glfw3 glm::glm EnTT::EnTT)
+
+add_executable(gl_ui main.cpp ${GL_UI_SOURCES})
 add_dependencies(gl_ui shaders)
-target_link_libraries(gl_ui glfw3 glm::glm EnTT::EnTT)
+target_link_libraries(gl_ui ${GL_UI_LIBS})
+
+#TESTS
+
+set(GL_UI_TESTS_SOURCES tests/test_sample.cpp)
+
+add_executable(gl_ui_tests ${GL_UI_SOURCES} ${GL_UI_TESTS_SOURCES})
+target_link_libraries(gl_ui_tests gtest gtest_main ${GL_UI_LIBS})

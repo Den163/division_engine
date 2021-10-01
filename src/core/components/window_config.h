@@ -1,8 +1,10 @@
 #pragma once
 
+#include <string>
+
 struct WindowConfig
 {
     int width;
     int height;
-    const char* title;
+    std::string title;
 };

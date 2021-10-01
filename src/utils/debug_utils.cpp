@@ -4,7 +4,7 @@
 
 void DebugUtils::errorCallback(int error, const char* description)
 {
-    std::cout << "Error with code: " << error << "\nDescription: " << description << std::endl;
+    std::cerr << "Error with code: " << error << "\nDescription: " << description << std::endl;
 }
 
 void DebugUtils::printRendererInfo()

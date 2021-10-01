@@ -1,6 +1,7 @@
 #include "window_system.h"
 
 #define GLFW_INCLUDE_NONE
+#include <chrono>
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <stdexcept>
@@ -11,13 +12,15 @@
 
 void WindowSystem::init(singleton_registry& engineData)
 {
-    const auto& windowConfig = engineData.get<WindowConfig>();
-
     auto& windowState = engineData.emplace<WindowState>();
+    windowState.lastUpdateTime = std::chrono::steady_clock::now();
+    windowState.deltaTime = std::chrono::duration<float> { 0 };
     windowState.shouldClose = false;
 
     auto& glfwWindowData = engineData.emplace<GlfwWindowData>();
     auto& windowHandle = glfwWindowData.windowHandle;
+
+    const auto& windowConfig = engineData.get<WindowConfig>();
 
     if (!glfwInit())
     {
@@ -32,7 +35,7 @@ void WindowSystem::init(singleton_registry& engineData)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     windowHandle = glfwCreateWindow(
-        windowConfig.width, windowConfig.height, windowConfig.title, nullptr, nullptr);
+        windowConfig.width, windowConfig.height, windowConfig.title.data(), nullptr, nullptr);
 
     if (!windowHandle)
     {
@@ -49,10 +52,13 @@ void WindowSystem::init(singleton_registry& engineData)
 
 void WindowSystem::update(singleton_registry& engineData)
 {
-    const auto& glfwWindowData = engineData.get<GlfwWindowData>();
-    auto& windowState = engineData.get<WindowState>();
+    auto [ windowState, glfwWindowData, cfg ] = engineData.get<WindowState, const GlfwWindowData, const WindowConfig>();
+    const auto now = std::chrono::steady_clock::now();
+    const auto deltaTime = now - windowState.lastUpdateTime;
 
     windowState.shouldClose = glfwWindowShouldClose(glfwWindowData.windowHandle);
+    windowState.deltaTime = deltaTime;
+    windowState.lastUpdateTime = now;
 }
 
 void WindowSystem::cleanup(singleton_registry& engineData)

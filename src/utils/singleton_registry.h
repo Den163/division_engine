@@ -2,6 +2,9 @@
 
 #include <entt/entt.hpp>
 
+#include "singleton_view.h"
+#include "singleton_group.h"
+
 class singleton_registry
 {
 public:
@@ -10,13 +13,13 @@ public:
         singleton(registry.create()) {}
 
     template<typename... TComponent>
-    decltype(auto) get() { return registry.get<TComponent...>(singleton);  }
+    decltype(auto) get() { return registry.template get<TComponent...>(singleton);  }
 
-    template<typename T>
-    decltype(auto) emplace() { return registry.emplace<T>(singleton); }
+    template<typename TComponent>
+    decltype(auto) emplace() { return registry.template emplace<TComponent>(singleton); }
 
     template<typename... TComponent>
-    void erase() { registry.erase<TComponent...>(singleton); }
+    void erase() { registry.template erase<TComponent...>(singleton); }
 
 private:
     entt::registry registry;

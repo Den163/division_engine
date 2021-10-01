@@ -114,17 +114,18 @@ static GLuint compileSingleShader(const ShaderInputInfo& shaderInfo)
     GLuint shader = glCreateShader(shaderInfo.shaderType);
     if (!shader) throw std::runtime_error {"Failed to create a shader!"};
 
-    std::vector<uint8_t> shaderBin = readBytes(shaderInfo.filePath);
+    auto shaderBin = readBytes(shaderInfo.filePath);
+
     glShaderBinary(
-        1, &shader, GL_SHADER_BINARY_FORMAT_SPIR_V, shaderBin.data(), static_cast<GLsizei>(shaderBin.size()));
+        1, &shader, GL_SHADER_BINARY_FORMAT_SPIR_V_ARB, shaderBin.data(), static_cast<GLsizei>(shaderBin.size()));
     GLint binaryLoadResult = 0;
     glGetShaderiv(shader, GL_SPIR_V_BINARY, &binaryLoadResult);
-    if (!binaryLoadResult) throw std::runtime_error {"Failed to load SPIR-V shader binary!"};
+    if (binaryLoadResult == GL_FALSE) throw std::runtime_error {"Failed to load SPIR-V shader binary!"};
 
     glSpecializeShaderARB(shader, "main", 0, nullptr, nullptr);
     GLint compilationResult = 0;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &compilationResult);
-    if (compilationResult) return shader;
+    if (compilationResult == GL_TRUE) return shader;
 
     GLint maxLength = 0;
     glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
@@ -151,7 +152,6 @@ static void throwLinkError(GLuint programHandle)
 
 void ShaderProgramSystem::update(singleton_registry& singletonRegistry)
 {
-
 }
 
 void ShaderProgramSystem::cleanup(singleton_registry& singletonRegistry)

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../utils/singleton_registry.h"
-#include "../components/rendered_frame_state.h"
 
 namespace RenderSystem
 {

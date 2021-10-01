@@ -4,8 +4,6 @@
 
 #include "../components/renderer_config.h"
 #include "../components/renderer_state.h"
-#include "../components/rendered_frame_state.h"
-#include "../components/window_state.h"
 
 #include <iostream>
 
@@ -13,24 +11,25 @@ void PreRenderTickSystem::init(singleton_registry& engineData)
 {
     auto& renderer = engineData.emplace<RendererState>();
     renderer.shouldUpdate = false;
+    renderer.lastUpdateTime = std::chrono::steady_clock::now();
+    renderer.deltaTime = std::chrono::duration<float> { 0 };
 }
 
 void PreRenderTickSystem::update(singleton_registry& engineData)
 {
-    const auto& rendererConfig = engineData.get<RendererConfig>();
+    auto [renderer, rendererConfig] = engineData.get<RendererState, const RendererConfig>();
+    const auto deltaTimeToUpdate = std::chrono::duration<float> { 1 / rendererConfig.targetFps };
+    const auto now = std::chrono::steady_clock::now();
+    const auto deltaTime = now - renderer.lastUpdateTime;
 
-    auto [renderer, frameData, window] = engineData.get<RendererState, RenderedFrameData, WindowState>();
-    const auto& lastUpdateTime = renderer.lastUpdateTime;
-
-    auto now = std::chrono::steady_clock::now();
-    auto deltaTime = std::chrono::duration_cast<std::chrono::duration<float>>(now - lastUpdateTime);
-    auto deltaTimeToUpdate = 1 / rendererConfig.targetFps;
-
-    frameData.deltaTimeSeconds = deltaTime.count();
-    renderer.shouldUpdate = frameData.deltaTimeSeconds >= deltaTimeToUpdate;
+    renderer.shouldUpdate = deltaTime >= deltaTimeToUpdate;
+    if (renderer.shouldUpdate)
+    {
+        renderer.lastUpdateTime = now;
+        renderer.deltaTime = deltaTime;
+    }
 }
 
 void PreRenderTickSystem::cleanup(singleton_registry& engineData)
 {
-
 }

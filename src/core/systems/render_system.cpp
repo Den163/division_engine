@@ -6,6 +6,8 @@
 #include "../components/gl_shader_program.h"
 #include "../components/window_config.h"
 
+#include "../components/renderer_config.h"
+
 static const std::vector<float> positions {
     -0.8f, -0.8f, 0.0f,
     0.8f, -0.8f, 0.0f,
@@ -20,11 +22,8 @@ static const std::vector<float> colors {
 
 void RenderSystem::init(singleton_registry& engineData)
 {
-    auto& renderedFrameData = engineData.emplace<RenderedFrameData>();
-    renderedFrameData.deltaTimeSeconds = 0;
-
     const auto& windowCfg = engineData.get<WindowConfig>();
-    glViewport(0, 0, windowCfg.width, windowCfg.height);
+//    glViewport(0, 0, windowCfg.width, windowCfg.height);
 
     auto& shaderProgram = engineData.get<GLShaderProgram>();
     glGenBuffers(GLShaderProgram::VBO_COUNT, shaderProgram.vboHandles);
@@ -32,9 +31,9 @@ void RenderSystem::init(singleton_registry& engineData)
 
 void RenderSystem::update(singleton_registry& engineData)
 {
-    auto& shaderProgram = engineData.get<GLShaderProgram>();
-    auto& vaoHandle = shaderProgram.vaoHandle;
+    auto [ shaderProgram, rendererConfig ] = engineData.get<GLShaderProgram, const RendererConfig>();
 
+    auto& vaoHandle = shaderProgram.vaoHandle;
     auto positionsVbo = shaderProgram.vboHandles[GLShaderProgram::POSITIONS_VBO_INDEX];
     auto colorsVbo = shaderProgram.vboHandles[GLShaderProgram::COLORS_VBO_INDEX];
 
@@ -58,8 +57,7 @@ void RenderSystem::update(singleton_registry& engineData)
 
     glBindVertexArray(vaoHandle);
 
-    glClearColor(0,0,1,1);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClearBufferfv(GL_COLOR, 0, &rendererConfig.backgroundColor.r);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
