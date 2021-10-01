@@ -13,7 +13,6 @@
 #include "components/renderer_config.h"
 #include "components/renderer_state.h"
 #include "components/window_config.h"
-#include "components/profile_update_data.h"
 
 static void init(singleton_registry& engineData);
 static void mainLoop(singleton_registry& engineData);

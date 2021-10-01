@@ -2,9 +2,6 @@
 
 #include <entt/entt.hpp>
 
-#include "singleton_view.h"
-#include "singleton_group.h"
-
 class singleton_registry
 {
 public:

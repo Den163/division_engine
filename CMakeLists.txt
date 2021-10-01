@@ -88,7 +88,7 @@ set(GL_UI_SOURCES
     src/core/systems/pre_render_tick_system.h
     src/core/systems/vsync_system.cpp
     src/core/systems/vsync_system.h
-    src/utils/singleton_group.h src/utils/singleton_view.h src/core/systems/profile_updates_system.cpp src/core/systems/profile_updates_system.h src/core/components/profile_update_data.h src/utils/math.cpp src/utils/math.h)
+    src/core/systems/profile_updates_system.cpp src/core/systems/profile_updates_system.h src/utils/math.cpp src/utils/math.h)
 
 set(GL_UI_LIBS glfw3 glm::glm EnTT::EnTT)
 
