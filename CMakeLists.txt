@@ -65,30 +65,31 @@ set(GL_UI_SOURCES
     libs/glad/src/gl.c
     src/utils/debug_utils.cpp
     src/utils/debug_utils.h
+    src/core/engine_state.h
     src/core/engine_core.cpp
     src/core/engine_core.h
-    src/core/systems/shader_program_system.cpp
-    src/core/systems/shader_program_system.h
+    src/core/systems/gl_shader_program_system.cpp
+    src/core/systems/gl_shader_program_system.h
     src/utils/file_utils.cpp
     src/utils/file_utils.h
-    src/core/systems/window_system.cpp
-    src/core/systems/window_system.h
-    src/core/systems/input_system.cpp
-    src/core/systems/input_system.h
-    src/core/systems/render_system.cpp
-    src/core/systems/render_system.h
-    src/utils/singleton_registry.h
-    src/core/components/gl_shader_program.h
+    src/core/systems/glfw_window_system.cpp
+    src/core/systems/glfw_window_system.h
+    src/core/systems/glfw_input_system.cpp
+    src/core/systems/glfw_input_system.h
+    src/core/systems/gl_render_system.cpp
+    src/core/systems/gl_render_system.h
+    src/core/components/gl_shader_state.h
     src/core/components/glfw_window_data.h
     src/core/components/window_state.h
     src/core/components/renderer_state.h
     src/core/components/renderer_config.h
     src/core/components/window_config.h
-    src/core/systems/pre_render_tick_system.cpp
-    src/core/systems/pre_render_tick_system.h
-    src/core/systems/vsync_system.cpp
-    src/core/systems/vsync_system.h
-    src/core/systems/profile_updates_system.cpp src/core/systems/profile_updates_system.h src/utils/math.cpp src/utils/math.h)
+    src/core/systems/render_tick_system.cpp
+    src/core/systems/render_tick_system.h
+    src/core/systems/glfw_vsync_system.cpp
+    src/core/systems/glfw_vsync_system.h
+    src/utils/math.cpp src/utils/math.h
+    src/core/components/update_timestamp.h src/core/systems/loop_tick_system.cpp src/core/systems/loop_tick_system.h)
 
 set(GL_UI_LIBS glfw3 glm::glm EnTT::EnTT)
 

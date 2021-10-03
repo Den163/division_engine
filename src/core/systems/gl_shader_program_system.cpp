@@ -1,4 +1,4 @@
-#include "shader_program_system.h"
+#include "gl_shader_program_system.h"
 
 #define GLFW_INCLUDE_NONE
 
@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "../../utils/file_utils.h"
-#include "../components/gl_shader_program.h"
+#include "../components/gl_shader_state.h"
 
 static constexpr const char* SPIR_V_EXT_ = ".spv";
 
@@ -39,10 +39,9 @@ static std::vector<ShaderInputInfo> collectShaderFileInfos();
 static GLuint compileSingleShader(const ShaderInputInfo& shaderInfo);
 static void throwLinkError(GLuint programHandle);
 
-void ShaderProgramSystem::init(singleton_registry& singletonRegistry)
+void GlShaderProgramSystem::init(GlShaderState& shaderProgram)
 {
-    auto& programComponent = singletonRegistry.emplace<GLShaderProgram>();
-    auto& programHandle = programComponent.handle;
+    auto& programHandle = shaderProgram.handle;
 
     programHandle = glCreateProgram();
     if (!programHandle) throw std::runtime_error {"Failed to create a program object"};
@@ -150,15 +149,8 @@ static void throwLinkError(GLuint programHandle)
     throw std::runtime_error {"Failed to link a shader program. Info log: \n" + error};
 }
 
-void ShaderProgramSystem::update(singleton_registry& singletonRegistry)
+void GlShaderProgramSystem::cleanup(GlShaderState& shaderProgram)
 {
-}
-
-void ShaderProgramSystem::cleanup(singleton_registry& singletonRegistry)
-{
-    const auto& shaderProgram = singletonRegistry.get<GLShaderProgram>();
     glDeleteProgram(shaderProgram.handle);
-
-    singletonRegistry.erase<GLShaderProgram>();
 }
 

@@ -1,87 +1,72 @@
+#define GLFW_INCLUDE_NONE
+
 #include "engine_core.h"
 
 #include <iostream>
 
-#include "systems/shader_program_system.h"
-#include "systems/window_system.h"
-#include "systems/input_system.h"
-#include "systems/pre_render_tick_system.h"
-#include "systems/profile_updates_system.h"
-#include "systems/render_system.h"
-#include "systems/vsync_system.h"
+#include "engine_state.h"
+#include "systems/gl_shader_program_system.h"
+#include "systems/glfw_window_system.h"
+#include "systems/glfw_input_system.h"
+#include "systems/render_tick_system.h"
+#include "systems/gl_render_system.h"
+#include "systems/glfw_vsync_system.h"
+#include "systems/loop_tick_system.h"
 
-#include "components/renderer_config.h"
-#include "components/renderer_state.h"
-#include "components/window_config.h"
+static void init(EngineState& engineState);
+static void mainLoop(EngineState& engineState);
+static void cleanup(EngineState& engineState);
 
-static void init(singleton_registry& engineData);
-static void mainLoop(singleton_registry& engineData);
-static void cleanup(singleton_registry& engineData);
-
-void EngineCore::run()
+void EngineCore::run(WindowConfig& windowConfig, RendererConfig& rendererConfig)
 {
-    singleton_registry singletonRegistry {};
+    EngineState engineState {};
+    engineState.windowConfig = windowConfig;
+    engineState.rendererConfig = rendererConfig;
 
-    init(singletonRegistry);
-    mainLoop(singletonRegistry);
-    cleanup(singletonRegistry);
+    init(engineState);
+    mainLoop(engineState);
+    cleanup(engineState);
 }
 
-static void init(singleton_registry& engineData)
+static void init(EngineState& engineState)
 {
-    auto& rendererConfig = engineData.emplace<RendererConfig>();
-    rendererConfig.targetFps = 60;
-    rendererConfig.backgroundColor = { 0, 1, 1, 1 };
-
-    auto& windowConfig = engineData.emplace<WindowConfig>();
-    windowConfig.title = "GL UI";
-    windowConfig.width = 640;
-    windowConfig.height = 480;
-
-    WindowSystem::init(engineData);
-    ShaderProgramSystem::init(engineData);
-    PreRenderTickSystem::init(engineData);
-    RenderSystem::init(engineData);
-    VSyncSystem::init(engineData);
-    InputSystem::init();
-    ProfileUpdatesSystem::init(engineData);
+    LoopTickSystem::init(engineState.loopUpdateTimestamp);
+    RenderTickSystem::init(engineState.rendererState);
+    GlfWindowSystem::init(engineState.windowState, engineState.glfwWindowData, engineState.windowConfig);
+    GlShaderProgramSystem::init(engineState.shaderState);
+    GlRenderSystem::init(engineState.shaderState, engineState.windowConfig);
 
 #ifdef PRINT_OPENGL_INFO
     DebugUtils::printRendererInfo();
 #endif
 }
 
-static void mainLoop(singleton_registry& engineData)
+static void mainLoop(EngineState& engineState)
 {
+    const auto& rendererState = engineState.rendererState;
+    const auto& windowState = engineState.windowState;
+
     do
     {
-        PreRenderTickSystem::update(engineData);
-
-        const auto& renderState = engineData.get<RendererState>();
-        if (renderState.shouldUpdate)
+        LoopTickSystem::update(engineState.loopUpdateTimestamp);
+        RenderTickSystem::update(engineState.rendererState, engineState.rendererConfig, engineState.loopUpdateTimestamp);
+        if (rendererState.shouldUpdate)
         {
-            RenderSystem::update(engineData);
-            VSyncSystem::update(engineData);
+            GlRenderSystem::update(engineState.shaderState, engineState.rendererConfig);
+            GlfwVSyncSystem::update(engineState.glfwWindowData);
         }
 
-        WindowSystem::update(engineData);
-        InputSystem::update();
-        ProfileUpdatesSystem::update(engineData);
+        GlfWindowSystem::update(engineState.windowState, engineState.glfwWindowData);
+        GlfwInputSystem::update();
 
-        const auto& window = engineData.get<WindowState>();
-        if (window.shouldClose) return;
+        if (windowState.shouldClose) return;
     }
     while (true);
 }
 
-static void cleanup(singleton_registry& engineData)
+static void cleanup(EngineState& engineState)
 {
-    InputSystem::cleanup();
-    ShaderProgramSystem::cleanup(engineData);
-    VSyncSystem::cleanup(engineData);
-    RenderSystem::cleanup(engineData);
-    PreRenderTickSystem::cleanup(engineData);
-    WindowSystem::cleanup(engineData);
-    ProfileUpdatesSystem::cleanup(engineData);
+    GlShaderProgramSystem::cleanup(engineState.shaderState);
+    GlfWindowSystem::cleanup(engineState.glfwWindowData);
 }
 
