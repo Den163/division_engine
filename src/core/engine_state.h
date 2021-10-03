@@ -7,6 +7,8 @@
 #include "components/glfw_window_data.h"
 #include "components/gl_shader_state.h"
 
+#include "entt/entt.hpp"
+
 struct EngineState
 {
     GlfwWindowData glfwWindowData;
@@ -17,4 +19,6 @@ struct EngineState
     RendererState rendererState;
     UpdateTimestamp loopUpdateTimestamp;
     GlShaderState shaderState;
+
+    entt::registry ecsRegistry;
 };

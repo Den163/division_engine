@@ -2,7 +2,7 @@
 
 #include <glad/gl.h>
 
-void DebugUtils::errorCallback(int error, const char* description)
+void DebugUtils::windowErrorCallback(int error, const char* description)
 {
     std::cerr << "Error with code: " << error << "\nDescription: " << description << std::endl;
 }
@@ -36,4 +36,24 @@ void DebugUtils::printRendererInfo()
     }
 
     std::cout << "------------------------------" << std::endl;
+}
+
+void DebugUtils::glRendererMessageCallback(
+    GLenum source,
+    GLenum type,
+    GLuint id,
+    GLenum severity,
+    GLsizei length,
+    const GLchar* message,
+    const void* userParam)
+{
+    if (severity == GL_DEBUG_SEVERITY_HIGH)
+    {
+        std::cerr << "debugMessageCallback: " << message << std::endl;
+    }
+    else
+    {
+        std::cout << "debugMessageCallback: " << message << std::endl;
+    }
+
 }

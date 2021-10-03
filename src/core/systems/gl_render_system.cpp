@@ -1,54 +1,35 @@
 #include "gl_render_system.h"
 
-#include <glad/gl.h>
-#include <iostream>
-#include <vector>
+#include "../../utils/debug_utils.h"
 
-static const std::vector<float> positions {
-    -0.8f, -0.8f, 0.0f,
-    0.8f, -0.8f, 0.0f,
-    0.0f, 0.8f, 0.0f
-};
-
-static const std::vector<float> colors {
-    1.0f, 0.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 1.0f
-};
-
-void GlRenderSystem::init(GlShaderState& shaderProgram, const WindowConfig& windowConfig)
+void GlRenderSystem::init(GlShaderState& shaderState, const WindowConfig& windowConfig)
 {
 //    glViewport(0, 0, windowCfg.width, windowCfg.height);
 
-    glGenBuffers(GlShaderState::VBO_COUNT, shaderProgram.vboHandles);
+    glEnable(GL_DEBUG_OUTPUT);
+    glDebugMessageCallback(DebugUtils::glRendererMessageCallback, nullptr);
+
+    glCreateVertexArrays(GlShaderState::VERTEX_ARRAYS_COUNT, shaderState.vertexArrayHandles);
+    glCreateBuffers(GlShaderState::VERTEX_BUFFERS_COUNT, shaderState.vertexBufferHandles);
+    glNamedBufferStorage(
+        shaderState.vertexBufferHandles[GlShaderState::POSITIONS_VBO_INDEX],
+        shaderState.vertexBuffer.size() * sizeof(float),
+        shaderState.vertexBuffer.data(),
+        0
+    );
+
+    glBindVertexArray(shaderState.vertexArrayHandles[GlShaderState::TRIANGLES_ARRAY_INDEX]);
+    glBindBuffer(GL_ARRAY_BUFFER, shaderState.vertexBufferHandles[GlShaderState::POSITIONS_VBO_INDEX]);
+    glVertexAttribPointer(GlShaderState::POSITIONS_VBO_INDEX, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(GlShaderState::POSITIONS_VBO_INDEX);
 }
 
 void GlRenderSystem::update(GlShaderState& shaderProgram, const RendererConfig& rendererConfig)
 {
-    auto& vaoHandle = shaderProgram.vaoHandle;
-    auto positionsVbo = shaderProgram.vboHandles[GlShaderState::POSITIONS_VBO_INDEX];
-    auto colorsVbo = shaderProgram.vboHandles[GlShaderState::COLORS_VBO_INDEX];
+    auto& vaoHandle = shaderProgram.vertexArrayHandles[0];
 
-    glBindBuffer(GL_ARRAY_BUFFER, positionsVbo);
-    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(positions.size()), positions.data(), GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ARRAY_BUFFER, colorsVbo);
-    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(colors.size()), colors.data(), GL_STATIC_DRAW);
-
-    glGenVertexArrays(1, &vaoHandle);
-    glBindVertexArray(vaoHandle);
-
-    glEnableVertexAttribArray(GlShaderState::POSITIONS_VBO_INDEX);
-    glEnableVertexAttribArray(GlShaderState::COLORS_VBO_INDEX);
-
-    glBindBuffer(GL_ARRAY_BUFFER, positionsVbo);
-    glVertexAttribPointer(GlShaderState::POSITIONS_VBO_INDEX, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-
-    glBindBuffer(GL_ARRAY_BUFFER, colorsVbo);
-    glVertexAttribPointer(GlShaderState::COLORS_VBO_INDEX, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glClearBufferfv(GL_COLOR, 0, reinterpret_cast<const GLfloat*>(&rendererConfig.backgroundColor));
 
     glBindVertexArray(vaoHandle);
-
-    glClearBufferfv(GL_COLOR, 0, &rendererConfig.backgroundColor.r);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLES, 0, shaderProgram.vertexBuffer.size());
 }

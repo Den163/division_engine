@@ -6,6 +6,6 @@
 
 namespace GlRenderSystem
 {
-void init(GlShaderState& shaderProgram, const WindowConfig& windowConfig);
+void init(GlShaderState& shaderState, const WindowConfig& windowConfig);
 void update(GlShaderState& shaderProgram, const RendererConfig& rendererConfig);
 }

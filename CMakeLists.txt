@@ -89,7 +89,7 @@ set(GL_UI_SOURCES
     src/core/systems/glfw_vsync_system.cpp
     src/core/systems/glfw_vsync_system.h
     src/utils/math.cpp src/utils/math.h
-    src/core/components/update_timestamp.h src/core/systems/loop_tick_system.cpp src/core/systems/loop_tick_system.h)
+    src/core/components/update_timestamp.h src/core/systems/loop_tick_system.cpp src/core/systems/loop_tick_system.h src/hook/lifecycle.cpp src/hook/lifecycle.h)
 
 set(GL_UI_LIBS glfw3 glm::glm EnTT::EnTT)
 

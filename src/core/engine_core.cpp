@@ -1,5 +1,3 @@
-#define GLFW_INCLUDE_NONE
-
 #include "engine_core.h"
 
 #include <iostream>
@@ -12,10 +10,11 @@
 #include "systems/gl_render_system.h"
 #include "systems/glfw_vsync_system.h"
 #include "systems/loop_tick_system.h"
+#include "../hook/lifecycle.h"
 
-static void init(EngineState& engineState);
-static void mainLoop(EngineState& engineState);
-static void cleanup(EngineState& engineState);
+static void init(EngineState& state);
+static void mainLoop(EngineState& state);
+static void cleanup(EngineState& state);
 
 void EngineCore::run(WindowConfig& windowConfig, RendererConfig& rendererConfig)
 {
@@ -28,45 +27,54 @@ void EngineCore::run(WindowConfig& windowConfig, RendererConfig& rendererConfig)
     cleanup(engineState);
 }
 
-static void init(EngineState& engineState)
+static void init(EngineState& state)
 {
-    LoopTickSystem::init(engineState.loopUpdateTimestamp);
-    RenderTickSystem::init(engineState.rendererState);
-    GlfWindowSystem::init(engineState.windowState, engineState.glfwWindowData, engineState.windowConfig);
-    GlShaderProgramSystem::init(engineState.shaderState);
-    GlRenderSystem::init(engineState.shaderState, engineState.windowConfig);
+    Lifecycle::preInit(state);
+
+    LoopTickSystem::init(state.loopUpdateTimestamp);
+    RenderTickSystem::init(state.rendererState);
+    GlfWindowSystem::init(state.windowState, state.glfwWindowData, state.windowConfig);
+    GlShaderProgramSystem::init(state.shaderState);
+    GlRenderSystem::init(state.shaderState, state.windowConfig);
+
+    Lifecycle::postInit(state);
 
 #ifdef PRINT_OPENGL_INFO
     DebugUtils::printRendererInfo();
 #endif
 }
 
-static void mainLoop(EngineState& engineState)
+static void mainLoop(EngineState& state)
 {
-    const auto& rendererState = engineState.rendererState;
-    const auto& windowState = engineState.windowState;
+    const auto& rendererState = state.rendererState;
+    const auto& windowState = state.windowState;
 
     do
     {
-        LoopTickSystem::update(engineState.loopUpdateTimestamp);
-        RenderTickSystem::update(engineState.rendererState, engineState.rendererConfig, engineState.loopUpdateTimestamp);
+        LoopTickSystem::update(state.loopUpdateTimestamp);
+        RenderTickSystem::update(state.rendererState, state.rendererConfig, state.loopUpdateTimestamp);
+
+        Lifecycle::beginLoopUpdate(state);
         if (rendererState.shouldUpdate)
         {
-            GlRenderSystem::update(engineState.shaderState, engineState.rendererConfig);
-            GlfwVSyncSystem::update(engineState.glfwWindowData);
+            Lifecycle::preRenderUpdate(state);
+            GlRenderSystem::update(state.shaderState, state.rendererConfig);
+            GlfwVSyncSystem::update(state.glfwWindowData);
+            Lifecycle::postRenderUpdate(state);
         }
 
-        GlfWindowSystem::update(engineState.windowState, engineState.glfwWindowData);
+        GlfWindowSystem::update(state.windowState, state.glfwWindowData);
         GlfwInputSystem::update();
-
-        if (windowState.shouldClose) return;
+        Lifecycle::endLoopUpdate(state);
     }
-    while (true);
+    while (!windowState.shouldClose);
 }
 
-static void cleanup(EngineState& engineState)
+static void cleanup(EngineState& state)
 {
-    GlShaderProgramSystem::cleanup(engineState.shaderState);
-    GlfWindowSystem::cleanup(engineState.glfwWindowData);
+    Lifecycle::preCleanup(state);
+    GlShaderProgramSystem::cleanup(state.shaderState);
+    GlfWindowSystem::cleanup(state.glfwWindowData);
+    Lifecycle::postCleanup(state);
 }
 

@@ -7,19 +7,18 @@
 
 void GlfWindowSystem::init(WindowState& windowState, GlfwWindowData& glfwWindowData, const WindowConfig& windowConfig)
 {
-    windowState.shouldClose = false;
-
     auto& windowHandle = glfwWindowData.windowHandle;
+    windowState.shouldClose = false;
 
     if (!glfwInit())
     {
-        throw std::runtime_error {"Failed to init GLFW"};
+        throw std::runtime_error {"Failed to preInit GLFW"};
     }
 
-    glfwSetErrorCallback(DebugUtils::errorCallback);
+    glfwSetErrorCallback(DebugUtils::windowErrorCallback);
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 

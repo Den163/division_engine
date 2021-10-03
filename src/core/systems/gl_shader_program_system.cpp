@@ -1,10 +1,5 @@
 #include "gl_shader_program_system.h"
 
-#define GLFW_INCLUDE_NONE
-
-#include <GLFW/glfw3.h>
-#include <glad/gl.h>
-
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -12,7 +7,6 @@
 #include <vector>
 
 #include "../../utils/file_utils.h"
-#include "../components/gl_shader_state.h"
 
 static constexpr const char* SPIR_V_EXT_ = ".spv";
 
@@ -39,11 +33,11 @@ static std::vector<ShaderInputInfo> collectShaderFileInfos();
 static GLuint compileSingleShader(const ShaderInputInfo& shaderInfo);
 static void throwLinkError(GLuint programHandle);
 
-void GlShaderProgramSystem::init(GlShaderState& shaderProgram)
+void GlShaderProgramSystem::init(GlShaderState& shaderState)
 {
-    auto& programHandle = shaderProgram.handle;
-
+    auto& programHandle = shaderState.programHandle;
     programHandle = glCreateProgram();
+
     if (!programHandle) throw std::runtime_error {"Failed to create a program object"};
 
     auto shaderInfos = collectShaderFileInfos();
@@ -65,7 +59,7 @@ void GlShaderProgramSystem::init(GlShaderState& shaderProgram)
     GLint linkStatus;
     glGetProgramiv(programHandle, GL_LINK_STATUS, &linkStatus);
 
-    if (linkStatus)
+    if (linkStatus == GL_TRUE)
     {
         glUseProgram(programHandle);
     }
@@ -151,6 +145,6 @@ static void throwLinkError(GLuint programHandle)
 
 void GlShaderProgramSystem::cleanup(GlShaderState& shaderProgram)
 {
-    glDeleteProgram(shaderProgram.handle);
+    glDeleteProgram(shaderProgram.programHandle);
 }
 

@@ -4,7 +4,7 @@
 
 namespace GlShaderProgramSystem
 {
-void init(GlShaderState& shaderProgram);
+void init(GlShaderState& shaderState);
 
 void cleanup(GlShaderState& shaderProgram);
 }
