@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-#include "../components/glfw_window_data.h"
+#include "../configs/glfw_window_config.h"
 
-void GlfwVSyncSystem::update(GlfwWindowData& glfwWindowData)
+void GlfwVSyncSystem::update(GlfwWindowConfig& glfwWindowData)
 {
     glfwSwapBuffers(glfwWindowData.windowHandle);
 }

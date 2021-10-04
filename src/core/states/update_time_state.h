@@ -1,6 +1,6 @@
 #pragma once
 
-struct UpdateTimestamp
+struct UpdateTimeState
 {
     using float_seconds = std::chrono::duration<float>;
     using steady_clock = std::chrono::steady_clock;

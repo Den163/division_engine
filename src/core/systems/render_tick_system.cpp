@@ -10,7 +10,7 @@ void RenderTickSystem::init(RendererState& rendererState)
 }
 
 void RenderTickSystem::update(
-    RendererState& rendererState, const RendererConfig& rendererConfig, const UpdateTimestamp& loopUpdateTimestamp)
+    RendererState& rendererState, const RendererConfig& rendererConfig, const UpdateTimeState& loopUpdateTimestamp)
 {
     auto& updateTimeStamp = rendererState.updateTimestamp;
     const auto& deltaTimeToUpdate = std::chrono::duration<float> { 1 / rendererConfig.targetFps };

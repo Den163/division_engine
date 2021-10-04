@@ -2,11 +2,10 @@
 
 #include <cstdlib>
 #include <ctime>
+#include <random>
 
 void Lifecycle::preInit(EngineState& state)
 {
-    std::srand(std::time(nullptr));
-
     state.shaderState.vertexBuffer = {
         -0.90, -0.90, 0.0,
          0.85, -0.90, 0.0,
@@ -29,11 +28,17 @@ void Lifecycle::beginLoopUpdate(EngineState& state)
 void Lifecycle::preRenderUpdate(EngineState& state)
 {
     auto& shaderState = state.shaderState;
-    auto vertexBuffer = shaderState.vertexBuffer;
-    float t = std::rand() / (float) RAND_MAX;
-    int idx = (int) ((1 - t) * (vertexBuffer.size() - 1));
+    auto& vertexBuffer = shaderState.vertexBuffer;
 
-    vertexBuffer[idx] = -t + (1-t);
+    std::random_device randomDevice {};
+    std::mt19937 generator {randomDevice()};
+    auto tDist = std::uniform_real_distribution { 0.0, 1.0 };
+    auto indexDist = std::uniform_int_distribution<size_t> { 0, vertexBuffer.size() - 1 };
+    auto t = (float) tDist(generator);
+    auto randomValue = (1-t) - t;
+    auto randomIndex = indexDist(generator);
+
+    vertexBuffer[randomIndex] = randomValue;
 }
 
 void Lifecycle::postRenderUpdate(EngineState& state)

@@ -2,11 +2,11 @@
 
 #include <chrono>
 
-#include "update_timestamp.h"
+#include "update_time_state.h"
 
 struct RendererState
 {
-    UpdateTimestamp updateTimestamp;
+    UpdateTimeState updateTimestamp;
     bool shouldUpdate;
 
     float fps() const { return 1 / updateTimestamp.deltaTime.count(); }

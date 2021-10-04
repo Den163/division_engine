@@ -1,12 +1,12 @@
 #include "loop_tick_system.h"
 
-void LoopTickSystem::init(UpdateTimestamp& loopUpdateTimestamp)
+void LoopTickSystem::init(UpdateTimeState& loopUpdateTimestamp)
 {
     loopUpdateTimestamp.lastUpdateTime = std::chrono::steady_clock::now();
     loopUpdateTimestamp.deltaTime = std::chrono::duration<float> { 0 };
 }
 
-void LoopTickSystem::update(UpdateTimestamp& loopUpdateTimestamp)
+void LoopTickSystem::update(UpdateTimeState& loopUpdateTimestamp)
 {
     const auto& now = std::chrono::steady_clock::now();
 

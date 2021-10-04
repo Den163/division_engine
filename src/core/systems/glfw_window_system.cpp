@@ -5,7 +5,7 @@
 
 #include "../../utils/debug_utils.h"
 
-void GlfWindowSystem::init(WindowState& windowState, GlfwWindowData& glfwWindowData, const WindowConfig& windowConfig)
+void GlfWindowSystem::init(WindowState& windowState, GlfwWindowConfig& glfwWindowData, const WindowConfig& windowConfig)
 {
     auto& windowHandle = glfwWindowData.windowHandle;
     windowState.shouldClose = false;
@@ -38,12 +38,12 @@ void GlfWindowSystem::init(WindowState& windowState, GlfwWindowData& glfwWindowD
     }
 }
 
-void GlfWindowSystem::update(WindowState& windowState, GlfwWindowData& glfwWindowData)
+void GlfWindowSystem::update(WindowState& windowState, GlfwWindowConfig& glfwWindowData)
 {
     windowState.shouldClose = glfwWindowShouldClose(glfwWindowData.windowHandle);
 }
 
-void GlfWindowSystem::cleanup(GlfwWindowData& glfwWindowData)
+void GlfWindowSystem::cleanup(GlfwWindowConfig& glfwWindowData)
 {
     glfwDestroyWindow(glfwWindowData.windowHandle);
     glfwTerminate();

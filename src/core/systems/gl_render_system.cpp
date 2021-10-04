@@ -15,7 +15,7 @@ void GlRenderSystem::init(GlShaderState& shaderState, const WindowConfig& window
         shaderState.vertexBufferHandles[GlShaderState::POSITIONS_VBO_INDEX],
         shaderState.vertexBuffer.size() * sizeof(float),
         shaderState.vertexBuffer.data(),
-        0
+        GL_DYNAMIC_STORAGE_BIT
     );
 
     glBindVertexArray(shaderState.vertexArrayHandles[GlShaderState::TRIANGLES_ARRAY_INDEX]);
@@ -24,12 +24,19 @@ void GlRenderSystem::init(GlShaderState& shaderState, const WindowConfig& window
     glEnableVertexAttribArray(GlShaderState::POSITIONS_VBO_INDEX);
 }
 
-void GlRenderSystem::update(GlShaderState& shaderProgram, const RendererConfig& rendererConfig)
+void GlRenderSystem::update(GlShaderState& shaderState, const RendererConfig& rendererConfig)
 {
-    auto& vaoHandle = shaderProgram.vertexArrayHandles[0];
+    auto& vaoHandle = shaderState.vertexArrayHandles[0];
 
     glClearBufferfv(GL_COLOR, 0, reinterpret_cast<const GLfloat*>(&rendererConfig.backgroundColor));
 
     glBindVertexArray(vaoHandle);
-    glDrawArrays(GL_TRIANGLES, 0, shaderProgram.vertexBuffer.size());
+    glNamedBufferSubData(
+        shaderState.vertexBufferHandles[GlShaderState::POSITIONS_VBO_INDEX],
+        0,
+        shaderState.vertexBuffer.size() * sizeof(float),
+        shaderState.vertexBuffer.data()
+    );
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 }

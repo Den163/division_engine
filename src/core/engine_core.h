@@ -1,7 +1,7 @@
 #pragma once
 
-#include "components/renderer_config.h"
-#include "components/window_config.h"
+#include "configs/renderer_config.h"
+#include "configs/window_config.h"
 
 namespace EngineCore
 {

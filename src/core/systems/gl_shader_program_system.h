@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../components/gl_shader_state.h"
+#include "../states/gl_shader_state.h"
 
 namespace GlShaderProgramSystem
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chrono>
-#include "update_timestamp.h"
+#include "update_time_state.h"
 
 struct WindowState
 {

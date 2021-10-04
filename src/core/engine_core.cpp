@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "engine_state.h"
+#include "states/engine_state.h"
 #include "systems/gl_shader_program_system.h"
 #include "systems/glfw_window_system.h"
 #include "systems/glfw_input_system.h"

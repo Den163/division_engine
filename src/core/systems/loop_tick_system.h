@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../components/window_state.h"
+#include "../states/window_state.h"
 
 namespace LoopTickSystem
 {
-void init(UpdateTimestamp& loopUpdateTimestamp);
-void update(UpdateTimestamp& loopUpdateTimestamp);
+void init(UpdateTimeState& loopUpdateTimestamp);
+void update(UpdateTimeState& loopUpdateTimestamp);
 }
