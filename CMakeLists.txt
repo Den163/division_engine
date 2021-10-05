@@ -88,8 +88,11 @@ set(GL_UI_SOURCES
     src/core/systems/render_tick_system.h
     src/core/systems/glfw_vsync_system.cpp
     src/core/systems/glfw_vsync_system.h
-    src/utils/math.cpp src/utils/math.h
-    src/core/states/update_time_state.h src/core/systems/loop_tick_system.cpp src/core/systems/loop_tick_system.h src/hook/lifecycle.cpp src/hook/lifecycle.h)
+    src/core/states/update_time_state.h
+    src/core/systems/loop_tick_system.cpp
+    src/core/systems/loop_tick_system.h
+    src/hook/lifecycle.cpp
+    src/hook/lifecycle.h src/core/components/gl_mesh.h src/core/components/mesh.h src/core/systems/check_gl_mesh_initialization_system.cpp src/core/systems/check_gl_mesh_initialization_system.h)
 
 set(GL_UI_LIBS glfw3 glm::glm EnTT::EnTT)
 

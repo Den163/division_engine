@@ -1,6 +1,9 @@
+#include <entt/entity/registry.hpp>
 #include "gl_render_system.h"
 
 #include "../../utils/debug_utils.h"
+#include "../components/mesh.h"
+#include "../components/gl_mesh.h"
 
 void GlRenderSystem::init(GlShaderState& shaderState, const WindowConfig& windowConfig)
 {
@@ -10,33 +13,36 @@ void GlRenderSystem::init(GlShaderState& shaderState, const WindowConfig& window
     glDebugMessageCallback(DebugUtils::glRendererMessageCallback, nullptr);
 
     glCreateVertexArrays(GlShaderState::VERTEX_ARRAYS_COUNT, shaderState.vertexArrayHandles);
-    glCreateBuffers(GlShaderState::VERTEX_BUFFERS_COUNT, shaderState.vertexBufferHandles);
-    glNamedBufferStorage(
-        shaderState.vertexBufferHandles[GlShaderState::POSITIONS_VBO_INDEX],
-        shaderState.vertexBuffer.size() * sizeof(float),
-        shaderState.vertexBuffer.data(),
-        GL_DYNAMIC_STORAGE_BIT
-    );
-
-    glBindVertexArray(shaderState.vertexArrayHandles[GlShaderState::TRIANGLES_ARRAY_INDEX]);
-    glBindBuffer(GL_ARRAY_BUFFER, shaderState.vertexBufferHandles[GlShaderState::POSITIONS_VBO_INDEX]);
-    glVertexAttribPointer(GlShaderState::POSITIONS_VBO_INDEX, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-    glEnableVertexAttribArray(GlShaderState::POSITIONS_VBO_INDEX);
 }
 
-void GlRenderSystem::update(GlShaderState& shaderState, const RendererConfig& rendererConfig)
+void GlRenderSystem::update(entt::registry& ecsRegistry, GlShaderState& shaderState, const RendererConfig& rendererConfig)
 {
     auto& vaoHandle = shaderState.vertexArrayHandles[0];
 
     glClearBufferfv(GL_COLOR, 0, reinterpret_cast<const GLfloat*>(&rendererConfig.backgroundColor));
 
-    glBindVertexArray(vaoHandle);
-    glNamedBufferSubData(
-        shaderState.vertexBufferHandles[GlShaderState::POSITIONS_VBO_INDEX],
-        0,
-        shaderState.vertexBuffer.size() * sizeof(float),
-        shaderState.vertexBuffer.data()
-    );
+    for (auto&& [e, mesh, glMesh] : ecsRegistry.view<Mesh, GlMesh>().each())
+    {
+        const auto& vboHandle = glMesh.vboHandle;
+        const auto& vertices = mesh.vertices;
+        const auto* verticesPtr = vertices.data();
+        const auto verticesCount = vertices.size();
+        const auto verticesBytes = static_cast<GLsizeiptr>(verticesCount * sizeof(Mesh::Vertex));
 
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(vaoHandle);
+
+        GLint bufferSize;
+        glGetNamedBufferParameteriv(vboHandle, GL_BUFFER_SIZE, &bufferSize);
+
+        if (bufferSize == verticesBytes)
+        {
+            glNamedBufferSubData(vboHandle, 0, verticesBytes, verticesPtr);
+        }
+        else
+        {
+            glNamedBufferStorage(vboHandle, verticesBytes, verticesPtr, GL_NONE);
+        }
+
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(verticesCount));
+    }
 }

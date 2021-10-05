@@ -7,5 +7,5 @@
 namespace GlRenderSystem
 {
 void init(GlShaderState& shaderState, const WindowConfig& windowConfig);
-void update(GlShaderState& shaderState, const RendererConfig& rendererConfig);
+void update(entt::registry& ecsRegistry, GlShaderState& shaderState, const RendererConfig& rendererConfig);
 }

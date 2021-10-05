@@ -8,6 +8,7 @@
 #include "systems/glfw_input_system.h"
 #include "systems/render_tick_system.h"
 #include "systems/gl_render_system.h"
+#include "systems/check_gl_mesh_initialization_system.h"
 #include "systems/glfw_vsync_system.h"
 #include "systems/loop_tick_system.h"
 #include "../hook/lifecycle.h"
@@ -57,8 +58,9 @@ static void mainLoop(EngineState& state)
         Lifecycle::beginLoopUpdate(state);
         if (rendererState.shouldUpdate)
         {
+            CheckGlMeshInitializationSystem::update(state.ecsRegistry, state.shaderState);
             Lifecycle::preRenderUpdate(state);
-            GlRenderSystem::update(state.shaderState, state.rendererConfig);
+            GlRenderSystem::update(state.ecsRegistry, state.shaderState, state.rendererConfig);
             GlfwVSyncSystem::update(state.glfwWindowData);
             Lifecycle::postRenderUpdate(state);
         }

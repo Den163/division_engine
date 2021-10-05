@@ -6,8 +6,8 @@
 
 struct RendererState
 {
-    UpdateTimeState updateTimestamp;
+    UpdateTimeState updateTime;
     bool shouldUpdate;
 
-    float fps() const { return 1 / updateTimestamp.deltaTime.count(); }
+    float fps() const { return 1 / updateTime.deltaTime.count(); }
 };

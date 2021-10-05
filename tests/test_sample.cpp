@@ -3,10 +3,6 @@
 
 #include <gtest/gtest.h>
 
-#include "../src/utils/math.h"
-
-#include <chrono>
-
 TEST(HELLO_WORLD, HELLO)
 {
 }
