@@ -22,6 +22,7 @@
 
 static void init(EngineState& state);
 static void eventLoop(EngineState& state);
+static void renderLoop(EngineState& state);
 static void cleanup(EngineState& state);
 
 void EngineCore::run(WindowConfig& windowConfig, RendererConfig& rendererConfig)
@@ -66,21 +67,26 @@ static void eventLoop(EngineState& state)
 
         if (rendererState.shouldUpdate)
         {
-            Lifecycle::preRenderUpdate(state);
-
-            CheckGlMeshCreatedSystem::update(state.ecsRegistry, state.shaderState);
-            CheckGlMeshDestroyedSystem::update(state.ecsRegistry, state.shaderState);
-
-            GlRenderSystem::update(state.ecsRegistry, state.shaderState, state.rendererConfig);
-            GlfwVsyncSystem::update(state.glfwWindowData);
-
-            Lifecycle::postRenderUpdate(state);
-            RegisterInputSystem::postRenderUpdate(state.inputState);
+            renderLoop(state);
         }
 
         GlfWindowSystem::update(state.windowState, state.glfwWindowData);
     }
     while (!windowState.shouldClose);
+}
+
+void renderLoop(EngineState& state)
+{
+    Lifecycle::preRenderUpdate(state);
+
+    CheckGlMeshCreatedSystem::update(state.ecsRegistry, state.shaderState);
+    CheckGlMeshDestroyedSystem::update(state.ecsRegistry, state.shaderState);
+
+    GlRenderSystem::update(state.ecsRegistry, state.shaderState, state.rendererConfig);
+    GlfwVsyncSystem::update(state.glfwWindowData);
+
+    Lifecycle::postRenderUpdate(state);
+    RegisterInputSystem::postRenderUpdate(state.inputState);
 }
 
 static void cleanup(EngineState& state)
