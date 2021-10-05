@@ -40,6 +40,7 @@ void GlfWindowSystem::init(WindowState& windowState, GlfwWindowConfig& glfwWindo
 
 void GlfWindowSystem::update(WindowState& windowState, GlfwWindowConfig& glfwWindowData)
 {
+    glfwPollEvents();
     windowState.shouldClose = glfwWindowShouldClose(glfwWindowData.windowHandle);
 }
 

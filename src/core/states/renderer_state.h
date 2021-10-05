@@ -9,5 +9,5 @@ struct RendererState
     UpdateTimeState updateTime;
     bool shouldUpdate;
 
-    float fps() const { return 1 / updateTime.deltaTime.count(); }
+    inline float fps() const { return 1 / updateTime.deltaTime.count(); }
 };

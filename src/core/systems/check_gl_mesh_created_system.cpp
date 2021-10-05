@@ -1,13 +1,13 @@
-#include "check_gl_mesh_initialization_system.h"
+#include "check_gl_mesh_created_system.h"
 
 #include "../components/mesh.h"
 #include "../components/gl_mesh.h"
 
-void CheckGlMeshInitializationSystem::update(entt::registry& ecsRegistry, GlShaderState& shaderState)
+void CheckGlMeshCreatedSystem::update(entt::registry& ecsRegistry, const GlShaderState& shaderState)
 {
     auto vaoHandle = shaderState.vertexArrayHandles[GlShaderState::TRIANGLES_ARRAY_INDEX];
 
-    for (auto&& [e, mesh] : ecsRegistry.view<Mesh>(entt::exclude<GlMesh>).each())
+    for (auto&& [e, mesh] : ecsRegistry.view<const Mesh>(entt::exclude<GlMesh>).each())
     {
         auto& glMesh = ecsRegistry.emplace<GlMesh>(e);
         auto& vboHandle = glMesh.vboHandle;

@@ -1,8 +1,14 @@
 #include "lifecycle.h"
 
 #include "../core/components/mesh.h"
+#include <iostream>
+#include <random>
+#include <stdexcept>
 
-void Lifecycle::preInit(EngineState& state)
+static void checkMeshCreateByKeyPress(EngineState& state);
+static void checkMeshDeleteByKeyPress(EngineState& state);
+
+void Lifecycle::init(EngineState& state)
 {
     auto e = state.ecsRegistry.create();
     auto& mesh = state.ecsRegistry.emplace<Mesh>(e);
@@ -17,47 +23,57 @@ void Lifecycle::preInit(EngineState& state)
     };
 }
 
-void Lifecycle::postInit(EngineState& state)
-{
-}
-
-void Lifecycle::beginLoopUpdate(EngineState& state)
-{
-
-}
-
 void Lifecycle::preRenderUpdate(EngineState& state)
 {
-//    auto& shaderState = state.shaderState;
-//    auto& vertexBuffer = shaderState.vertexBuffer;
-//
-//    std::random_device randomDevice {};
-//    std::mt19937 generator {randomDevice()};
-//    auto tDist = std::uniform_real_distribution { 0.0, 1.0 };
-//    auto indexDist = std::uniform_int_distribution<size_t> { 0, vertexBuffer.size() - 1 };
-//    auto t = (float) tDist(generator);
-//    auto randomValue = (1-t) - t;
-//    auto randomIndex = indexDist(generator);
-//
-//    vertexBuffer[randomIndex] = randomValue;
+}
+
+glm::vec3 randomVert(EngineState& state)
+{
+    std::uniform_real_distribution dist { -1.f, 1.f };
+    glm::vec3 v;
+
+    for (size_t i = 0; i < 3; i++)
+    {
+        auto randomDevice = std::random_device {};
+        auto randomFunctor = std::mt19937 { randomDevice() };
+        v[i] = dist(randomFunctor);
+    }
+
+    return v;
+}
+
+void checkMeshCreateByKeyPress(EngineState& state)
+{
+    if (!state.inputState.keyboardState.keyHasFlag('C', InputState::KEY_STATE_PRESSED)) return;
+
+    auto e = state.ecsRegistry.create();
+    auto& mesh = state.ecsRegistry.emplace<Mesh>(e);
+    mesh.vertices = {
+        {randomVert(state) },
+        {randomVert(state) },
+        {randomVert(state) },
+    };
+}
+
+void checkMeshDeleteByKeyPress(EngineState& state)
+{
+    if (!state.inputState.keyboardState.keyHasFlag('D', InputState::KEY_STATE_PRESSED)) return;
+
+    for (auto&& [e, mesh] : state.ecsRegistry.view<Mesh>().each())
+    {
+        state.ecsRegistry.remove<Mesh>(e);
+        return;
+    }
 }
 
 void Lifecycle::postRenderUpdate(EngineState& state)
 {
-
+    checkMeshCreateByKeyPress(state);
+    checkMeshDeleteByKeyPress(state);
 }
 
-void Lifecycle::endLoopUpdate(EngineState& state)
+void Lifecycle::cleanup(EngineState& state)
 {
 
 }
 
-void Lifecycle::preCleanup(EngineState& state)
-{
-
-}
-
-void Lifecycle::postCleanup(EngineState& state)
-{
-
-}

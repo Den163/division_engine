@@ -2,7 +2,7 @@
 
 #include "../configs/glfw_window_config.h"
 
-namespace GlfwVSyncSystem
+namespace GlfwVsyncSystem
 {
 void update(GlfwWindowConfig& glfwWindowData);
 }
