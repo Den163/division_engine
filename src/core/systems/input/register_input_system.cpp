@@ -1,7 +1,7 @@
 #include <iostream>
 #include "register_input_system.h"
 
-#include "../../utils/math.h"
+#include "../../../utils/math.h"
 
 void RegisterInputSystem::init(InputState& inputState)
 {

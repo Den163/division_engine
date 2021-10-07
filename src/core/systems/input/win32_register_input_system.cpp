@@ -2,9 +2,9 @@
 
 #include <iostream>
 #include <stdexcept>
-#include <windows.h>
+#include <Windows.h>
 
-#include "../../utils/math.h"
+#include "../../../utils/math.h"
 
 constexpr auto BITS_IN_BYTES = 8;
 constexpr uint8_t WIN32_KEY_PRESSED_MASK = 1 << (sizeof(BYTE) * BITS_IN_BYTES - 1);

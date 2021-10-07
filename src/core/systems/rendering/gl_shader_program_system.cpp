@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../../utils/file_utils.h"
+#include "../../../utils/file_utils.h"
 
 static constexpr const char* SPIR_V_EXT_ = ".spv";
 

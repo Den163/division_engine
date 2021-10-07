@@ -1,7 +1,7 @@
 #include "check_gl_mesh_destroyed_system.h"
 
-#include "../components/mesh.h"
-#include "../components/gl_mesh.h"
+#include "../../components/mesh.h"
+#include "../../components/gl_mesh.h"
 
 void CheckGlMeshDestroyedSystem::update(entt::registry& ecsRegistry, const GlShaderState& shaderState)
 {

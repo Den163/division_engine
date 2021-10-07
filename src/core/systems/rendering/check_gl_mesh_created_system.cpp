@@ -1,7 +1,9 @@
 #include "check_gl_mesh_created_system.h"
 
-#include "../components/mesh.h"
-#include "../components/gl_mesh.h"
+#include <glm/mat4x4.hpp>
+
+#include "../../components/mesh.h"
+#include "../../components/gl_mesh.h"
 
 void CheckGlMeshCreatedSystem::update(entt::registry& ecsRegistry, const GlShaderState& shaderState)
 {
@@ -10,26 +12,19 @@ void CheckGlMeshCreatedSystem::update(entt::registry& ecsRegistry, const GlShade
     for (auto&& [e, mesh] : ecsRegistry.view<const Mesh>(entt::exclude<GlMesh>).each())
     {
         auto& glMesh = ecsRegistry.emplace<GlMesh>(e);
-        auto& vboHandle = glMesh.vboHandle;
+        auto& vertexVboHandle = glMesh.vboHandle;
 
-        glCreateBuffers(1, &vboHandle);
+        glCreateBuffers(1, &vertexVboHandle);
         glNamedBufferStorage(
-            vboHandle,
+            vertexVboHandle,
             mesh.vertices.size() * sizeof(Mesh::Vertex),
             nullptr,
             GL_DYNAMIC_STORAGE_BIT
         );
 
         glBindVertexArray(vaoHandle);
-        glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
-        glVertexAttribPointer(
-            GlMesh::VERTEX_POSITION_ATTRIB_INDEX,
-            3,
-            GL_FLOAT,
-            GL_FALSE,
-            sizeof(Mesh::Vertex),
-            nullptr
-        );
-        glEnableVertexAttribArray(GlMesh::VERTEX_POSITION_ATTRIB_INDEX);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexVboHandle);
+        glVertexAttribPointer(GlMesh::VERTEX_ATTRIB_INDEX, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), nullptr);
+        glEnableVertexAttribArray(GlMesh::VERTEX_ATTRIB_INDEX);
     }
 }

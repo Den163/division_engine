@@ -1,9 +1,9 @@
 #pragma once
 
 #include <entt/entt.hpp>
-#include "../states/gl_shader_state.h"
+#include "../../states/gl_shader_state.h"
 
-namespace CheckGlMeshCreatedSystem
+namespace CheckGlMeshDestroyedSystem
 {
 void update(entt::registry& ecsRegistry, const GlShaderState& shaderState);
 }

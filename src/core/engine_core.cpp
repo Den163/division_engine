@@ -7,16 +7,16 @@
 #include <iostream>
 
 #include "states/engine_state.h"
-#include "systems/gl_shader_program_system.h"
+#include "systems/rendering/gl_shader_program_system.h"
 #include "systems/glfw_window_system.h"
 #include "systems/render_tick_system.h"
-#include "systems/gl_render_system.h"
-#include "systems/check_gl_mesh_created_system.h"
-#include "systems/check_gl_mesh_destroyed_system.h"
+#include "systems/rendering/gl_render_system.h"
+#include "systems/rendering/check_gl_mesh_created_system.h"
+#include "systems/rendering/check_gl_mesh_destroyed_system.h"
 #include "systems/glfw_vsync_system.h"
 #include "systems/loop_tick_system.h"
-#include "systems/win32_register_input_system.h"
-#include "systems/register_input_system.h"
+#include "systems/input/win32_register_input_system.h"
+#include "systems/input/register_input_system.h"
 
 #include "../hook/lifecycle.h"
 
@@ -44,7 +44,7 @@ static void init(EngineState& state)
     RenderTickSystem::init(state.rendererState);
     GlfWindowSystem::init(state.windowState, state.glfwWindowData, state.windowConfig);
     GlShaderProgramSystem::init(state.shaderState);
-    GlRenderSystem::init(state.shaderState, state.windowConfig);
+    GlRenderSystem::init(state.shaderState, state.cameraState, state.windowConfig);
 
     Lifecycle::init(state);
 
@@ -82,7 +82,11 @@ void renderLoop(EngineState& state)
     CheckGlMeshCreatedSystem::update(state.ecsRegistry, state.shaderState);
     CheckGlMeshDestroyedSystem::update(state.ecsRegistry, state.shaderState);
 
-    GlRenderSystem::update(state.ecsRegistry, state.shaderState, state.rendererConfig);
+    GlRenderSystem::update(state.ecsRegistry,
+        state.shaderState,
+        state.rendererConfig,
+        state.cameraState,
+        state.windowConfig);
     GlfwVsyncSystem::update(state.glfwWindowData);
 
     Lifecycle::postRenderUpdate(state);

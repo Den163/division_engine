@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../states/input_state.h"
-#include "../states/raw_input_state.h"
+#include "../../states/input_state.h"
+#include "../../states/raw_input_state.h"
 
 namespace Win32RegisterInputSystem
 {

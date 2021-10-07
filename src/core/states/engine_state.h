@@ -3,6 +3,8 @@
 #include "../configs/renderer_config.h"
 #include "../configs/window_config.h"
 #include "../configs/glfw_window_config.h"
+
+#include "camera_state.h"
 #include "gl_shader_state.h"
 #include "input_state.h"
 #include "raw_input_state.h"
@@ -19,6 +21,7 @@ struct EngineState
 
     RendererConfig rendererConfig;
     RendererState rendererState;
+    CameraState cameraState;
     UpdateTimeState loopUpdateTimestamp;
     GlShaderState shaderState;
     InputState inputState;
