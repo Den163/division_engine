@@ -11,43 +11,47 @@
 
 static inline void applyVertexBuffer(const GlMesh& glMesh, const Mesh& mesh);
 static inline void applyTransformMatrix(
-    const glm::vec3& position,
-    const glm::quat& rotation,
-    const glm::vec3& scale,
+    const glm::mat4& modelMatrix,
     const glm::mat4& viewMatrix,
     const glm::mat4& projectionMatrix);
 
-void GlRenderSystem::init(GlShaderState& shaderState, CameraState& cameraState, const WindowConfig& windowConfig)
+void GlRenderSystem::init(GlShaderState& shaderState, CameraState& cameraState, const WindowState& windowState)
 {
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(DebugUtils::glRendererMessageCallback, nullptr);
 
     glCreateVertexArrays(GlShaderState::VERTEX_ARRAYS_COUNT, shaderState.vertexArrayHandles);
 
-    cameraState.position = glm::vec3 {0};
+    cameraState.position = glm::vec3 {0, 0, -10};
     cameraState.rotation = glm::quat {glm::vec3 {0}};
 }
 
 void GlRenderSystem::update(
     entt::registry& ecsRegistry,
     GlShaderState& shaderState,
-    const RendererConfig& rendererConfig,
+    const RendererState& rendererState,
     const CameraState& cameraState,
-    const WindowConfig& windowConfig)
+    const WindowState& windowState)
 {
     auto& vaoHandle = shaderState.vertexArrayHandles[0];
     auto viewMatrix = transformMatrix(cameraState.position, cameraState.rotation);
-    auto projectionMatrix = glm::ortho(-1.f, 1.f, -1.f, 1.f);
 
-    glClearBufferfv(GL_COLOR, 0, reinterpret_cast<const GLfloat*>(&rendererConfig.backgroundColor));
+    auto halfWidth = windowState.width * 0.5f;
+    auto halfHeight = windowState.height * 0.5f;
+    auto projectionMatrix = glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, 0.1f, 100.f);
+
+    glViewport(0, 0, windowState.width, windowState.height);
+    glClearBufferfv(GL_COLOR, 0, reinterpret_cast<const GLfloat*>(&rendererState.backgroundColor));
 
     auto meshComponentsView = ecsRegistry.view<Mesh, GlMesh, const Position, const Rotation, const Scale>();
     for (auto&& [e, mesh, glMesh, pos, rot, scale]: meshComponentsView.each())
     {
+        auto modelMatrix = transformMatrix(pos.value, rot.value, scale.value);
+
         glBindVertexArray(vaoHandle);
 
         applyVertexBuffer(glMesh, mesh);
-        applyTransformMatrix(pos.value, rot.value, scale.value, viewMatrix, projectionMatrix);
+        applyTransformMatrix(modelMatrix, viewMatrix, projectionMatrix);
 
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(mesh.vertices.size()));
     }
@@ -80,14 +84,11 @@ static inline void applyVertexBuffer(const GlMesh& glMesh, const Mesh& mesh)
 }
 
 static inline void applyTransformMatrix(
-    const glm::vec3& position,
-    const glm::quat& rotation,
-    const glm::vec3& scale,
+    const glm::mat4& modelMatrix,
     const glm::mat4& viewMatrix,
     const glm::mat4& projectionMatrix)
 {
-    auto modelMatrix = transformMatrix(position, rotation, scale);
-    auto transformMatrix = projectionMatrix * modelMatrix * viewMatrix;
+    auto transformMatrix = projectionMatrix * viewMatrix * modelMatrix;
 
     glVertexAttribPointer(GlMesh::MATRIX_ATTRIB_INDEX, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
     glVertexAttribPointer(GlMesh::MATRIX_ATTRIB_INDEX + 1, 4, GL_FLOAT, GL_FALSE, 0, nullptr);

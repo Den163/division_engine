@@ -1,5 +1,7 @@
 #pragma once
 
+#include <chrono>
+
 struct UpdateTimeState
 {
     using float_seconds = std::chrono::duration<float>;

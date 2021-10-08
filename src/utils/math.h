@@ -17,6 +17,5 @@ inline glm::mat4 transformMatrix(
 {
     auto scaleMat = glm::scale(glm::mat4 {1}, scale);
     auto rotMat = glm::mat4_cast(rotation);
-    auto translationMat = glm::translate(glm::mat4 { 1 }, translation);
-    return scaleMat * rotMat * translationMat;
+    return glm::translate(scaleMat * rotMat , translation);
 }

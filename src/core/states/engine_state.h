@@ -2,7 +2,7 @@
 
 #include "../configs/renderer_config.h"
 #include "../configs/window_config.h"
-#include "../configs/glfw_window_config.h"
+#include "glfw_window_state.h"
 
 #include "camera_state.h"
 #include "gl_shader_state.h"
@@ -15,11 +15,9 @@
 
 struct EngineState
 {
-    GlfwWindowConfig glfwWindowData;
-    WindowConfig windowConfig;
+    GlfwWindowState glfwWindowData;
     WindowState windowState;
 
-    RendererConfig rendererConfig;
     RendererState rendererState;
     CameraState cameraState;
     UpdateTimeState loopUpdateTimestamp;

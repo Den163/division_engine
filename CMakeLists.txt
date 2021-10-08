@@ -77,13 +77,13 @@ set(GL_UI_SOURCES
     src/core/systems/rendering/gl_render_system.cpp
     src/core/systems/rendering/gl_render_system.h
     src/core/states/gl_shader_state.h
-    src/core/configs/glfw_window_config.h
+    src/core/states/glfw_window_state.h
     src/core/states/window_state.h
     src/core/states/renderer_state.h
     src/core/configs/renderer_config.h
     src/core/configs/window_config.h
-    src/core/systems/render_tick_system.cpp
-    src/core/systems/render_tick_system.h
+    src/core/systems/rendering/render_tick_system.cpp
+    src/core/systems/rendering/render_tick_system.h
     src/core/systems/glfw_vsync_system.cpp
     src/core/systems/glfw_vsync_system.h
     src/core/states/update_time_state.h

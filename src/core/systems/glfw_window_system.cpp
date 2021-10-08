@@ -5,9 +5,12 @@
 
 #include "../../utils/debug_utils.h"
 
-void GlfWindowSystem::init(WindowState& windowState, GlfwWindowConfig& glfwWindowData, const WindowConfig& windowConfig)
+void GlfWindowSystem::init(WindowState& windowState, GlfwWindowState& glfwWindowData, const WindowConfig& windowConfig)
 {
     auto& windowHandle = glfwWindowData.windowHandle;
+
+    windowState.width = windowConfig.width;
+    windowState.height = windowConfig.height;
     windowState.shouldClose = false;
 
     if (!glfwInit())
@@ -22,8 +25,9 @@ void GlfWindowSystem::init(WindowState& windowState, GlfwWindowConfig& glfwWindo
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    windowHandle = glfwCreateWindow(
-        windowConfig.width, windowConfig.height, windowConfig.title.data(), nullptr, nullptr);
+
+    windowHandle = glfwCreateWindow(windowState.width, windowState.height, windowConfig.title.data(), nullptr, nullptr);
+
 
     if (!windowHandle)
     {
@@ -38,13 +42,16 @@ void GlfWindowSystem::init(WindowState& windowState, GlfwWindowConfig& glfwWindo
     }
 }
 
-void GlfWindowSystem::update(WindowState& windowState, GlfwWindowConfig& glfwWindowData)
+void GlfWindowSystem::update(WindowState& windowState, GlfwWindowState& glfwWindowData)
 {
+    auto* windowHandle = glfwWindowData.windowHandle;
+
     glfwPollEvents();
-    windowState.shouldClose = glfwWindowShouldClose(glfwWindowData.windowHandle);
+    windowState.shouldClose = glfwWindowShouldClose(windowHandle);
+    glfwGetWindowSize(windowHandle, &windowState.width, &windowState.height);
 }
 
-void GlfWindowSystem::cleanup(GlfwWindowConfig& glfwWindowData)
+void GlfWindowSystem::cleanup(GlfwWindowState& glfwWindowData)
 {
     glfwDestroyWindow(glfwWindowData.windowHandle);
     glfwTerminate();

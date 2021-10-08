@@ -1,9 +1,10 @@
 #pragma once
 
-#include <chrono>
-#include "update_time_state.h"
+#include <cstdint>
 
 struct WindowState
 {
+    int32_t width;
+    int32_t height;
     bool shouldClose;
 };

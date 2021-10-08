@@ -9,7 +9,7 @@
 #include "states/engine_state.h"
 #include "systems/rendering/gl_shader_program_system.h"
 #include "systems/glfw_window_system.h"
-#include "systems/render_tick_system.h"
+#include "systems/rendering/render_tick_system.h"
 #include "systems/rendering/gl_render_system.h"
 #include "systems/rendering/check_gl_mesh_created_system.h"
 #include "systems/rendering/check_gl_mesh_destroyed_system.h"
@@ -20,7 +20,7 @@
 
 #include "../hook/lifecycle.h"
 
-static void init(EngineState& state);
+static void init(EngineState& state, const WindowConfig& windowConfig, const RendererConfig& rendererConfig);
 static void eventLoop(EngineState& state);
 static void renderLoop(EngineState& state);
 static void cleanup(EngineState& state);
@@ -28,23 +28,21 @@ static void cleanup(EngineState& state);
 void EngineCore::run(WindowConfig& windowConfig, RendererConfig& rendererConfig)
 {
     EngineState engineState {};
-    engineState.windowConfig = windowConfig;
-    engineState.rendererConfig = rendererConfig;
 
-    init(engineState);
+    init(engineState, windowConfig, rendererConfig);
     eventLoop(engineState);
     cleanup(engineState);
 }
 
-static void init(EngineState& state)
+static void init(EngineState& state, const WindowConfig& windowConfig, const RendererConfig& rendererConfig)
 {
     Win32RegisterInputSystem::init(state.rawInputState);
     RegisterInputSystem::init(state.inputState);
     LoopTickSystem::init(state.loopUpdateTimestamp);
-    RenderTickSystem::init(state.rendererState);
-    GlfWindowSystem::init(state.windowState, state.glfwWindowData, state.windowConfig);
+    RenderTickSystem::init(state.rendererState, rendererConfig);
+    GlfWindowSystem::init(state.windowState, state.glfwWindowData, windowConfig);
     GlShaderProgramSystem::init(state.shaderState);
-    GlRenderSystem::init(state.shaderState, state.cameraState, state.windowConfig);
+    GlRenderSystem::init(state.shaderState, state.cameraState, state.windowState);
 
     Lifecycle::init(state);
 
@@ -61,7 +59,7 @@ static void eventLoop(EngineState& state)
     do
     {
         LoopTickSystem::update(state.loopUpdateTimestamp);
-        RenderTickSystem::update(state.rendererState, state.rendererConfig, state.loopUpdateTimestamp);
+        RenderTickSystem::update(state.rendererState, state.loopUpdateTimestamp);
         Win32RegisterInputSystem::update(state.rawInputState);
         RegisterInputSystem::eventLoopUpdate(state.inputState, state.rawInputState);
 
@@ -82,11 +80,12 @@ void renderLoop(EngineState& state)
     CheckGlMeshCreatedSystem::update(state.ecsRegistry, state.shaderState);
     CheckGlMeshDestroyedSystem::update(state.ecsRegistry, state.shaderState);
 
-    GlRenderSystem::update(state.ecsRegistry,
+    GlRenderSystem::update(
+        state.ecsRegistry,
         state.shaderState,
-        state.rendererConfig,
+        state.rendererState,
         state.cameraState,
-        state.windowConfig);
+        state.windowState);
     GlfwVsyncSystem::update(state.glfwWindowData);
 
     Lifecycle::postRenderUpdate(state);
