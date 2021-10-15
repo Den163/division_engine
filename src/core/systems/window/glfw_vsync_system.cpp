@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "../states/glfw_window_state.h"
+#include "../../states/glfw_window_state.h"
 
 void GlfwVsyncSystem::update(GlfwWindowState& glfwWindowData)
 {

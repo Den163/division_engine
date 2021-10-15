@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../states/window_state.h"
-#include "../states/glfw_window_state.h"
-#include "../configs/window_config.h"
+#include "../../states/window_state.h"
+#include "../../states/glfw_window_state.h"
+#include "../../configs/window_config.h"
 
 namespace GlfWindowSystem
 {

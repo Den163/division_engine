@@ -4,25 +4,29 @@
 #include <random>
 #include <stdexcept>
 
-#include "../core/components/mesh.h"
-#include "../utils/primitive_factory.h"
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/quaternion.hpp>
 
-static void checkMeshCreateByKeyPress(EngineState& state);
-static void checkMeshDeleteByKeyPress(EngineState& state);
-static glm::vec3 randomVert(float minX, float maxX, float minY, float maxY);
+#include "../core/components/gui_mesh.h"
+#include "../utils/primitive_factory.h"
+#include "../utils/debug_utils.h"
+#include "../utils/math.h"
+
+static inline void checkMeshCreateByKeyPress(EngineState& state);
+static inline void checkMeshDeleteByKeyPress(EngineState& state);
+static inline void checkPrintCameraInfoByKeyPress(EngineState& state);
+static inline glm::vec3 randomVert(float minX, float maxX, float minY, float maxY);
 
 void Lifecycle::init(EngineState& state)
 {
-    auto [e, mesh] = PrimitiveFactory::createMeshEntity(state.ecsRegistry);
+    auto& cameraState = state.cameraState;
 
-    mesh.vertices = {
-        Mesh::Vertex{{-300, -300, 0.0}},
-        Mesh::Vertex{{ 250, -300, 0.0}},
-        Mesh::Vertex{{-300,  250, 0.0}},
-        Mesh::Vertex{{ 300, -250, 0.0}},
-        Mesh::Vertex{{ 300,  300, 0.0}},
-        Mesh::Vertex{{-250,  300, 0.0}},
-    };
+    auto [ae, axisMesh] = PrimitiveFactory::createTriangle(
+        state.guiRegistry,
+        Transform { {}, {}, glm::vec3{1.f} },
+        { glm::vec3 { 100,100,-0.5f }, {100,200,-0.5f}, {200,200,-0.5f} },
+        glm::vec4 {1,0,0,1}
+    );
 }
 
 void Lifecycle::preRenderUpdate(EngineState& state)
@@ -31,20 +35,7 @@ void Lifecycle::preRenderUpdate(EngineState& state)
 
 void Lifecycle::postRenderUpdate(EngineState& state)
 {
-    glm::vec3 move { 100, 0, 0 };
-
-    if (state.inputState.keyboardState.keyHasFlag('J', InputState::KEY_STATE_PRESSED))
-    {
-        state.cameraState.position -= move;
-        std::cout << "Moving left" << std::endl;
-    }
-
-    if (state.inputState.keyboardState.keyHasFlag('K', InputState::KEY_STATE_PRESSED))
-    {
-        state.cameraState.position += move;
-        std::cout << "Moving right" << std::endl;
-    }
-
+    checkPrintCameraInfoByKeyPress(state);
     checkMeshCreateByKeyPress(state);
     checkMeshDeleteByKeyPress(state);
 }
@@ -55,9 +46,11 @@ void checkMeshCreateByKeyPress(EngineState& state)
 
     auto halfWidth = state.windowState.width * 0.5f;
     auto halfHeight = state.windowState.height * 0.5f;
-    auto [e, mesh] = PrimitiveFactory::createMeshEntity(state.ecsRegistry);
+    auto [e, mesh] = PrimitiveFactory::createMeshEntity(state.guiRegistry);
+
+    mesh.renderShape = RenderShape::Triangle;
     mesh.vertices = {
-        {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight) },
+        {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight), },
         {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight) },
         {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight) },
     };
@@ -67,9 +60,9 @@ void checkMeshDeleteByKeyPress(EngineState& state)
 {
     if (!state.inputState.keyboardState.keyHasFlag('D', InputState::KEY_STATE_PRESSED)) return;
 
-    for (auto&& [e, mesh] : state.ecsRegistry.view<Mesh>().each())
+    for (auto&& [e, mesh] : state.guiRegistry.view<GuiMesh>().each())
     {
-        state.ecsRegistry.remove<Mesh>(e);
+        state.guiRegistry.remove<GuiMesh>(e);
         return;
     }
 }
@@ -81,7 +74,7 @@ glm::vec3 randomVert(float minX, float maxX, float minY, float maxY)
         std::uniform_real_distribution { minY, maxY },
     };
 
-    glm::vec3 v;
+    glm::vec3 v { 0.0f };
 
     for (size_t i = 0; i < 2; i++)
     {
@@ -90,13 +83,22 @@ glm::vec3 randomVert(float minX, float maxX, float minY, float maxY)
         v[i] = dists[i](randomFunctor);
     }
 
-    v[2] = 1.0f;
-
     return v;
+}
+
+void checkPrintCameraInfoByKeyPress(EngineState& state)
+{
+    const auto& cameraState = state.cameraState;
+
+    if (state.inputState.keyPressed('P'))
+    {
+       std::cout << "Camera position        : " << cameraState.position << std::endl
+                 << "Camera rotation (euler): " << glm::degrees(glm::eulerAngles(cameraState.rotation)) << std::endl
+                 << "Mouse screen position  : " << state.inputState.postRenderMousePosition << std::endl;
+    }
 }
 
 void Lifecycle::cleanup(EngineState& state)
 {
 
 }
-

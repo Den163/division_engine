@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <glad/gl.h>
 
-#include "../../utils/debug_utils.h"
+#include "../../../utils/debug_utils.h"
 
 void GlfWindowSystem::init(WindowState& windowState, GlfwWindowState& glfwWindowData, const WindowConfig& windowConfig)
 {
@@ -27,8 +27,6 @@ void GlfWindowSystem::init(WindowState& windowState, GlfwWindowState& glfwWindow
 
 
     windowHandle = glfwCreateWindow(windowState.width, windowState.height, windowConfig.title.data(), nullptr, nullptr);
-
-
     if (!windowHandle)
     {
         throw std::runtime_error {"Failed to create a window_"};

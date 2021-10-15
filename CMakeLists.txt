@@ -72,8 +72,8 @@ set(GL_UI_SOURCES
     src/core/systems/rendering/gl_shader_program_system.h
     src/utils/file_utils.cpp
     src/utils/file_utils.h
-    src/core/systems/glfw_window_system.cpp
-    src/core/systems/glfw_window_system.h
+    src/core/systems/window/glfw_window_system.cpp
+    src/core/systems/window/glfw_window_system.h
     src/core/systems/rendering/gl_render_system.cpp
     src/core/systems/rendering/gl_render_system.h
     src/core/states/gl_shader_state.h
@@ -84,13 +84,13 @@ set(GL_UI_SOURCES
     src/core/configs/window_config.h
     src/core/systems/rendering/render_tick_system.cpp
     src/core/systems/rendering/render_tick_system.h
-    src/core/systems/glfw_vsync_system.cpp
-    src/core/systems/glfw_vsync_system.h
+    src/core/systems/window/glfw_vsync_system.cpp
+    src/core/systems/window/glfw_vsync_system.h
     src/core/states/update_time_state.h
     src/core/systems/loop_tick_system.cpp
     src/core/systems/loop_tick_system.h
     src/hook/lifecycle.cpp
-    src/hook/lifecycle.h src/core/components/gl_mesh.h src/core/components/mesh.h src/core/systems/rendering/check_gl_mesh_created_system.cpp src/core/systems/rendering/check_gl_mesh_created_system.h src/core/systems/rendering/check_gl_mesh_destroyed_system.cpp src/core/systems/rendering/check_gl_mesh_destroyed_system.h src/core/systems/input/win32_register_input_system.cpp src/core/systems/input/win32_register_input_system.h src/core/states/input_state.h src/core/states/raw_input_state.h src/core/states/keyboard_state.h src/core/systems/input/register_input_system.cpp src/core/systems/input/register_input_system.h src/utils/math.h src/core/components/text2d.h src/core/systems/rendering/gl_text_2d_renderer_system.cpp src/core/systems/rendering/gl_text_2d_renderer_system.h src/core/components/rotation.h src/core/components/position.h src/core/components/scale.h src/core/states/camera_state.h src/utils/primitive_factory.cpp src/utils/primitive_factory.h)
+    src/hook/lifecycle.h src/core/components/gl_mesh.h src/core/components/gui_mesh.h src/core/systems/rendering/check_gl_mesh_created_system.cpp src/core/systems/rendering/check_gl_mesh_created_system.h src/core/systems/rendering/check_gl_mesh_destroyed_system.cpp src/core/systems/rendering/check_gl_mesh_destroyed_system.h src/core/systems/input/win32_register_input_system.cpp src/core/systems/input/win32_register_input_system.h src/core/states/input_state.h src/core/states/raw_input_state.h src/core/states/keyboard_state.h src/core/systems/input/register_input_system.cpp src/core/systems/input/register_input_system.h src/utils/math.h src/core/components/text2d.h src/core/systems/rendering/gl_text_2d_renderer_system.cpp src/core/systems/rendering/gl_text_2d_renderer_system.h src/core/components/rotation.h src/core/components/position.h src/core/components/scale.h src/core/states/camera_state.h src/utils/primitive_factory.cpp src/utils/primitive_factory.h src/core/configs/key_code.h src/core/states/win32_state.h src/core/systems/window/win32_window_system.cpp src/core/systems/window/win32_window_system.h src/core/components/triangle.h src/core/components/transform.h)
 
 set(GL_UI_LIBS glfw3 glm::glm EnTT::EnTT)
 

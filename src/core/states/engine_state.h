@@ -10,12 +10,14 @@
 #include "raw_input_state.h"
 #include "renderer_state.h"
 #include "window_state.h"
+#include "win32_state.h"
 
 #include <entt/entt.hpp>
 
 struct EngineState
 {
-    GlfwWindowState glfwWindowData;
+    GlfwWindowState glfwWindowState;
+    Win32State win32State;
     WindowState windowState;
 
     RendererState rendererState;
@@ -25,5 +27,5 @@ struct EngineState
     InputState inputState;
     RawInputState rawInputState;
 
-    entt::registry ecsRegistry;
+    entt::registry guiRegistry;
 };

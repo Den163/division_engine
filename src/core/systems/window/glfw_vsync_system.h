@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../states/glfw_window_state.h"
+#include "../../states/glfw_window_state.h"
 
 namespace GlfwVsyncSystem
 {

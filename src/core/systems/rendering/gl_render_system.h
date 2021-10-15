@@ -7,10 +7,10 @@
 #include "../../states/window_state.h"
 #include "../../states/renderer_state.h"
 
-namespace GlRenderSystem
+namespace GlRenderGuiSystem
 {
 void init(GlShaderState& shaderState, CameraState& cameraState, const WindowState& windowState);
 void update(
-    entt::registry& ecsRegistry, GlShaderState& shaderState, const RendererState& rendererState,
+    entt::registry& guiRegistry, const GlShaderState& shaderState, const RendererState& rendererState,
     const CameraState& cameraState, const WindowState& windowState);
 }

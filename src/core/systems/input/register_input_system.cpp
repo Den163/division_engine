@@ -2,6 +2,7 @@
 #include "register_input_system.h"
 
 #include "../../../utils/math.h"
+#include "math.h"
 
 void RegisterInputSystem::init(InputState& inputState)
 {
@@ -9,6 +10,9 @@ void RegisterInputSystem::init(InputState& inputState)
     {
         key = InputState::KEY_STATE_NONE;
     }
+
+    inputState.postRenderMouseDelta = glm::vec2 {0};
+    inputState.postRenderMousePosition = glm::vec2 {0};
 }
 
 void RegisterInputSystem::eventLoopUpdate(InputState& inputState, const RawInputState& rawInputState)
@@ -16,15 +20,15 @@ void RegisterInputSystem::eventLoopUpdate(InputState& inputState, const RawInput
     const auto& rawKeyboardState = rawInputState.keyboardState;
     auto& keyboardState = inputState.keyboardState;
 
-    for (size_t i = 0; i < KeyboardState::KEYS_COUNT; i++)
+    for (size_t i = 0; i < KeysState::KEYS_COUNT; i++)
     {
         const auto& rawKeyState = rawKeyboardState.keyFlags[i];
         auto& keyState = keyboardState.keyFlags[i];
 
-        auto rawKeyPressed = hasFlag(rawKeyState, RawInputState::KEY_STATE_PRESSED);
-        auto keyWasPressed = hasFlag(keyState, InputState::KEY_STATE_PRESSED);
-        auto keyWasReleased = hasFlag(keyState, InputState::KEY_STATE_RELEASED);
-        auto keyWasInSomeState = !hasFlag(keyState, InputState::KEY_STATE_NONE);
+        auto rawKeyPressed = Math::hasFlag(rawKeyState, RawInputState::KEY_STATE_PRESSED);
+        auto keyWasPressed = Math::hasFlag(keyState, InputState::KEY_STATE_PRESSED);
+        auto keyWasReleased = Math::hasFlag(keyState, InputState::KEY_STATE_RELEASED);
+        auto keyWasInSomeState = !Math::hasFlag(keyState, InputState::KEY_STATE_NONE);
 
         auto keyWillPressed = rawKeyPressed && !keyWasInSomeState;
         auto keyWillHold = rawKeyPressed && (keyWillPressed || keyWasPressed || keyWasReleased);
@@ -50,22 +54,25 @@ void RegisterInputSystem::eventLoopUpdate(InputState& inputState, const RawInput
     }
 }
 
-void RegisterInputSystem::postRenderUpdate(InputState& inputState)
+void RegisterInputSystem::postRenderUpdate(InputState& inputState, const RawInputState& rawInputState)
 {
     auto& keyboardState = inputState.keyboardState;
 
-    for (size_t i = 0; i < KeyboardState::KEYS_COUNT; i++)
+    for (size_t i = 0; i < KeysState::KEYS_COUNT; i++)
     {
         auto& keyState = keyboardState.keyFlags[i];
 
-        if (hasFlag(keyState, InputState::KEY_STATE_PRESSED))
+        if (Math::hasFlag(keyState, InputState::KEY_STATE_PRESSED))
         {
             keyState = (keyState ^ InputState::KEY_STATE_PRESSED);
         }
 
-        if (hasFlag(keyState, InputState::KEY_STATE_RELEASED))
+        if (Math::hasFlag(keyState, InputState::KEY_STATE_RELEASED))
         {
             keyState = InputState::KEY_STATE_NONE;
         }
     }
+
+    inputState.postRenderMouseDelta = rawInputState.eventLoopMousePosition - inputState.postRenderMousePosition;
+    inputState.postRenderMousePosition = rawInputState.eventLoopMousePosition;
 }

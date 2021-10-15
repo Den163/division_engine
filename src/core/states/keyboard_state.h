@@ -1,11 +1,13 @@
 #pragma once
 
 #include <cstdint>
+#include "../configs/key_code.h"
 
-struct KeyboardState
+struct KeysState
 {
     static constexpr size_t KEYS_COUNT = 256;
     uint8_t keyFlags[KEYS_COUNT];
 
-    inline bool keyHasFlag(uint8_t key, uint8_t flag) const { return (keyFlags[key] & flag) == flag; }
+    template<typename T>
+    constexpr bool keyHasFlag(T key, uint8_t flag) const { return (keyFlags[static_cast<uint8_t>(key)] & flag) == flag; }
 };
