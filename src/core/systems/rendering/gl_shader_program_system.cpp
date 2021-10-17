@@ -38,7 +38,7 @@ void GlShaderProgramSystem::init(GlShaderState& shaderState)
     auto& programHandle = shaderState.programHandle;
     programHandle = glCreateProgram();
 
-    if (!programHandle) throw std::runtime_error {"Failed to create a program object"};
+    if (!programHandle) throw std::runtime_error {"Failed to makeDefault a program object"};
 
     auto shaderInfos = collectShaderFileInfos();
     std::vector<CompiledShaderInfo> compiledShaders { shaderInfos.size() };
@@ -105,7 +105,7 @@ static std::vector<ShaderInputInfo> collectShaderFileInfos()
 static GLuint compileSingleShader(const ShaderInputInfo& shaderInfo)
 {
     GLuint shader = glCreateShader(shaderInfo.shaderType);
-    if (!shader) throw std::runtime_error {"Failed to create a shader!"};
+    if (!shader) throw std::runtime_error {"Failed to makeDefault a shader!"};
 
     auto shaderBin = readBytes(shaderInfo.filePath);
 

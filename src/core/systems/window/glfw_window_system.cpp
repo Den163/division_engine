@@ -29,7 +29,7 @@ void GlfWindowSystem::init(WindowState& windowState, GlfwWindowState& glfwWindow
     windowHandle = glfwCreateWindow(windowState.width, windowState.height, windowConfig.title.data(), nullptr, nullptr);
     if (!windowHandle)
     {
-        throw std::runtime_error {"Failed to create a window_"};
+        throw std::runtime_error {"Failed to makeDefault a window_"};
     }
 
     glfwMakeContextCurrent(windowHandle);

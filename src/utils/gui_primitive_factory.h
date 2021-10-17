@@ -24,22 +24,6 @@ namespace GuiPrimitiveFactory
     std::tuple<const entt::entity&, GuiMesh&> createTriangle(
         entt::registry& ecsRegistry,
         const Transform& transform,
-        const std::array<glm::vec3, 3>& vertices,
-        const glm::vec4& color);
-
-    std::tuple<const entt::entity&, GuiMesh&> createTriangle(
-        entt::registry& ecsRegistry,
-        const Transform& transform,
         const GuiTriangle& triangle);
 
-    std::tuple<const entt::entity&, GuiMesh&> createQuad(
-        entt::registry& guiRegistry,
-        const Transform& transform,
-        const std::array<glm::vec3, 4>& vertices,
-        const glm::vec4& color);
-
-    std::tuple<const entt::entity&, GuiMesh&> createQuad(
-        entt::registry& guiRegistry,
-        const Transform& transform,
-        const GuiQuad& quad);
 }

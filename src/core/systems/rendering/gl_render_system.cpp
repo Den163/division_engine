@@ -35,7 +35,7 @@ void GlRenderGuiSystem::update(
     const WindowState& windowState)
 {
     auto& vaoHandle = shaderState.vertexArrayHandles[GlShaderState::TRIANGLES_ARRAY_INDEX];
-    auto projectionMatrix = glm::ortho(0.f, (float) windowState.width, 0.f, (float) windowState.height, 0.1f, 100.f);
+    auto projectionMatrix = glm::ortho(0.f, (float) windowState.width, 0.f, (float) windowState.height);
 
     glViewport(0, 0, windowState.width, windowState.height);
     glClearBufferfv(GL_COLOR, 0, reinterpret_cast<const GLfloat*>(&rendererState.backgroundColor));
