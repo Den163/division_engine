@@ -26,19 +26,6 @@ std::tuple<const entt::entity&, GuiMesh&> PrimitiveFactory::createMeshEntity(
 
 std::tuple<const entt::entity&, GuiMesh&> PrimitiveFactory::createTriangle(
     entt::registry& ecsRegistry,
-    const Triangle& triangle)
-{
-    const auto& transform = triangle.transform;
-    auto [e, mesh] = createMeshEntity(ecsRegistry, transform.position, transform.rotation, transform.scale);
-
-    mesh.renderShape = RenderShape::Triangle;
-    mesh.vertices = std::vector<GuiVertex> { triangle.vertices.begin(), triangle.vertices.end() };
-
-    return {e, mesh};
-}
-
-std::tuple<const entt::entity&, GuiMesh&> PrimitiveFactory::createTriangle(
-    entt::registry& ecsRegistry,
     const Transform& transform,
     const std::array<glm::vec3, 3>& vertexPositions,
     const glm::vec4& color)
@@ -48,6 +35,17 @@ std::tuple<const entt::entity&, GuiMesh&> PrimitiveFactory::createTriangle(
         vertices[i] = GuiVertex { vertexPositions[i], color };
     }
 
-    return createTriangle(ecsRegistry, Triangle {transform, vertices});
+    return createTriangle(ecsRegistry, transform, GuiTriangle {vertices});
+}
+
+std::tuple<const entt::entity&, GuiMesh&>
+PrimitiveFactory::createTriangle(entt::registry& ecsRegistry, const Transform& transform, const GuiTriangle& triangle)
+{
+    auto [e, mesh] = createMeshEntity(ecsRegistry, transform.position, transform.rotation, transform.scale);
+
+    mesh.renderShape = RenderMode::Triangles;
+    mesh.vertices = std::vector<GuiVertex> { triangle.vertices.begin(), triangle.vertices.end() };
+
+    return {e, mesh};
 }
 

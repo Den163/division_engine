@@ -3,10 +3,9 @@
 #include <array>
 
 #include "gui_vertex.h"
-#include "transform.h"
+#include "../../components/transform.h"
 
-struct Triangle
+struct GuiTriangle
 {
-    Transform transform;
     std::array<GuiVertex, 3> vertices;
 };

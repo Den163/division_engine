@@ -48,7 +48,7 @@ void checkMeshCreateByKeyPress(EngineState& state)
     auto halfHeight = state.windowState.height * 0.5f;
     auto [e, mesh] = PrimitiveFactory::createMeshEntity(state.guiRegistry);
 
-    mesh.renderShape = RenderShape::Triangle;
+    mesh.renderShape = RenderMode::Triangles;
     mesh.vertices = {
         {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight), },
         {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight) },

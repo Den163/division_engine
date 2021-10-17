@@ -7,7 +7,7 @@
 #include <tuple>
 
 #include "../core/components/gui_mesh.h"
-#include "../core/components/triangle.h"
+#include "../core/primitives/gui/gui_triangle.h"
 
 namespace PrimitiveFactory
 {
@@ -20,7 +20,8 @@ std::tuple<const entt::entity&, GuiMesh&> createMeshEntity(
 
 void deleteMeshEntity(entt::registry& ecsRegistry, const entt::entity& entity);
 
-std::tuple<const entt::entity&, GuiMesh&> createTriangle(entt::registry& ecsRegistry, const Triangle& triangle);
+std::tuple<const entt::entity&, GuiMesh&>
+createTriangle(entt::registry& ecsRegistry, const Transform& transform, const GuiTriangle& triangle);
 std::tuple<const entt::entity&, GuiMesh&> createTriangle(
     entt::registry& ecsRegistry,
     const Transform& transform,

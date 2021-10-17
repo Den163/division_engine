@@ -1,12 +1,12 @@
 #pragma once
 
 #include <vector>
-#include "gui_vertex.h"
+#include "../primitives/gui/gui_vertex.h"
 #include "glad/gl.h"
-#include "render_shape.h"
+#include "render_mode.h"
 
 struct GuiMesh
 {
-    RenderShape renderShape;
+    RenderMode renderShape;
     std::vector<GuiVertex> vertices;
 };
