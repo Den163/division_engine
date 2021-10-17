@@ -30,6 +30,12 @@ void Lifecycle::init(EngineState& state)
             Colors::red
         )
     );
+
+    auto [qe, qm] = GuiPrimitiveFactory::createQuad(
+      state.guiRegistry,
+      Transform::makeDefault().withPosition({400,400,0}),
+      GuiQuad::create(300, 400, Colors::blue)
+    );
 }
 
 void Lifecycle::preRenderUpdate(EngineState& state)
@@ -49,7 +55,7 @@ void checkMeshCreateByKeyPress(EngineState& state)
 
     auto halfWidth = state.windowState.width * 0.5f;
     auto halfHeight = state.windowState.height * 0.5f;
-    auto [e, mesh] = GuiPrimitiveFactory::createMeshEntity(state.guiRegistry);
+    auto [e, mesh] = GuiPrimitiveFactory::createMeshEntity(state.guiRegistry, Transform::makeDefault());
 
     mesh.renderShape = RenderMode::Triangles;
     mesh.vertices = {

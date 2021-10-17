@@ -5,31 +5,43 @@
 #include "../core/components/scale.h"
 
 std::tuple<const entt::entity&, GuiMesh&> GuiPrimitiveFactory::createMeshEntity(
-    entt::registry& ecsRegistry,
-    const glm::vec3& position,
-    const glm::quat& rotation,
-    const glm::vec3& scale)
+    entt::registry& registry,
+    const Transform& transform)
 {
-    const auto& e = ecsRegistry.create();
-    auto& mesh = ecsRegistry.emplace<GuiMesh>(e);
+    const auto& e = registry.create();
+    auto& mesh = registry.emplace<GuiMesh>(e);
 
-    auto& newPos = ecsRegistry.emplace<Position>(e);
-    auto& newRot = ecsRegistry.emplace<Rotation>(e);
-    auto& newScale = ecsRegistry.emplace<Scale>(e);
+    auto& newPos = registry.emplace<Position>(e);
+    auto& newRot = registry.emplace<Rotation>(e);
+    auto& newScale = registry.emplace<Scale>(e);
 
-    newPos.value = position;
-    newRot.value = rotation;
-    newScale.value = scale;
+    newPos.value = transform.position;
+    newRot.value = transform.rotation;
+    newScale.value = transform.scale;
 
     return {e, mesh};
 }
 
-std::tuple<const entt::entity&, GuiMesh&>
-GuiPrimitiveFactory::createTriangle(entt::registry& ecsRegistry, const Transform& transform, const GuiTriangle& triangle)
+std::tuple<const entt::entity&, GuiMesh&> GuiPrimitiveFactory::createTriangle(
+    entt::registry& guiRegistry,
+    const Transform& transform,
+    const GuiTriangle& triangle)
 {
-    auto [e, mesh] = createMeshEntity(ecsRegistry, transform.position, transform.rotation, transform.scale);
+    auto [e, mesh] = createMeshEntity(guiRegistry, transform);
     mesh.renderShape = RenderMode::Triangles;
     mesh.vertices = std::vector<GuiVertex> { triangle.vertices.begin(), triangle.vertices.end() };
+
+    return {e, mesh};
+}
+
+std::tuple<const entt::entity&, GuiMesh&> GuiPrimitiveFactory::createQuad(
+    entt::registry& guiRegistry,
+    const Transform& transform,
+    const GuiQuad& quad)
+{
+    auto [e, mesh] = createMeshEntity(guiRegistry, transform);
+    mesh.renderShape = RenderMode::TrianglesFan;
+    mesh.vertices = std::vector<GuiVertex> { quad.vertices.begin(), quad.vertices.end() };
 
     return {e, mesh};
 }

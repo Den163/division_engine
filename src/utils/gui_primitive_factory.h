@@ -12,18 +12,16 @@
 
 namespace GuiPrimitiveFactory
 {
-    std::tuple<const entt::entity&, GuiMesh&> createMeshEntity(
-        entt::registry& ecsRegistry,
-        const glm::vec3& position = glm::vec3 {0},
-        const glm::quat& rotation = glm::quat {glm::vec3 {0}},
-        const glm::vec3& scale = glm::vec3 {1}
-                                                              );
-
-    void deleteMeshEntity(entt::registry& ecsRegistry, const entt::entity& entity);
+    std::tuple<const entt::entity&, GuiMesh&> createMeshEntity(entt::registry& registry, const Transform& transform);
 
     std::tuple<const entt::entity&, GuiMesh&> createTriangle(
-        entt::registry& ecsRegistry,
+        entt::registry& guiRegistry,
         const Transform& transform,
         const GuiTriangle& triangle);
+
+    std::tuple<const entt::entity&, GuiMesh&> createQuad(
+        entt::registry& guiRegistry,
+        const Transform& transform,
+        const GuiQuad& quad);
 
 }
