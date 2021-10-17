@@ -6,7 +6,7 @@
 
 namespace GlfWindowSystem
 {
-void init(WindowState& windowState, GlfwWindowState& glfwWindowData, const WindowConfig& windowConfig);
-void update(WindowState& windowState, GlfwWindowState& glfwWindowData);
-void cleanup(GlfwWindowState& glfwWindowData);
+    void init(WindowState& windowState, GlfwWindowState& glfwWindowData, const WindowConfig& windowConfig);
+    void update(WindowState& windowState, GlfwWindowState& glfwWindowData);
+    void cleanup(GlfwWindowState& glfwWindowData);
 }

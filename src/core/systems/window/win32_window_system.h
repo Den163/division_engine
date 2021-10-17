@@ -5,5 +5,5 @@
 
 namespace Win32WindowSystem
 {
-void init(Win32State& win32State, const GlfwWindowState& glfwWindowState);
+    void init(Win32State& win32State, const GlfwWindowState& glfwWindowState);
 };

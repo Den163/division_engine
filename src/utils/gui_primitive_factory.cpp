@@ -1,10 +1,10 @@
-#include "primitive_factory.h"
+#include "gui_primitive_factory.h"
 
 #include "../core/components/position.h"
 #include "../core/components/rotation.h"
 #include "../core/components/scale.h"
 
-std::tuple<const entt::entity&, GuiMesh&> PrimitiveFactory::createMeshEntity(
+std::tuple<const entt::entity&, GuiMesh&> GuiPrimitiveFactory::createMeshEntity(
     entt::registry& ecsRegistry,
     const glm::vec3& position,
     const glm::quat& rotation,
@@ -24,7 +24,7 @@ std::tuple<const entt::entity&, GuiMesh&> PrimitiveFactory::createMeshEntity(
     return {e, mesh};
 }
 
-std::tuple<const entt::entity&, GuiMesh&> PrimitiveFactory::createTriangle(
+std::tuple<const entt::entity&, GuiMesh&> GuiPrimitiveFactory::createTriangle(
     entt::registry& ecsRegistry,
     const Transform& transform,
     const std::array<glm::vec3, 3>& vertexPositions,
@@ -39,7 +39,7 @@ std::tuple<const entt::entity&, GuiMesh&> PrimitiveFactory::createTriangle(
 }
 
 std::tuple<const entt::entity&, GuiMesh&>
-PrimitiveFactory::createTriangle(entt::registry& ecsRegistry, const Transform& transform, const GuiTriangle& triangle)
+GuiPrimitiveFactory::createTriangle(entt::registry& ecsRegistry, const Transform& transform, const GuiTriangle& triangle)
 {
     auto [e, mesh] = createMeshEntity(ecsRegistry, transform.position, transform.rotation, transform.scale);
 

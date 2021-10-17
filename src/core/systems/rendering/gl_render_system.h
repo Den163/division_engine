@@ -9,8 +9,8 @@
 
 namespace GlRenderGuiSystem
 {
-void init(GlShaderState& shaderState, CameraState& cameraState, const WindowState& windowState);
-void update(
-    entt::registry& guiRegistry, const GlShaderState& shaderState, const RendererState& rendererState,
-    const CameraState& cameraState, const WindowState& windowState);
+    void init(GlShaderState& shaderState, CameraState& cameraState, const WindowState& windowState);
+    void update(
+        entt::registry& guiRegistry, const GlShaderState& shaderState, const RendererState& rendererState,
+        const CameraState& cameraState, const WindowState& windowState);
 }

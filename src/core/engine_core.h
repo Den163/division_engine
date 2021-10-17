@@ -6,5 +6,5 @@
 
 namespace EngineCore
 {
-void run(WindowConfig& windowConfig, RendererConfig& rendererConfig);
+    void run(WindowConfig& windowConfig, RendererConfig& rendererConfig);
 }

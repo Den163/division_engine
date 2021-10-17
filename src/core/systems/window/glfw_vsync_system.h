@@ -4,5 +4,5 @@
 
 namespace GlfwVsyncSystem
 {
-void update(GlfwWindowState& glfwWindowData);
+    void update(GlfwWindowState& glfwWindowData);
 }

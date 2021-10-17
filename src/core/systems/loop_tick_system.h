@@ -5,6 +5,6 @@
 
 namespace LoopTickSystem
 {
-void init(UpdateTimeState& loopUpdateTimestamp);
-void update(UpdateTimeState& loopUpdateTimestamp);
+    void init(UpdateTimeState& loopUpdateTimestamp);
+    void update(UpdateTimeState& loopUpdateTimestamp);
 }

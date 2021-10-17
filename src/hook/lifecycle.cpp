@@ -8,7 +8,7 @@
 #include <glm/gtc/quaternion.hpp>
 
 #include "../core/components/gui_mesh.h"
-#include "../utils/primitive_factory.h"
+#include "../utils/gui_primitive_factory.h"
 #include "../utils/debug_utils.h"
 #include "../utils/math.h"
 
@@ -21,7 +21,7 @@ void Lifecycle::init(EngineState& state)
 {
     auto& cameraState = state.cameraState;
 
-    auto [ae, axisMesh] = PrimitiveFactory::createTriangle(
+    auto [ae, axisMesh] = GuiPrimitiveFactory::createTriangle(
         state.guiRegistry,
         Transform { {}, {}, glm::vec3{1.f} },
         { glm::vec3 { 100,100,-0.5f }, {100,200,-0.5f}, {200,200,-0.5f} },
@@ -46,7 +46,7 @@ void checkMeshCreateByKeyPress(EngineState& state)
 
     auto halfWidth = state.windowState.width * 0.5f;
     auto halfHeight = state.windowState.height * 0.5f;
-    auto [e, mesh] = PrimitiveFactory::createMeshEntity(state.guiRegistry);
+    auto [e, mesh] = GuiPrimitiveFactory::createMeshEntity(state.guiRegistry);
 
     mesh.renderShape = RenderMode::Triangles;
     mesh.vertices = {
