@@ -29,15 +29,10 @@ namespace Colors
 
     uint32_t toRgbaHex(const glm::vec4& color)
     {
-        constexpr auto MAX_BYTE = 255;
-        auto R_OFFSET = 24;
-        auto G_OFFSET = 16;
-        auto B_OFFSET = 8;
-
-        auto r = (uint32_t) (color.r * MAX_BYTE) << R_OFFSET;
-        auto g = (uint32_t) (color.g * MAX_BYTE) << G_OFFSET;
-        auto b = (uint32_t) (color.b * MAX_BYTE) << B_OFFSET;
-        auto a = (uint32_t) (color.a * MAX_BYTE);
+        auto r = (uint32_t) (((double) color.r) * R_MASK) & R_MASK;
+        auto g = (uint32_t) (((double) color.g) * G_MASK) & G_MASK;
+        auto b = (uint32_t) (((double) color.b) * B_MASK) & B_MASK;
+        auto a = (uint32_t) (((double) color.a) * A_MASK) & A_MASK;
 
         return r + g + b + a;
     }
