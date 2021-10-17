@@ -8,9 +8,10 @@
 #include <glm/gtc/quaternion.hpp>
 
 #include "../core/components/gui_mesh.h"
-#include "../utils/primitive_factory.h"
+#include "../utils/gui_primitive_factory.h"
 #include "../utils/debug_utils.h"
 #include "../utils/math.h"
+#include "../utils/colors.h"
 
 static inline void checkMeshCreateByKeyPress(EngineState& state);
 static inline void checkMeshDeleteByKeyPress(EngineState& state);
@@ -21,11 +22,19 @@ void Lifecycle::init(EngineState& state)
 {
     auto& cameraState = state.cameraState;
 
-    auto [ae, axisMesh] = PrimitiveFactory::createTriangle(
+    auto [te, tm] = GuiPrimitiveFactory::createTriangle(
         state.guiRegistry,
-        Transform { {}, {}, glm::vec3{1.f} },
-        { glm::vec3 { 100,100,-0.5f }, {100,200,-0.5f}, {200,200,-0.5f} },
-        glm::vec4 {1,0,0,1}
+        Transform::makeDefault(),
+        GuiTriangle::create(
+            { glm::vec3 { 100,100,0.f }, {100,200,0.f}, {200,200,0.f} },
+            Colors::red
+        )
+    );
+
+    auto [qe, qm] = GuiPrimitiveFactory::createQuad(
+      state.guiRegistry,
+      Transform::makeDefault().withPosition({400,400,0}),
+      GuiQuad::create(300, 400, Colors::blue)
     );
 }
 
@@ -46,9 +55,9 @@ void checkMeshCreateByKeyPress(EngineState& state)
 
     auto halfWidth = state.windowState.width * 0.5f;
     auto halfHeight = state.windowState.height * 0.5f;
-    auto [e, mesh] = PrimitiveFactory::createMeshEntity(state.guiRegistry);
+    auto [e, mesh] = GuiPrimitiveFactory::createMeshEntity(state.guiRegistry, Transform::makeDefault());
 
-    mesh.renderShape = RenderShape::Triangle;
+    mesh.renderShape = RenderMode::Triangles;
     mesh.vertices = {
         {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight), },
         {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight) },

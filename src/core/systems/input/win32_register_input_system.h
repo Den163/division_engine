@@ -6,6 +6,6 @@
 
 namespace Win32RegisterInputSystem
 {
-void init(RawInputState& rawInputState);
-void update(RawInputState& rawInputState, const Win32State& win32State);
+    void init(RawInputState& rawInputState);
+    void update(RawInputState& rawInputState, const Win32State& win32State);
 }

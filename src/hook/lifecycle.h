@@ -4,10 +4,10 @@
 
 namespace Lifecycle
 {
-void init(EngineState& state);
+    void init(EngineState& state);
 
-void preRenderUpdate(EngineState& state);
-void postRenderUpdate(EngineState& state);
+    void preRenderUpdate(EngineState& state);
+    void postRenderUpdate(EngineState& state);
 
-void cleanup(EngineState& state);
+    void cleanup(EngineState& state);
 }

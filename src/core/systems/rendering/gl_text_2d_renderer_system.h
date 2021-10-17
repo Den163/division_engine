@@ -4,6 +4,6 @@
 
 namespace GlText2dRendererSystem
 {
-void init(entt::registry& ecsRegistry);
-void update(entt::registry& ecsRegistry);
+    void init(entt::registry& ecsRegistry);
+    void update(entt::registry& ecsRegistry);
 }

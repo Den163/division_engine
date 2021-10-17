@@ -6,6 +6,6 @@
 
 namespace RenderTickSystem
 {
-void init(RendererState& rendererState, const RendererConfig& rendererConfig);
-void update(RendererState& rendererState, const UpdateTimeState& loopUpdateTimestamp);
+    void init(RendererState& rendererState, const RendererConfig& rendererConfig);
+    void update(RendererState& rendererState, const UpdateTimeState& loopUpdateTimestamp);
 }

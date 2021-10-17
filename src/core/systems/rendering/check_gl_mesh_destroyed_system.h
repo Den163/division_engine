@@ -5,5 +5,5 @@
 
 namespace CheckGlMeshDestroyedSystem
 {
-void update(entt::registry& ecsRegistry, const GlShaderState& shaderState);
+    void update(entt::registry& ecsRegistry, const GlShaderState& shaderState);
 }
