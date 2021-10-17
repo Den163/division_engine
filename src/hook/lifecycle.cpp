@@ -1,16 +1,14 @@
+#pragma once
+
 #include "lifecycle.h"
 
 #include <iostream>
 #include <random>
 #include <stdexcept>
 
-#include <glm/gtx/quaternion.hpp>
-#include <glm/gtc/quaternion.hpp>
-
 #include "../core/components/gui_mesh.h"
 #include "../utils/gui_primitive_factory.h"
 #include "../utils/debug_utils.h"
-#include "../utils/math.h"
 #include "../utils/colors.h"
 
 static inline void checkMeshCreateByKeyPress(EngineState& state);
@@ -34,7 +32,7 @@ void Lifecycle::init(EngineState& state)
     auto [qe, qm] = GuiPrimitiveFactory::createQuad(
       state.guiRegistry,
       Transform::makeDefault().withPosition({400,400,0}),
-      GuiQuad::create(300, 400, Colors::blue)
+      GuiQuad::create(300, 400, Colors::yellow)
     );
 }
 
