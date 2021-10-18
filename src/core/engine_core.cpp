@@ -18,21 +18,20 @@
 #include "systems/input/win32_register_input_system.h"
 #include "systems/input/register_input_system.h"
 
-#include "../hook/lifecycle.h"
 #include "systems/window/win32_window_system.h"
 
 static void init(EngineState& state, const EngineConfig& engineConfig);
-static void eventLoop(EngineState& state);
-static void renderLoop(EngineState& state);
-static void cleanup(EngineState& state);
+static void eventLoop(EngineState& state, const EngineConfig& engineConfig);
+static void renderLoop(EngineState& state, const EngineConfig& engineConfig);
+static void cleanup(EngineState& state, const EngineConfig& engineConfig);
 
 void EngineCore::run(const EngineConfig& engineConfig)
 {
     EngineState engineState {};
 
     init(engineState, engineConfig);
-    eventLoop(engineState);
-    cleanup(engineState);
+    eventLoop(engineState, engineConfig);
+    cleanup(engineState, engineConfig);
 }
 
 static void init(EngineState& state, const EngineConfig& engineConfig)
@@ -46,14 +45,14 @@ static void init(EngineState& state, const EngineConfig& engineConfig)
     GlShaderProgramSystem::init(state.shaderState, engineConfig.shaders);
     GlRenderGuiSystem::init(state.shaderState, state.cameraState, state.windowState);
 
-    Lifecycle::init(state);
+    engineConfig.init(state);
 
 #ifdef PRINT_OPENGL_INFO
     DebugUtils::printRendererInfo();
 #endif
 }
 
-static void eventLoop(EngineState& state)
+static void eventLoop(EngineState& state, const EngineConfig& engineConfig)
 {
     const auto& rendererState = state.rendererState;
     const auto& windowState = state.windowState;
@@ -67,7 +66,7 @@ static void eventLoop(EngineState& state)
 
         if (rendererState.shouldUpdate)
         {
-            renderLoop(state);
+            renderLoop(state, engineConfig);
         }
 
         GlfWindowSystem::update(state.windowState, state.glfwWindowState);
@@ -75,9 +74,9 @@ static void eventLoop(EngineState& state)
     while (!windowState.shouldClose);
 }
 
-void renderLoop(EngineState& state)
+void renderLoop(EngineState& state, const EngineConfig& engineConfig)
 {
-    Lifecycle::preRenderUpdate(state);
+    engineConfig.preRenderUpdate(state);
 
     CheckGlMeshCreatedSystem::update(state.guiRegistry, state.shaderState);
     CheckGlMeshDestroyedSystem::update(state.guiRegistry, state.shaderState);
@@ -86,13 +85,13 @@ void renderLoop(EngineState& state)
         state.guiRegistry, state.shaderState, state.rendererState, state.cameraState, state.windowState);
     GlfwVsyncSystem::update(state.glfwWindowState);
 
-    Lifecycle::postRenderUpdate(state);
+    engineConfig.postRenderUpdate(state);
     RegisterInputSystem::postRenderUpdate(state.inputState, state.rawInputState);
 }
 
-static void cleanup(EngineState& state)
+static void cleanup(EngineState& state, const EngineConfig& engineConfig)
 {
-    Lifecycle::cleanup(state);
+    engineConfig.cleanup(state);
     GlShaderProgramSystem::cleanup(state.shaderState);
     GlfWindowSystem::cleanup(state.glfwWindowState);
 }

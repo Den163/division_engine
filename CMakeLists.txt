@@ -84,7 +84,7 @@ set(GL_UI_SOURCES
     src/core/systems/window/glfw_vsync_system.cpp src/core/systems/window/glfw_vsync_system.h
     src/core/states/update_time_state.h
     src/core/systems/loop_tick_system.cpp src/core/systems/loop_tick_system.h
-    src/hook/lifecycle.cpp src/hook/lifecycle.h
+    test_hook/lifecycle.cpp test_hook/lifecycle.h
     src/core/components/gl_mesh.h
     src/core/components/gui_mesh.h
     src/core/systems/rendering/check_gl_mesh_created_system.cpp src/core/systems/rendering/check_gl_mesh_created_system.h

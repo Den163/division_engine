@@ -1,4 +1,5 @@
 #include "src/core/engine_core.h"
+#include "test_hook/lifecycle.h"
 
 int main()
 {
@@ -17,7 +18,16 @@ int main()
         ShaderConfig { "basic.frag", ShaderType::Fragment },
     };
 
-    EngineCore::run(EngineConfig { rendererConfig, windowConfig, shaders });
+    EngineCore::run(EngineConfig
+    {
+        rendererConfig,
+        windowConfig,
+        shaders,
+        Lifecycle::init,
+        Lifecycle::preRenderUpdate,
+        Lifecycle::postRenderUpdate,
+        Lifecycle::cleanup
+    });
 
     return 0;
 }

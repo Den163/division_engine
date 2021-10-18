@@ -6,10 +6,10 @@
 #include <random>
 #include <stdexcept>
 
-#include "../core/components/gui_mesh.h"
-#include "../utils/gui_primitive_factory.h"
-#include "../utils/debug_utils.h"
-#include "../utils/color.h"
+#include "../src/core/components/gui_mesh.h"
+#include "../src/utils/gui_primitive_factory.h"
+#include "../src/utils/debug_utils.h"
+#include "../src/utils/color.h"
 
 static inline void checkMeshCreateByKeyPress(EngineState& state);
 static inline void checkMeshDeleteByKeyPress(EngineState& state);
