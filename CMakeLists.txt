@@ -99,7 +99,7 @@ set(GL_UI_SOURCES
     src/core/components/position.h
     src/core/components/scale.h
     src/core/states/camera_state.h
-    src/utils/gui_primitive_factory.cpp src/utils/gui_primitive_factory.h
+    src/core/primitives/gui/gui_primitive_factory.cpp src/core/primitives/gui/gui_primitive_factory.h
     src/core/components/key_code.h
     src/core/states/win32_state.h
     src/core/systems/window/win32_window_system.cpp src/core/systems/window/win32_window_system.h

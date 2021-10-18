@@ -7,7 +7,7 @@
 #include <stdexcept>
 
 #include "../src/core/components/gui_mesh.h"
-#include "../src/utils/gui_primitive_factory.h"
+#include "../src/core/primitives/gui/gui_primitive_factory.h"
 #include "../src/utils/debug_utils.h"
 #include "../src/utils/color.h"
 
