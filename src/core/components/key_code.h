@@ -8,7 +8,7 @@
     Z = 'Z', X = 'X', C = 'C', V = 'V', B = 'B', N = 'N', M = 'M',
 
 #if defined(WIN32) || defined(_WIN32)
-#include <windows.h>
+#include <Windows.h>
 enum class KeyCode : uint8_t
 {
     LEFT_ARROW = VK_LEFT,

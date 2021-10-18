@@ -21,29 +21,29 @@
 #include "../hook/lifecycle.h"
 #include "systems/window/win32_window_system.h"
 
-static void init(EngineState& state, const WindowConfig& windowConfig, const RendererConfig& rendererConfig);
+static void init(EngineState& state, const EngineConfig& engineConfig);
 static void eventLoop(EngineState& state);
 static void renderLoop(EngineState& state);
 static void cleanup(EngineState& state);
 
-void EngineCore::run(WindowConfig& windowConfig, RendererConfig& rendererConfig)
+void EngineCore::run(const EngineConfig& engineConfig)
 {
     EngineState engineState {};
 
-    init(engineState, windowConfig, rendererConfig);
+    init(engineState, engineConfig);
     eventLoop(engineState);
     cleanup(engineState);
 }
 
-static void init(EngineState& state, const WindowConfig& windowConfig, const RendererConfig& rendererConfig)
+static void init(EngineState& state, const EngineConfig& engineConfig)
 {
     Win32RegisterInputSystem::init(state.rawInputState);
     RegisterInputSystem::init(state.inputState);
     LoopTickSystem::init(state.loopUpdateTimestamp);
-    RenderTickSystem::init(state.rendererState, rendererConfig);
-    GlfWindowSystem::init(state.windowState, state.glfwWindowState, windowConfig);
+    RenderTickSystem::init(state.rendererState, engineConfig.renderer);
+    GlfWindowSystem::init(state.windowState, state.glfwWindowState, engineConfig.window);
     Win32WindowSystem::init(state.win32State, state.glfwWindowState);
-    GlShaderProgramSystem::init(state.shaderState);
+    GlShaderProgramSystem::init(state.shaderState, engineConfig.shaders);
     GlRenderGuiSystem::init(state.shaderState, state.cameraState, state.windowState);
 
     Lifecycle::init(state);

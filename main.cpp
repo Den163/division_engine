@@ -11,7 +11,13 @@ int main()
     rendererConfig.backgroundColor = { 0, 0, 0, 1 };
     rendererConfig.targetFps = 60;
 
-    EngineCore::run(windowConfig, rendererConfig);
+    std::vector<ShaderConfig> shaders
+    {
+        ShaderConfig { "basic.vert", ShaderType::Vertex },
+        ShaderConfig { "basic.frag", ShaderType::Fragment },
+    };
+
+    EngineCore::run(EngineConfig { rendererConfig, windowConfig, shaders });
 
     return 0;
 }

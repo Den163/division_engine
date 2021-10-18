@@ -43,7 +43,7 @@ endif()
 set(SHADER_SOURCES
     basic.vert
     basic.frag
-    )
+)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/shaders)
 
@@ -101,13 +101,13 @@ set(GL_UI_SOURCES
     src/core/components/scale.h
     src/core/states/camera_state.h
     src/utils/gui_primitive_factory.cpp src/utils/gui_primitive_factory.h
-    src/core/configs/key_code.h
+    src/core/components/key_code.h
     src/core/states/win32_state.h
     src/core/systems/window/win32_window_system.cpp src/core/systems/window/win32_window_system.h
     src/core/primitives/gui/gui_triangle.h src/core/primitives/gui/gui_triangle.cpp
     src/core/components/transform.h
     src/utils/color.h
-    src/core/primitives/gui/gui_quad.h src/core/primitives/gui/gui_quad.cpp)
+    src/core/primitives/gui/gui_quad.h src/core/primitives/gui/gui_quad.cpp src/core/configs/engine_config.h src/core/configs/shader_config.h)
 
 set(GL_UI_LIBS glfw3 glm::glm EnTT::EnTT)
 
