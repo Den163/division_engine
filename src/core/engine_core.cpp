@@ -45,7 +45,7 @@ static void init(EngineState& state, const EngineConfig& engineConfig)
     GlShaderProgramSystem::init(state.shaderState, engineConfig.shaders);
     GlRenderGuiSystem::init(state.shaderState, state.cameraState, state.windowState);
 
-    engineConfig.init(state);
+    engineConfig.lifecycle.init(state);
 
 #ifdef PRINT_OPENGL_INFO
     DebugUtils::printRendererInfo();
@@ -76,7 +76,7 @@ static void eventLoop(EngineState& state, const EngineConfig& engineConfig)
 
 void renderLoop(EngineState& state, const EngineConfig& engineConfig)
 {
-    engineConfig.preRenderUpdate(state);
+    engineConfig.lifecycle.preRenderUpdate(state);
 
     CheckGlMeshCreatedSystem::update(state.guiRegistry, state.shaderState);
     CheckGlMeshDestroyedSystem::update(state.guiRegistry, state.shaderState);
@@ -85,13 +85,13 @@ void renderLoop(EngineState& state, const EngineConfig& engineConfig)
         state.guiRegistry, state.shaderState, state.rendererState, state.cameraState, state.windowState);
     GlfwVsyncSystem::update(state.glfwWindowState);
 
-    engineConfig.postRenderUpdate(state);
+    engineConfig.lifecycle.postRenderUpdate(state);
     RegisterInputSystem::postRenderUpdate(state.inputState, state.rawInputState);
 }
 
 static void cleanup(EngineState& state, const EngineConfig& engineConfig)
 {
-    engineConfig.cleanup(state);
+    engineConfig.lifecycle.cleanup(state);
     GlShaderProgramSystem::cleanup(state.shaderState);
     GlfWindowSystem::cleanup(state.glfwWindowState);
 }

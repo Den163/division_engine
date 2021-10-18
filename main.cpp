@@ -18,16 +18,22 @@ int main()
         ShaderConfig { "basic.frag", ShaderType::Fragment },
     };
 
-    EngineCore::run(EngineConfig
+    LifecycleConfig lifecycle
     {
-        rendererConfig,
-        windowConfig,
-        shaders,
         Lifecycle::init,
         Lifecycle::preRenderUpdate,
         Lifecycle::postRenderUpdate,
         Lifecycle::cleanup
-    });
+    };
+
+    const EngineConfig& config
+    {
+            rendererConfig,
+            windowConfig,
+            lifecycle,
+            shaders,
+    };
+    EngineCore::run(config);
 
     return 0;
 }
