@@ -106,7 +106,7 @@ set(GL_UI_SOURCES
     src/core/systems/window/win32_window_system.cpp src/core/systems/window/win32_window_system.h
     src/core/primitives/gui/gui_triangle.h src/core/primitives/gui/gui_triangle.cpp
     src/core/components/transform.h
-    src/utils/colors.h
+    src/utils/color.h
     src/core/primitives/gui/gui_quad.h src/core/primitives/gui/gui_quad.cpp)
 
 set(GL_UI_LIBS glfw3 glm::glm EnTT::EnTT)

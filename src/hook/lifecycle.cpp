@@ -9,7 +9,7 @@
 #include "../core/components/gui_mesh.h"
 #include "../utils/gui_primitive_factory.h"
 #include "../utils/debug_utils.h"
-#include "../utils/colors.h"
+#include "../utils/color.h"
 
 static inline void checkMeshCreateByKeyPress(EngineState& state);
 static inline void checkMeshDeleteByKeyPress(EngineState& state);
@@ -25,14 +25,14 @@ void Lifecycle::init(EngineState& state)
         Transform::makeDefault(),
         GuiTriangle::create(
             { glm::vec3 { 100,100,0.f }, {100,200,0.f}, {200,200,0.f} },
-            Colors::red
+            Color::red
         )
     );
 
     auto [qe, qm] = GuiPrimitiveFactory::createQuad(
       state.guiRegistry,
       Transform::makeDefault().withPosition({400,400,0}),
-      GuiQuad::create(300, 400, Colors::yellow)
+      GuiQuad::create(300, 400, Color::yellow)
     );
 }
 

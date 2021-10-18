@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <map>
-#include "../src/utils/colors.h"
+#include "../src/utils/color.h"
 #include "../src/utils/debug_utils.h"
 
 std::map<uint32_t, glm::vec4> testCases {
@@ -21,7 +21,7 @@ TEST(COLORS_TESTS, fromRgbaHex_returns_color_as_expected)
     const auto ERROR_TOLERANCE = 0.01f;
     for (auto [hexColor, expected] : testCases)
     {
-        auto result = Colors::fromRgbaHex(hexColor);
+        auto result = Color::fromRgbaHex(hexColor);
 
         EXPECT_NEAR(expected.r, result.r, ERROR_TOLERANCE);
         EXPECT_NEAR(expected.g, result.g, ERROR_TOLERANCE);
@@ -34,10 +34,10 @@ TEST(COLORS_TESTS, toRgbaHex_returns_as_expected)
 {
     for (auto [expected, vectorColor] : testCases)
     {
-        auto result = Colors::toRgbaHex(vectorColor);
+        auto result = Color::toRgbaHex(vectorColor);
         EXPECT_EQ(expected, result)
-            << "Expected color vector: " << vectorColor << std::endl
-            << "Actual color vector: " << Colors::fromRgbaHex(result) << std::endl
+                        << "Expected color vector: " << vectorColor << std::endl
+                        << "Actual color vector: " << Color::fromRgbaHex(result) << std::endl
             << "Expected (hex): 0x" << std::hex << expected << std::endl
             << "Actual (hex): 0x" << std::hex << result << std::endl;
     }
