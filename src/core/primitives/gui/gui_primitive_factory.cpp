@@ -3,45 +3,50 @@
 #include "../../components/position.h"
 #include "../../components/rotation.h"
 #include "../../components/scale.h"
+#include "../../states/gl_shader_state.h"
+#include "../../events/create_gui_mesh_entity.h"
+#include "../../events/destroy_gui_mesh_entity.h"
 
-std::tuple<const entt::entity&, GuiMesh&> GuiPrimitiveFactory::createMeshEntity(
-    entt::registry& registry,
-    const Transform& transform)
+
+GuiMesh& GuiPrimitiveFactory::makeEntityMesh(
+    entt::registry& registry, const entt::entity& entity, const Transform& transform)
 {
-    const auto& e = registry.create();
-    auto& mesh = registry.emplace<GuiMesh>(e);
-
-    auto& newPos = registry.emplace<Position>(e);
-    auto& newRot = registry.emplace<Rotation>(e);
-    auto& newScale = registry.emplace<Scale>(e);
+    auto& mesh = registry.emplace<GuiMesh>(entity);
+    auto& newPos = registry.emplace<Position>(entity);
+    auto& newRot = registry.emplace<Rotation>(entity);
+    auto& newScale = registry.emplace<Scale>(entity);
 
     newPos.value = transform.position;
     newRot.value = transform.rotation;
     newScale.value = transform.scale;
 
-    return {e, mesh};
+    registry.emplace<CreateGuiMeshEntity>(entity);
+
+    return mesh;
 }
 
-std::tuple<const entt::entity&, GuiMesh&> GuiPrimitiveFactory::createTriangle(
-    entt::registry& guiRegistry,
-    const Transform& transform,
-    const GuiTriangle& triangle)
+
+void GuiPrimitiveFactory::deleteMeshEntity(entt::registry& registry, const entt::entity& entity)
 {
-    auto [e, mesh] = createMeshEntity(guiRegistry, transform);
+    registry.emplace<DestroyGuiMeshEntity>(entity);
+}
+
+GuiMesh& GuiPrimitiveFactory::makeEntityTriangle(
+    entt::registry& guiRegistry, const entt::entity& entity, const Transform& transform, const GuiTriangle& triangle)
+{
+    auto& mesh = makeEntityMesh(guiRegistry, entity, transform);
     mesh.renderShape = RenderMode::Triangles;
     mesh.vertices = std::vector<GuiVertex> { triangle.vertices.begin(), triangle.vertices.end() };
 
-    return {e, mesh};
+    return mesh;
 }
 
-std::tuple<const entt::entity&, GuiMesh&> GuiPrimitiveFactory::createQuad(
-    entt::registry& guiRegistry,
-    const Transform& transform,
-    const GuiQuad& quad)
+GuiMesh& GuiPrimitiveFactory::makeEntityQuad(
+    entt::registry& guiRegistry, const entt::entity& entity, const Transform& transform, const GuiQuad& quad)
 {
-    auto [e, mesh] = createMeshEntity(guiRegistry, transform);
+    auto& mesh = makeEntityMesh(guiRegistry, entity, transform);
     mesh.renderShape = RenderMode::TrianglesFan;
     mesh.vertices = std::vector<GuiVertex> { quad.vertices.begin(), quad.vertices.end() };
 
-    return {e, mesh};
+    return mesh;
 }

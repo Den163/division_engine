@@ -7,6 +7,6 @@
 namespace RegisterInputSystem
 {
     void init(InputState& inputState);
-    void eventLoopUpdate(InputState& inputState, const RawInputState& rawInputState);
-    void postRenderUpdate(InputState& inputState, const RawInputState& rawInputState);
+    void eventLoop(InputState& inputState, const RawInputState& rawInputState);
+    void postRender(InputState& inputState, const RawInputState& rawInputState);
 }

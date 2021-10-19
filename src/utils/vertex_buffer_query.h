@@ -7,6 +7,7 @@
 
 #include "memory.h"
 #include "gl_utils.h"
+#include "../core/configs/render_mode.h"
 
 struct VertexBufferQueryFactory
 {

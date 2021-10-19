@@ -1,5 +1,5 @@
 #include <entt/entity/registry.hpp>
-#include "gl_render_system.h"
+#include "gl_render_gui_system.h"
 
 #include "../../../utils/debug_utils.h"
 #include "../../../utils/math.h"
@@ -17,8 +17,6 @@ void GlRenderGuiSystem::init(GlShaderState& shaderState, CameraState& cameraStat
     glClipControl(GL_LOWER_LEFT, GL_NEGATIVE_ONE_TO_ONE);
     glDebugMessageCallback(DebugUtils::glRendererMessageCallback, nullptr);
 
-    glCreateVertexArrays(GlShaderState::VERTEX_ARRAYS_COUNT, shaderState.vertexArrayHandles);
-
     cameraState.position = glm::vec3 {0};
     cameraState.rotation = glm::identity<glm::quat>();
     cameraState.nearPlane = 0.1f;
@@ -32,7 +30,7 @@ void GlRenderGuiSystem::update(
     const CameraState& cameraState,
     const WindowState& windowState)
 {
-    auto& vaoHandle = shaderState.vertexArrayHandles[GlShaderState::TRIANGLES_ARRAY_INDEX];
+    auto& vaoHandle = shaderState.vaoHandle;
     auto projectionMatrix = glm::ortho(0.f, (float) windowState.width, 0.f, (float) windowState.height);
 
     glViewport(0, 0, windowState.width, windowState.height);
@@ -49,7 +47,7 @@ void GlRenderGuiSystem::update(
         auto shaderQuery = ShaderQuery
         {
             shaderState.programHandle,
-            shaderState.vertexArrayHandles[GlShaderState::TRIANGLES_ARRAY_INDEX]
+            vaoHandle
         };
 
         shaderQuery.setUniform(GlMesh::MVP_MATRIX_UNIFORM_INDEX, mvpMatrix);

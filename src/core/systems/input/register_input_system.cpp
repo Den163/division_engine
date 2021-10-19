@@ -15,7 +15,7 @@ void RegisterInputSystem::init(InputState& inputState)
     inputState.postRenderMousePosition = glm::vec2 {0};
 }
 
-void RegisterInputSystem::eventLoopUpdate(InputState& inputState, const RawInputState& rawInputState)
+void RegisterInputSystem::eventLoop(InputState& inputState, const RawInputState& rawInputState)
 {
     const auto& rawKeyboardState = rawInputState.keyboardState;
     auto& keyboardState = inputState.keyboardState;
@@ -54,7 +54,7 @@ void RegisterInputSystem::eventLoopUpdate(InputState& inputState, const RawInput
     }
 }
 
-void RegisterInputSystem::postRenderUpdate(InputState& inputState, const RawInputState& rawInputState)
+void RegisterInputSystem::postRender(InputState& inputState, const RawInputState& rawInputState)
 {
     auto& keyboardState = inputState.keyboardState;
 

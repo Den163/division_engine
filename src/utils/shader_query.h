@@ -18,9 +18,10 @@ struct ShaderQuery
         glBindVertexArray(vaoHandle);
     }
 
-    inline void setUniform(int32_t uniformId, const glm::mat4& value)
+    inline const auto& setUniform(int32_t uniformId, const glm::mat4& value) const
     {
         glUniformMatrix4fv(uniformId, 1, GL_FALSE, &value[0][0]);
+        return *this;
     }
 
     template<class TBufferObject>
@@ -33,5 +34,11 @@ struct ShaderQuery
     inline auto modifyBuffer(uint32_t vboHandle, const std::vector<TBufferObject>& bufferObjects)
     {
         return VertexBufferQueryFactory::modifyBuffer(vboHandle, bufferObjects);
+    }
+
+    inline const auto& deleteBuffer(uint32_t vboHandle)
+    {
+        glDeleteBuffers(1, &vboHandle);
+        return *this;
     }
 };

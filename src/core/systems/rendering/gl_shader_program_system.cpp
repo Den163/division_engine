@@ -38,6 +38,8 @@ void GlShaderProgramSystem::init(GlShaderState& shaderState, const std::vector<S
     if (configsSize == 0) return;
 
     shaderState.programHandle = glCreateProgram();
+    glCreateVertexArrays(1, &shaderState.vaoHandle);
+
     const auto programHandle = shaderState.programHandle;
     if (!programHandle) throw std::runtime_error {"Failed to create a program object"};
 
