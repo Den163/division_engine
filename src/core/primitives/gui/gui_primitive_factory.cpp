@@ -1,8 +1,8 @@
 #include "gui_primitive_factory.h"
 
-#include "../core/components/position.h"
-#include "../core/components/rotation.h"
-#include "../core/components/scale.h"
+#include "../../components/position.h"
+#include "../../components/rotation.h"
+#include "../../components/scale.h"
 
 std::tuple<const entt::entity&, GuiMesh&> GuiPrimitiveFactory::createMeshEntity(
     entt::registry& registry,

@@ -8,7 +8,7 @@ void CheckGlMeshDestroyedSystem::update(entt::registry& ecsRegistry, const GlSha
     for (auto&& [e, glMesh] : ecsRegistry.view<const GlMesh>(entt::exclude<GuiMesh>).each())
     {
         glBindVertexArray(shaderState.vertexArrayHandles[GlShaderState::TRIANGLES_ARRAY_INDEX]);
-        glDeleteBuffers(1, &glMesh.vboHandle);
+        glDeleteBuffers(1, &glMesh.vertexVboHandle);
 
         ecsRegistry.remove<GlMesh>(e);
     }

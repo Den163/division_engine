@@ -29,27 +29,24 @@ struct CompiledShaderInfo
     GLenum shaderType;
 };
 
-static std::vector<ShaderInputInfo> collectShaderFileInfos();
-static GLuint compileSingleShader(const ShaderInputInfo& shaderInfo);
+static GLuint compileSingleShader(const ShaderConfig& config);
 static void throwLinkError(GLuint programHandle);
 
-void GlShaderProgramSystem::init(GlShaderState& shaderState)
+void GlShaderProgramSystem::init(GlShaderState& shaderState, const std::vector<ShaderConfig>& shaderConfigs)
 {
-    auto& programHandle = shaderState.programHandle;
-    programHandle = glCreateProgram();
+    const auto configsSize = shaderConfigs.size();
+    if (configsSize == 0) return;
 
-    if (!programHandle) throw std::runtime_error {"Failed to makeDefault a program object"};
+    shaderState.programHandle = glCreateProgram();
+    const auto programHandle = shaderState.programHandle;
+    if (!programHandle) throw std::runtime_error {"Failed to create a program object"};
 
-    auto shaderInfos = collectShaderFileInfos();
-    std::vector<CompiledShaderInfo> compiledShaders { shaderInfos.size() };
-    for (const auto& info: shaderInfos)
+    std::vector<CompiledShaderInfo> compiledShaders { configsSize };
+    for (size_t i = 0; i < configsSize; i++)
     {
-        auto shaderHandle = compileSingleShader(info);
-        compiledShaders.push_back(CompiledShaderInfo
-            {
-                shaderHandle,
-                info.shaderType,
-            });
+        const auto& config = shaderConfigs[i];
+        auto shaderHandle = compileSingleShader(config);
+        compiledShaders[i] = CompiledShaderInfo { shaderHandle, static_cast<GLenum>(config.type) };
 
         glAttachShader(programHandle, shaderHandle);
     }
@@ -69,45 +66,12 @@ void GlShaderProgramSystem::init(GlShaderState& shaderState)
     }
 }
 
-static std::vector<ShaderInputInfo> collectShaderFileInfos()
+static GLuint compileSingleShader(const ShaderConfig& config)
 {
-    std::vector<ShaderInputInfo> shaders;
-    std::filesystem::directory_entry currentDir {std::filesystem::current_path().append("shaders")};
-    std::filesystem::recursive_directory_iterator dirIter {currentDir};
-    auto extensionToShaderTypeMap = SHADER_EXTENSION_TO_TYPE_MAP;
-
-    for (const auto& entry: dirIter)
-    {
-        const auto& file = entry.path().filename();
-
-        if (!entry.is_regular_file() ||
-            file.extension() != SPIR_V_EXT_)
-        {
-            continue;
-        }
-
-        auto preExtension = file.stem().extension().string();
-        if (extensionToShaderTypeMap.count(preExtension) == 0)
-        {
-            throw std::runtime_error {"Unknown shader extension: " + preExtension};
-        }
-
-        shaders.push_back(ShaderInputInfo
-            {
-                extensionToShaderTypeMap[preExtension],
-                entry.path().string()
-            });
-    }
-
-    return shaders;
-}
-
-static GLuint compileSingleShader(const ShaderInputInfo& shaderInfo)
-{
-    GLuint shader = glCreateShader(shaderInfo.shaderType);
+    GLuint shader = glCreateShader(static_cast<GLenum>(config.type));
     if (!shader) throw std::runtime_error {"Failed to makeDefault a shader!"};
 
-    auto shaderBin = readBytes(shaderInfo.filePath);
+    auto shaderBin = readBytes("shaders/" + config.name + ".spv");
 
     glShaderBinary(
         1, &shader, GL_SHADER_BINARY_FORMAT_SPIR_V_ARB, shaderBin.data(), static_cast<GLsizei>(shaderBin.size()));

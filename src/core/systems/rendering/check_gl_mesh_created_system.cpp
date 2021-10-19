@@ -4,6 +4,7 @@
 
 #include "../../components/gui_mesh.h"
 #include "../../components/gl_mesh.h"
+#include "../../../utils/shader_query.h"
 
 void CheckGlMeshCreatedSystem::update(entt::registry& ecsRegistry, const GlShaderState& shaderState)
 {
@@ -12,19 +13,8 @@ void CheckGlMeshCreatedSystem::update(entt::registry& ecsRegistry, const GlShade
     for (auto&& [e, mesh] : ecsRegistry.view<const GuiMesh>(entt::exclude<GlMesh>).each())
     {
         auto& glMesh = ecsRegistry.emplace<GlMesh>(e);
-        auto& vertexVboHandle = glMesh.vboHandle;
 
-        glCreateBuffers(1, &vertexVboHandle);
-        glNamedBufferStorage(
-            vertexVboHandle,
-            mesh.vertices.size() * sizeof(GuiVertex),
-            nullptr,
-            GL_DYNAMIC_STORAGE_BIT
-        );
-
-        glBindVertexArray(vaoHandle);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexVboHandle);
-        glVertexAttribPointer(GlMesh::VERTEX_ATTRIB_INDEX, 3, GL_FLOAT, GL_FALSE, sizeof(GuiVertex), nullptr);
-        glEnableVertexAttribArray(GlMesh::VERTEX_ATTRIB_INDEX);
+        ShaderQuery { shaderState.programHandle, vaoHandle }
+            .createEmptyBuffer(glMesh.vertexVboHandle, mesh.vertices);
     }
 }

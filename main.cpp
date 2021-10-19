@@ -1,4 +1,5 @@
 #include "src/core/engine_core.h"
+#include "test_hook/lifecycle.h"
 
 int main()
 {
@@ -11,7 +12,28 @@ int main()
     rendererConfig.backgroundColor = { 0, 0, 0, 1 };
     rendererConfig.targetFps = 60;
 
-    EngineCore::run(windowConfig, rendererConfig);
+    std::vector<ShaderConfig> shaders
+    {
+        ShaderConfig { "basic.vert", ShaderType::Vertex },
+        ShaderConfig { "basic.frag", ShaderType::Fragment },
+    };
+
+    LifecycleConfig lifecycle
+    {
+        Lifecycle::init,
+        Lifecycle::preRenderUpdate,
+        Lifecycle::postRenderUpdate,
+        Lifecycle::cleanup
+    };
+
+    const EngineConfig& config
+    {
+            rendererConfig,
+            windowConfig,
+            lifecycle,
+            shaders,
+    };
+    EngineCore::run(config);
 
     return 0;
 }

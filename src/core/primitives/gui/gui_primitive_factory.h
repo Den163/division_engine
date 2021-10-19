@@ -6,9 +6,9 @@
 #include <glm/ext/quaternion_float.hpp>
 #include <tuple>
 
-#include "../core/components/gui_mesh.h"
-#include "../core/primitives/gui/gui_triangle.h"
-#include "../core/primitives/gui/gui_quad.h"
+#include "../../components/gui_mesh.h"
+#include "gui_triangle.h"
+#include "gui_quad.h"
 
 namespace GuiPrimitiveFactory
 {
