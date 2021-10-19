@@ -9,5 +9,5 @@ struct GlMesh
     static constexpr size_t MVP_MATRIX_UNIFORM_INDEX = 2;
     static constexpr size_t VERTICES_IN_TRIANGLE = 3;
 
-    GLuint vboHandle;
+    GLuint vertexVboHandle;
 };

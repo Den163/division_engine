@@ -9,8 +9,7 @@
 #include "../../components/rotation.h"
 #include "../../components/scale.h"
 
-static inline void applyVertexBuffer(const GlMesh& glMesh, const GuiMesh& mesh);
-static inline void applyTransformMatrix(const glm::mat4& modelMatrix, const glm::mat4& projectionMatrix);
+#include "../../../utils/shader_query.h"
 
 void GlRenderGuiSystem::init(GlShaderState& shaderState, CameraState& cameraState, const WindowState& windowState)
 {
@@ -19,7 +18,6 @@ void GlRenderGuiSystem::init(GlShaderState& shaderState, CameraState& cameraStat
     glDebugMessageCallback(DebugUtils::glRendererMessageCallback, nullptr);
 
     glCreateVertexArrays(GlShaderState::VERTEX_ARRAYS_COUNT, shaderState.vertexArrayHandles);
-
 
     cameraState.position = glm::vec3 {0};
     cameraState.rotation = glm::identity<glm::quat>();
@@ -43,63 +41,21 @@ void GlRenderGuiSystem::update(
     auto meshComponentsView = guiRegistry.view<GuiMesh, GlMesh, const Position, const Rotation, const Scale>();
     for (auto&& [e, mesh, glMesh, pos, rot, scale]: meshComponentsView.each())
     {
-        auto modelMatrix = Math::transformMatrix(pos.value, rot.value, scale.value);
+        const auto& vertexVboHandle = glMesh.vertexVboHandle;
+        const auto& vertices = mesh.vertices;
+        const auto& modelMatrix = Math::transformMatrix(pos.value, rot.value, scale.value);
+        const auto& mvpMatrix = projectionMatrix * modelMatrix;
 
-        glBindVertexArray(vaoHandle);
+        auto shaderQuery = ShaderQuery
+        {
+            shaderState.programHandle,
+            shaderState.vertexArrayHandles[GlShaderState::TRIANGLES_ARRAY_INDEX]
+        };
 
-        applyVertexBuffer(glMesh, mesh);
-        applyTransformMatrix(modelMatrix, projectionMatrix);
-
-        glDrawArrays(static_cast<GLenum>(mesh.renderShape), 0, static_cast<GLsizei>(mesh.vertices.size()));
+        shaderQuery.setUniform(GlMesh::MVP_MATRIX_UNIFORM_INDEX, mvpMatrix);
+        shaderQuery.modifyBuffer(glMesh.vertexVboHandle, vertices)
+            .bindVecAttributeToField(GlMesh::VERTEX_ATTRIB_INDEX, &GuiVertex::position)
+            .bindVecAttributeToField(GlMesh::COLOR_ATTRIB_INDEX, &GuiVertex::color)
+            .draw(mesh.renderShape);
     }
-}
-
-static inline void applyVertexBuffer(const GlMesh& glMesh, const GuiMesh& mesh)
-{
-    const auto& vertexVboHandle = glMesh.vboHandle;
-    const auto& vertices = mesh.vertices;
-    const auto* verticesPtr = vertices.data();
-    const auto verticesCount = vertices.size();
-    const auto verticesBytes = static_cast<GLsizeiptr>(verticesCount * sizeof(GuiVertex));
-
-    glBindBuffer(GL_ARRAY_BUFFER, vertexVboHandle);
-
-    GLint bufferSize;
-    glGetNamedBufferParameteriv(vertexVboHandle, GL_BUFFER_SIZE, &bufferSize);
-
-    if (bufferSize == verticesBytes)
-    {
-        glNamedBufferSubData(vertexVboHandle, 0, verticesBytes, verticesPtr);
-    }
-    else
-    {
-        glNamedBufferStorage(vertexVboHandle, verticesBytes, verticesPtr, GL_DYNAMIC_STORAGE_BIT);
-    }
-
-    glVertexAttribPointer(
-        GlMesh::VERTEX_ATTRIB_INDEX,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(GuiVertex),
-        (void*) offsetof(GuiVertex, position));
-
-    glVertexAttribPointer(
-        GlMesh::COLOR_ATTRIB_INDEX,
-        4,
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(GuiVertex),
-        (void*) offsetof(GuiVertex, color));
-
-
-    glEnableVertexAttribArray(GlMesh::VERTEX_ATTRIB_INDEX);
-    glEnableVertexAttribArray(GlMesh::COLOR_ATTRIB_INDEX);
-}
-
-static inline void applyTransformMatrix(const glm::mat4& modelMatrix, const glm::mat4& projectionMatrix)
-{
-    auto transformMatrix = projectionMatrix * modelMatrix;
-
-    glUniformMatrix4fv(GlMesh::MVP_MATRIX_UNIFORM_INDEX, 1, GL_FALSE, &transformMatrix[0][0]);
 }
