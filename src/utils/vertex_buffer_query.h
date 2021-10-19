@@ -55,7 +55,7 @@ struct VertexBufferQueryFactory
     template<typename TBufferObject>
     struct VertexBufferQuery
     {
-        uint32_t vboHandle;
+        const uint32_t vboHandle;
         const std::vector<TBufferObject>& bufferObjects;
 
         template<auto VectorLength, typename TVectorType, glm::qualifier VectorQualifier>
