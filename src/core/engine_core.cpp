@@ -9,6 +9,7 @@
 #include "event_systems/on_gui_mesh_entity_created_event_system.h"
 #include "event_systems/on_gui_mesh_entity_destroyed_event_system.h"
 #include "systems/rendering/gl_shader_program_system.h"
+#include "systems/rendering/gl_prepare_framebuffer_system.h"
 #include "systems/window/glfw_window_system.h"
 #include "systems/rendering/render_tick_system.h"
 #include "systems/rendering/gl_render_gui_system.h"
@@ -80,6 +81,7 @@ void renderLoop(EngineState& state, const EngineConfig& engineConfig)
     OnGuiMeshEntityCreatedEventSystem::update(state.guiRegistry, state.shaderState);
     OnGuiMeshEntityDestroyedEventSystem::update(state.guiRegistry, state.shaderState);
 
+    GlPrepareFramebufferSystem::update(state.rendererState, state.windowState);
     GlRenderGuiSystem::update(
         state.guiRegistry, state.shaderState, state.rendererState, state.cameraState, state.windowState);
     GlfwVsyncSystem::update(state.glfwWindowState);

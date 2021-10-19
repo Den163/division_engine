@@ -30,14 +30,11 @@ void GlRenderGuiSystem::update(
     const CameraState& cameraState,
     const WindowState& windowState)
 {
-    auto& vaoHandle = shaderState.vaoHandle;
-    auto projectionMatrix = glm::ortho(0.f, (float) windowState.width, 0.f, (float) windowState.height);
+    const auto& vaoHandle = shaderState.vaoHandle;
+    const auto& projectionMatrix = glm::ortho(0.f, (float) windowState.width, 0.f, (float) windowState.height);
 
-    glViewport(0, 0, windowState.width, windowState.height);
-    glClearBufferfv(GL_COLOR, 0, reinterpret_cast<const GLfloat*>(&rendererState.backgroundColor));
-
-    auto meshComponentsView = guiRegistry.view<GuiMesh, GlMesh, const Position, const Rotation, const Scale>();
-    for (auto&& [e, mesh, glMesh, pos, rot, scale]: meshComponentsView.each())
+    for (auto&& [e, mesh, glMesh, pos, rot, scale]:
+         guiRegistry.view<GuiMesh, GlMesh, const Position, const Rotation, const Scale>().each())
     {
         const auto& vertexVboHandle = glMesh.vertexVboHandle;
         const auto& vertices = mesh.vertices;
