@@ -9,4 +9,5 @@ struct GlMesh
     static constexpr size_t MVP_MATRIX_UNIFORM_INDEX = 2;
 
     GLuint vertexVboHandle;
+    GLuint modelViewProjectionVboHandle;
 };

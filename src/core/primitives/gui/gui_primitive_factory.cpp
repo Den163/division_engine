@@ -35,7 +35,7 @@ GuiMesh& GuiPrimitiveFactory::makeEntityTriangle(
     entt::registry& guiRegistry, const entt::entity& entity, const Transform& transform, const GuiTriangle& triangle)
 {
     auto& mesh = makeEntityMesh(guiRegistry, entity, transform);
-    mesh.renderShape = RenderMode::Triangles;
+    mesh.renderMode = RenderMode::Triangles;
     mesh.vertices = std::vector<GuiVertex> { triangle.vertices.begin(), triangle.vertices.end() };
 
     return mesh;
@@ -45,7 +45,7 @@ GuiMesh& GuiPrimitiveFactory::makeEntityQuad(
     entt::registry& guiRegistry, const entt::entity& entity, const Transform& transform, const GuiQuad& quad)
 {
     auto& mesh = makeEntityMesh(guiRegistry, entity, transform);
-    mesh.renderShape = RenderMode::TrianglesFan;
+    mesh.renderMode = RenderMode::TrianglesFan;
     mesh.vertices = std::vector<GuiVertex> { quad.vertices.begin(), quad.vertices.end() };
 
     return mesh;

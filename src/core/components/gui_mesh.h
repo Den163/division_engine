@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <glm/mat4x4.hpp>
 #include <vector>
 
 #include "../primitives/gui/gui_vertex.h"
@@ -10,6 +11,7 @@ struct GuiMesh
 {
     static constexpr size_t SHADER_INDEX = 0;
 
-    RenderMode renderShape;
+    RenderMode renderMode;
     std::vector<GuiVertex> vertices;
+    glm::mat4 modelViewProjection;
 };

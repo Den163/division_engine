@@ -2,7 +2,6 @@
 #include "../components/gl_mesh.h"
 #include "../components/gui_mesh.h"
 #include "../events/create_gui_mesh_entity.h"
-#include "../../utils/shader_query.h"
 
 void OnGuiMeshEntityCreatedEventSystem::update(entt::registry& registry, const GlShaderState& shaderState)
 {
@@ -10,9 +9,14 @@ void OnGuiMeshEntityCreatedEventSystem::update(entt::registry& registry, const G
     {
         auto& glMesh = registry.emplace<GlMesh>(e);
 
-        glMesh.vertexVboHandle = ShaderQuery { shaderState.programHandle, shaderState.vaoHandle}
-            .createEmptyBuffer(guiMesh.vertices)
-            .vboId;
+        glUseProgram(shaderState.programHandle);
+        glBindVertexArray(shaderState.vaoHandle);
+        glCreateBuffers(1, &glMesh.vertexVboHandle);
+        glNamedBufferStorage(
+            glMesh.vertexVboHandle, guiMesh.vertices.size() * sizeof(GuiVertex), nullptr, GL_DYNAMIC_STORAGE_BIT);
+
+        glCreateBuffers(1, &glMesh.modelViewProjectionVboHandle);
+        glNamedBufferStorage(glMesh.modelViewProjectionVboHandle, sizeof(glm::mat4), nullptr, GL_DYNAMIC_STORAGE_BIT);
 
         registry.remove<CreateGuiMeshEntity>(e);
     }

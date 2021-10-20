@@ -109,7 +109,7 @@ set(GL_UI_SOURCES
     src/utils/color.h
     src/core/primitives/gui/gui_quad.h src/core/primitives/gui/gui_quad.cpp
     src/core/configs/engine_config.h src/core/configs/shader_config.h src/core/configs/lifecycle_config.h
-    src/utils/shader_query.h src/utils/vertex_buffer_query.h src/utils/memory.h src/utils/gl_utils.h
+    src/utils/memory.h src/utils/gl_utils.h
     src/core/events/create_gui_mesh_entity.h src/core/events/destroy_gui_mesh_entity.h
     src/core/event_systems/on_gui_mesh_entity_created_event_system.cpp
     src/core/event_systems/on_gui_mesh_entity_created_event_system.h

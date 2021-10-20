@@ -59,7 +59,7 @@ void checkMeshCreateByKeyPress(EngineState& state)
         state.guiRegistry.create(),
         Transform::makeDefault());
 
-    mesh.renderShape = RenderMode::Triangles;
+    mesh.renderMode = RenderMode::Triangles;
     mesh.vertices = {
         {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight), Color::blue },
         {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight), Color::blue },
