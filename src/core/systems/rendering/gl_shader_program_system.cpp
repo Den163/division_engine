@@ -1,69 +1,58 @@
 #include "gl_shader_program_system.h"
 
-#include <filesystem>
 #include <fstream>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 #include "../../../utils/file_utils.h"
 
+static constexpr const char* SHADERS_DIR_ = "shaders/";
 static constexpr const char* SPIR_V_EXT_ = ".spv";
 
-#define SHADER_EXTENSION_TO_TYPE_MAP        \
-    std::unordered_map<std::string, GLenum> \
-    {                                       \
-        {".vert", GL_VERTEX_SHADER},        \
-        {".frag", GL_FRAGMENT_SHADER},      \
-    }
+static std::vector<GlShaderPipelineState> makeShaderPipelines(
+    const ShaderPipelineConfig& pipelineConfigs,
+    const std::vector<ShaderConfig>& shaderConfigs,
+    const std::vector<GlShaderState>& shaderStates);
 
-struct ShaderInputInfo
-{
-    GLenum shaderType;
-    std::string filePath;
-};
-
-struct CompiledShaderInfo
-{
-    GLuint handle;
-    GLenum shaderType;
-};
-
+static std::vector<GlShaderState> makeShaders(const std::vector<ShaderConfig>& shaderConfigs);
 static GLuint compileSingleShader(const ShaderConfig& config);
-static void throwLinkError(GLuint programHandle);
+static void checkProgramStatus(GLuint programHandle);
+static std::string getProgramInfoLog(GLuint programHandle);
 
-void GlShaderProgramSystem::init(GlShaderState& shaderState, const std::vector<ShaderConfig>& shaderConfigs)
+void GlShaderProgramSystem::init(EngineState& engineState, const EngineConfig& engineConfig)
 {
-    const auto configsSize = shaderConfigs.size();
-    if (configsSize == 0) return;
-
-    shaderState.programHandle = glCreateProgram();
-    const auto programHandle = shaderState.programHandle;
-    if (!programHandle) throw std::runtime_error {"Failed to create a program object"};
-
-    std::vector<CompiledShaderInfo> compiledShaders { configsSize };
-    for (size_t i = 0; i < configsSize; i++)
+    if (engineConfig.shaders.empty())
     {
+        throw std::runtime_error { "Can't run engine, because shaders or shader pipelines are not configured" };
+    }
+
+    engineState.shaderStates = makeShaders(engineConfig.shaders);
+    engineState.shaderPipelineStates = makeShaderPipelines(
+        engineConfig.shaderPipeline, engineConfig.shaders, engineState.shaderStates);
+}
+
+std::vector<GlShaderState> makeShaders(const std::vector<ShaderConfig>& shaderConfigs)
+{
+    auto shaderStates = std::vector<GlShaderState> { shaderConfigs.size() };
+
+    for (size_t i = 0; i < shaderConfigs.size(); i++)
+    {
+        auto& shaderState = shaderStates[i];
         const auto& config = shaderConfigs[i];
+
+        auto programHandle = glCreateProgram();
+        glProgramParameteri(programHandle, GL_PROGRAM_SEPARABLE, GL_TRUE);
+
         auto shaderHandle = compileSingleShader(config);
-        compiledShaders[i] = CompiledShaderInfo { shaderHandle, static_cast<GLenum>(config.type) };
-
         glAttachShader(programHandle, shaderHandle);
+        glLinkProgram(programHandle);
+        checkProgramStatus(programHandle);
+
+        shaderState.glProgramHandle = programHandle;
+        shaderState.glShaderHandle = shaderHandle;
     }
 
-    glLinkProgram(programHandle);
-
-    GLint linkStatus;
-    glGetProgramiv(programHandle, GL_LINK_STATUS, &linkStatus);
-
-    if (linkStatus == GL_TRUE)
-    {
-        glUseProgram(programHandle);
-    }
-    else
-    {
-        throwLinkError(programHandle);
-    }
+    return shaderStates;
 }
 
 static GLuint compileSingleShader(const ShaderConfig& config)
@@ -71,7 +60,7 @@ static GLuint compileSingleShader(const ShaderConfig& config)
     GLuint shader = glCreateShader(static_cast<GLenum>(config.type));
     if (!shader) throw std::runtime_error {"Failed to makeDefault a shader!"};
 
-    auto shaderBin = readBytes("shaders/" + config.name + ".spv");
+    auto shaderBin = readBytes(SHADERS_DIR_ + config.name + SPIR_V_EXT_);
 
     glShaderBinary(
         1, &shader, GL_SHADER_BINARY_FORMAT_SPIR_V_ARB, shaderBin.data(), static_cast<GLsizei>(shaderBin.size()));
@@ -96,19 +85,62 @@ static GLuint compileSingleShader(const ShaderConfig& config)
         };
 }
 
-static void throwLinkError(GLuint programHandle)
+void checkProgramStatus(GLuint programHandle)
+{
+    GLint linkStatus;
+    glGetProgramiv(programHandle, GL_LINK_STATUS, &linkStatus);
+    if (linkStatus == GL_FALSE)
+    {
+        const auto error = getProgramInfoLog(programHandle);
+        throw std::runtime_error {"Failed to link a shader program. Info log: \n" + error};
+    }
+
+    glValidateProgram(programHandle);
+    GLint validateStatus;
+    glGetProgramiv(programHandle, GL_VALIDATE_STATUS, &validateStatus);
+    if (validateStatus == GL_FALSE)
+    {
+        const auto error = getProgramInfoLog(programHandle);
+        throw std::runtime_error{"Failed to validate a shader program. Info log: \n" + error};
+    }
+}
+
+static std::string getProgramInfoLog(GLuint programHandle)
 {
     GLint linkErrorLength;
     glGetProgramiv(programHandle, GL_INFO_LOG_LENGTH, &linkErrorLength);
-    std::string error(static_cast<size_t>(linkErrorLength), ' ');
+    std::string error((size_t) linkErrorLength, ' ');
     glGetProgramInfoLog(programHandle, linkErrorLength, &linkErrorLength, error.data());
-    error.resize(linkErrorLength);
 
-    throw std::runtime_error {"Failed to link a shader program. Info log: \n" + error};
+    return error;
 }
 
-void GlShaderProgramSystem::cleanup(GlShaderState& shaderProgram)
+std::vector<GlShaderPipelineState> makeShaderPipelines(
+    const ShaderPipelineConfig& pipelineConfig,
+    const std::vector<ShaderConfig>& shaderConfigs,
+    const std::vector<GlShaderState>& shaderStates)
 {
-    glDeleteProgram(shaderProgram.programHandle);
+    const auto pipelinesCount = pipelineConfig.pipelinesCount;
+    auto pipelineStates = std::vector<GlShaderPipelineState> {pipelinesCount};
+
+    for (size_t pipelineIdx = 0; pipelineIdx < pipelinesCount; pipelineIdx++)
+    {
+        auto& pipelineState = pipelineStates[pipelineIdx];
+        glCreateProgramPipelines(1, &pipelineState.glPipelineHandle);
+    }
+
+    return pipelineStates;
 }
 
+void GlShaderProgramSystem::cleanup(EngineState& engineState)
+{
+    for (const auto& pipelineState: engineState.shaderPipelineStates)
+    {
+        glDeleteProgramPipelines(1, &pipelineState.glPipelineHandle);
+    }
+
+    for (const auto& shaderState: engineState.shaderStates)
+    {
+        glDeleteProgram(shaderState.glProgramHandle);
+    }
+}

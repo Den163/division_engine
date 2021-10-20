@@ -4,6 +4,7 @@
 #include "lifecycle_config.h"
 #include "renderer_config.h"
 #include "shader_config.h"
+#include "shader_pipeline_config.h"
 #include "window_config.h"
 
 #include <functional>
@@ -14,5 +15,7 @@ struct EngineConfig
     RendererConfig renderer;
     WindowConfig window;
     LifecycleConfig lifecycle;
+    ShaderPipelineConfig shaderPipeline;
+
     std::vector<ShaderConfig> shaders;
 };

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../states/glfw_window_state.h"
+#include "../../states/engine_state.h"
 
 namespace GlfwVsyncSystem
 {
-    void update(GlfwWindowState& glfwWindowData);
+    void update(EngineState& engineState);
 }

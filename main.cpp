@@ -14,9 +14,11 @@ int main()
 
     std::vector<ShaderConfig> shaders
     {
-        ShaderConfig { "basic.vert", ShaderType::Vertex },
-        ShaderConfig { "basic.frag", ShaderType::Fragment },
+        ShaderConfig { "default_gui.vert", ShaderType::Vertex },
+        ShaderConfig { "default_gui.frag", ShaderType::Fragment }
     };
+
+    ShaderPipelineConfig pipelineConfig { 1 };
 
     LifecycleConfig lifecycle
     {
@@ -26,14 +28,13 @@ int main()
         Lifecycle::cleanup
     };
 
-    const EngineConfig& config
-    {
-            rendererConfig,
-            windowConfig,
-            lifecycle,
-            shaders,
-    };
-    EngineCore::run(config);
+    EngineCore::run(EngineConfig {
+        rendererConfig,
+        windowConfig,
+        lifecycle,
+        pipelineConfig,
+        shaders,
+    });
 
     return 0;
 }

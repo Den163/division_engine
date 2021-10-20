@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdexcept>
 #include <glad/gl.h>
 #include <string>
 
@@ -13,4 +14,15 @@ struct ShaderConfig
 {
     std::string name;
     ShaderType type;
+
+    GLbitfield getTypeBit() const
+    {
+        switch(type)
+        {
+            case ShaderType::Vertex : return GL_VERTEX_SHADER_BIT;
+            case ShaderType::Fragment: return GL_FRAGMENT_SHADER_BIT;
+        }
+
+        throw std::runtime_error { "Invalid type" };
+    }
 };

@@ -1,13 +1,14 @@
 #include "glfw_window_system.h"
 
 #include <stdexcept>
-#include <glad/gl.h>
 
 #include "../../../utils/debug_utils.h"
 
-void GlfWindowSystem::init(WindowState& windowState, GlfwWindowState& glfwWindowData, const WindowConfig& windowConfig)
+void GlfWindowSystem::init(EngineState& engineState, const EngineConfig& engineConfig)
 {
-    auto& windowHandle = glfwWindowData.windowHandle;
+    auto& windowState = engineState.windowState;
+    auto& windowHandle = engineState.glfwWindowState.windowHandle;
+    const auto& windowConfig = engineConfig.window;
 
     windowState.width = windowConfig.width;
     windowState.height = windowConfig.height;
@@ -40,18 +41,19 @@ void GlfWindowSystem::init(WindowState& windowState, GlfwWindowState& glfwWindow
     }
 }
 
-void GlfWindowSystem::update(WindowState& windowState, GlfwWindowState& glfwWindowData)
+void GlfWindowSystem::update(EngineState& engineState)
 {
-    auto* windowHandle = glfwWindowData.windowHandle;
+    auto& windowState = engineState.windowState;
+    auto& windowHandle = engineState.glfwWindowState.windowHandle;
 
     glfwPollEvents();
     windowState.shouldClose = glfwWindowShouldClose(windowHandle);
     glfwGetWindowSize(windowHandle, &windowState.width, &windowState.height);
 }
 
-void GlfWindowSystem::cleanup(GlfwWindowState& glfwWindowData)
+void GlfWindowSystem::cleanup(EngineState& engineState)
 {
-    glfwDestroyWindow(glfwWindowData.windowHandle);
+    glfwDestroyWindow(engineState.glfwWindowState.windowHandle);
     glfwTerminate();
 }
 

@@ -34,6 +34,10 @@ include_directories(${CMAKE_SOURCE_DIR}/libs/glad/include)
 include_directories(${CMAKE_SOURCE_DIR}/libs/glfw/include)
 link_directories(${CMAKE_SOURCE_DIR}/libs/glfw)
 
+add_library(glad libs/glad/src/gl.c)
+
+#SHADERS
+
 if(NOT DEFINED ENV{GLSL_LANG_VALIDATOR_COMP})
     message(FATAL_ERROR
             "Add environment variable GLSL_LANG_VALIDATOR_COMP with path to glslangValidator compiler"
@@ -41,15 +45,16 @@ if(NOT DEFINED ENV{GLSL_LANG_VALIDATOR_COMP})
 endif()
 
 set(SHADER_SOURCES
-    basic.vert
-    basic.frag
+    shaders/default_gui.vert
+    shaders/default_gui.frag
 )
 
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/shaders)
-
 foreach(SHADER IN LISTS SHADER_SOURCES)
-    set(SHADER_INPUT ${CMAKE_SOURCE_DIR}/shaders/${SHADER})
-    set(SHADER_OUTPUT ${CMAKE_BINARY_DIR}/shaders/${SHADER}.spv)
+    set(SHADER_INPUT ${CMAKE_SOURCE_DIR}/${SHADER})
+    set(SHADER_OUTPUT ${CMAKE_BINARY_DIR}/${SHADER}.spv)
+
+    get_filename_component(SHADER_OUTPUT_DIR ${SHADER_OUTPUT} DIRECTORY)
+    file(MAKE_DIRECTORY ${SHADER_OUTPUT_DIR})
 
     add_custom_command(
             OUTPUT ${SHADER_OUTPUT}
@@ -66,15 +71,14 @@ add_custom_target(shaders DEPENDS ${SHADERS_OUTPUTS})
 #ENGINE
 
 set(GL_UI_SOURCES
-    libs/glad/src/gl.c
     src/utils/debug_utils.cpp src/utils/debug_utils.h
     src/core/states/engine_state.h
     src/core/engine_core.cpp src/core/engine_core.h
     src/core/systems/rendering/gl_shader_program_system.cpp src/core/systems/rendering/gl_shader_program_system.h
     src/utils/file_utils.cpp src/utils/file_utils.h
     src/core/systems/window/glfw_window_system.cpp src/core/systems/window/glfw_window_system.h
-    src/core/systems/rendering/gl_render_system.cpp src/core/systems/rendering/gl_render_system.h
-    src/core/states/gl_shader_state.h
+    src/core/systems/rendering/gl_render_gui_system.cpp src/core/systems/rendering/gl_render_gui_system.h
+    src/core/states/gl_shader_pipeline_state.h
     src/core/states/glfw_window_state.h
     src/core/states/window_state.h
     src/core/states/renderer_state.h
@@ -86,15 +90,12 @@ set(GL_UI_SOURCES
     src/core/systems/loop_tick_system.cpp src/core/systems/loop_tick_system.h
     src/core/components/gl_mesh.h
     src/core/components/gui_mesh.h
-    src/core/systems/rendering/check_gl_mesh_created_system.cpp src/core/systems/rendering/check_gl_mesh_created_system.h
-    src/core/systems/rendering/check_gl_mesh_destroyed_system.cpp src/core/systems/rendering/check_gl_mesh_destroyed_system.h
     src/core/systems/input/win32_register_input_system.cpp src/core/systems/input/win32_register_input_system.h
     src/core/states/input_state.h
     src/core/states/raw_input_state.h
     src/core/states/keyboard_state.h
     src/core/systems/input/register_input_system.cpp src/core/systems/input/register_input_system.h
     src/utils/math.h
-    src/core/systems/rendering/gl_text_2d_renderer_system.cpp src/core/systems/rendering/gl_text_2d_renderer_system.h
     src/core/components/rotation.h
     src/core/components/position.h
     src/core/components/scale.h
@@ -106,9 +107,18 @@ set(GL_UI_SOURCES
     src/core/primitives/gui/gui_triangle.h src/core/primitives/gui/gui_triangle.cpp
     src/core/components/transform.h
     src/utils/color.h
-    src/core/primitives/gui/gui_quad.h src/core/primitives/gui/gui_quad.cpp src/core/configs/engine_config.h src/core/configs/shader_config.h src/core/configs/lifecycle_config.h src/utils/shader_query.h src/utils/vertex_buffer_query.h src/utils/memory.h src/utils/gl_utils.h)
+    src/core/primitives/gui/gui_quad.h src/core/primitives/gui/gui_quad.cpp
+    src/core/configs/engine_config.h src/core/configs/shader_config.h src/core/configs/lifecycle_config.h
+    src/utils/memory.h src/utils/gl_utils.h
+    src/core/events/create_gui_mesh_entity.h src/core/events/destroy_gui_mesh_entity.h
+    src/core/event_systems/on_gui_mesh_entity_created_event_system.cpp
+    src/core/event_systems/on_gui_mesh_entity_created_event_system.h
+    src/core/event_systems/on_gui_mesh_entity_destroyed_event_system.cpp
+    src/core/event_systems/on_gui_mesh_entity_destroyed_event_system.h
+    src/core/systems/rendering/gl_prepare_framebuffer_system.cpp
+    src/core/systems/rendering/gl_prepare_framebuffer_system.h src/core/configs/shader_pipeline_config.h src/core/states/gl_shader_state.h src/utils/engine_state_helper.h src/utils/engine_invariants.h)
 
-set(GL_UI_LIBS glfw3 glm::glm EnTT::EnTT)
+set(GL_UI_LIBS glad glfw3 glm::glm EnTT::EnTT)
 
 add_library(gl_ui ${GL_UI_SOURCES})
 add_dependencies(gl_ui shaders)

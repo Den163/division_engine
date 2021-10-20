@@ -1,11 +1,10 @@
 #pragma once
 
-#include "../../states/renderer_state.h"
-#include "../../configs/renderer_config.h"
-#include "../../states/window_state.h"
+#include "../../states/engine_state.h"
+#include "../../configs/engine_config.h"
 
 namespace RenderTickSystem
 {
-    void init(RendererState& rendererState, const RendererConfig& rendererConfig);
-    void update(RendererState& rendererState, const UpdateTimeState& loopUpdateTimestamp);
+    void init(EngineState& engineState, const EngineConfig& engineConfig);
+    void update(EngineState& engineState);
 }

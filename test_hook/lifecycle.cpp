@@ -20,19 +20,20 @@ void Lifecycle::init(EngineState& state)
 {
     auto& cameraState = state.cameraState;
 
-    auto [te, tm] = GuiPrimitiveFactory::createTriangle(
+    auto& tm = GuiPrimitiveFactory::makeEntityTriangle(
         state.guiRegistry,
+        state.guiRegistry.create(),
         Transform::makeDefault(),
         GuiTriangle::create(
-            { glm::vec3 { 100,100,0.f }, {100,200,0.f}, {200,200,0.f} },
+            {glm::vec3 {100, 100, 0.f}, {100, 200, 0.f}, {200, 200, 0.f}},
             Color::red
-        )
-    );
+        ));
 
-    auto [qe, qm] = GuiPrimitiveFactory::createQuad(
-      state.guiRegistry,
-      Transform::makeDefault().withPosition({400,400,0}),
-      GuiQuad::create(300, 400, Color::yellow)
+    auto& qm = GuiPrimitiveFactory::makeEntityQuad(
+        state.guiRegistry,
+        state.guiRegistry.create(),
+        Transform::makeDefault().withPosition({400, 400, 0}),
+        GuiQuad::create(300, 400, Color::yellow)
     );
 }
 
@@ -53,13 +54,16 @@ void checkMeshCreateByKeyPress(EngineState& state)
 
     auto halfWidth = state.windowState.width * 0.5f;
     auto halfHeight = state.windowState.height * 0.5f;
-    auto [e, mesh] = GuiPrimitiveFactory::createMeshEntity(state.guiRegistry, Transform::makeDefault());
+    auto& mesh = GuiPrimitiveFactory::makeEntityMesh(
+        state.guiRegistry,
+        state.guiRegistry.create(),
+        Transform::makeDefault());
 
-    mesh.renderShape = RenderMode::Triangles;
+    mesh.renderMode = RenderMode::Triangles;
     mesh.vertices = {
-        {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight), },
-        {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight) },
-        {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight) },
+        {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight), Color::blue },
+        {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight), Color::blue },
+        {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight), Color::blue },
     };
 }
 
@@ -69,7 +73,7 @@ void checkMeshDeleteByKeyPress(EngineState& state)
 
     for (auto&& [e, mesh] : state.guiRegistry.view<GuiMesh>().each())
     {
-        state.guiRegistry.remove<GuiMesh>(e);
+        GuiPrimitiveFactory::deleteMeshEntity(state.guiRegistry, e);
         return;
     }
 }
