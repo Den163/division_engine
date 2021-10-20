@@ -3,7 +3,7 @@
 #include "../../components/position.h"
 #include "../../components/rotation.h"
 #include "../../components/scale.h"
-#include "../../states/gl_shader_state.h"
+#include "../../states/gl_shader_pipeline_state.h"
 #include "../../events/create_gui_mesh_entity.h"
 #include "../../events/destroy_gui_mesh_entity.h"
 

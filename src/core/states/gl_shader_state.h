@@ -1,11 +1,9 @@
 #pragma once
 
-#include <glad/gl.h>
 #include <cstdint>
-
-#include <vector>
 
 struct GlShaderState
 {
-    GLint programHandle;
+    uint32_t glShaderHandle;
+    uint32_t glProgramHandle;
 };

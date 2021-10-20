@@ -5,7 +5,7 @@
 #include "glfw_window_state.h"
 
 #include "camera_state.h"
-#include "gl_shader_state.h"
+#include "gl_shader_pipeline_state.h"
 #include "input_state.h"
 #include "raw_input_state.h"
 #include "renderer_state.h"
@@ -23,9 +23,11 @@ struct EngineState
     RendererState rendererState;
     CameraState cameraState;
     UpdateTimeState loopUpdateTimestamp;
-    GlShaderState shaderState;
     InputState inputState;
     RawInputState rawInputState;
+
+    std::vector<GlShaderPipelineState> shaderPipelineStates;
+    std::vector<GlShaderState> shaderStates;
 
     entt::registry guiRegistry;
 };

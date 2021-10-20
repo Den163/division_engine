@@ -5,12 +5,10 @@
 
 void OnGuiMeshEntityDestroyedEventSystem::update(EngineState& engineState)
 {
-    auto& shaderState = engineState.shaderState;
     auto& registry = engineState.guiRegistry;
 
     for (auto&& [e, glMesh] : registry.view<const GlMesh, const DestroyGuiMeshEntity>().each())
     {
-        glUseProgram(shaderState.programHandle);
         glBindVertexArray(glMesh.vaoHandle);
         glDeleteBuffers(1, &glMesh.vertexVboHandle);
         glDeleteBuffers(1, &glMesh.modelViewProjectionVboHandle);

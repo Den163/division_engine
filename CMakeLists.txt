@@ -78,7 +78,7 @@ set(GL_UI_SOURCES
     src/utils/file_utils.cpp src/utils/file_utils.h
     src/core/systems/window/glfw_window_system.cpp src/core/systems/window/glfw_window_system.h
     src/core/systems/rendering/gl_render_gui_system.cpp src/core/systems/rendering/gl_render_gui_system.h
-    src/core/states/gl_shader_state.h
+    src/core/states/gl_shader_pipeline_state.h
     src/core/states/glfw_window_state.h
     src/core/states/window_state.h
     src/core/states/renderer_state.h
@@ -116,7 +116,7 @@ set(GL_UI_SOURCES
     src/core/event_systems/on_gui_mesh_entity_destroyed_event_system.cpp
     src/core/event_systems/on_gui_mesh_entity_destroyed_event_system.h
     src/core/systems/rendering/gl_prepare_framebuffer_system.cpp
-    src/core/systems/rendering/gl_prepare_framebuffer_system.h)
+    src/core/systems/rendering/gl_prepare_framebuffer_system.h src/core/configs/shader_pipeline_config.h src/core/states/gl_shader_state.h src/utils/engine_state_helper.h src/utils/engine_invariants.h)
 
 set(GL_UI_LIBS glad glfw3 glm::glm EnTT::EnTT)
 
