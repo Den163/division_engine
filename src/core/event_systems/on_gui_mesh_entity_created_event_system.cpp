@@ -3,8 +3,11 @@
 #include "../components/gui_mesh.h"
 #include "../events/create_gui_mesh_entity.h"
 
-void OnGuiMeshEntityCreatedEventSystem::update(entt::registry& registry, const GlShaderState& shaderState)
+void OnGuiMeshEntityCreatedEventSystem::update(EngineState& engineState)
 {
+    auto& registry = engineState.guiRegistry;
+    const auto& shaderState = engineState.shaderState;
+
     for (auto&& [e, guiMesh] : registry.view<const GuiMesh, const CreateGuiMeshEntity>().each())
     {
         auto& glMesh = registry.emplace<GlMesh>(e);

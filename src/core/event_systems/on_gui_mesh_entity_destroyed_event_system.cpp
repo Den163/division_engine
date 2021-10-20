@@ -3,8 +3,11 @@
 #include "../components/gl_mesh.h"
 #include "../events/destroy_gui_mesh_entity.h"
 
-void OnGuiMeshEntityDestroyedEventSystem::update(entt::registry& registry, const GlShaderState& shaderState)
+void OnGuiMeshEntityDestroyedEventSystem::update(EngineState& engineState)
 {
+    auto& shaderState = engineState.shaderState;
+    auto& registry = engineState.guiRegistry;
+
     for (auto&& [e, glMesh] : registry.view<const GlMesh, const DestroyGuiMeshEntity>().each())
     {
         glUseProgram(shaderState.programHandle);

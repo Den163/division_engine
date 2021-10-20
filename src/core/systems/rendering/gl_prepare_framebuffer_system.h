@@ -1,9 +1,8 @@
 #pragma once
 
-#include "../../states/renderer_state.h"
-#include "../../states/window_state.h"
+#include "../../states/engine_state.h"
 
 namespace GlPrepareFramebufferSystem
 {
-    void update(const RendererState& rendererState, const WindowState& windowState);
+    void update(EngineState& engineState);
 }

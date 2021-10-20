@@ -95,7 +95,6 @@ set(GL_UI_SOURCES
     src/core/states/keyboard_state.h
     src/core/systems/input/register_input_system.cpp src/core/systems/input/register_input_system.h
     src/utils/math.h
-    src/core/systems/rendering/gl_text_2d_renderer_system.cpp src/core/systems/rendering/gl_text_2d_renderer_system.h
     src/core/components/rotation.h
     src/core/components/position.h
     src/core/components/scale.h

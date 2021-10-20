@@ -1,5 +1,6 @@
-#include <entt/entity/registry.hpp>
 #include "gl_render_gui_system.h"
+
+#include <entt/entity/registry.hpp>
 
 #include "../../../utils/debug_utils.h"
 #include "../../../utils/math.h"
@@ -9,8 +10,10 @@
 #include "../../components/rotation.h"
 #include "../../components/scale.h"
 
-void GlRenderGuiSystem::init(GlShaderState& shaderState, CameraState& cameraState, const WindowState& windowState)
+void GlRenderGuiSystem::init(EngineState& engineState)
 {
+    auto& cameraState = engineState.cameraState;
+
     glEnable(GL_DEBUG_OUTPUT);
     glClipControl(GL_LOWER_LEFT, GL_NEGATIVE_ONE_TO_ONE);
     glDebugMessageCallback(DebugUtils::glRendererMessageCallback, nullptr);
@@ -21,13 +24,12 @@ void GlRenderGuiSystem::init(GlShaderState& shaderState, CameraState& cameraStat
     cameraState.farPlane = 100;
 }
 
-void GlRenderGuiSystem::update(
-    entt::registry& guiRegistry,
-    const GlShaderState& shaderState,
-    const RendererState& rendererState,
-    const CameraState& cameraState,
-    const WindowState& windowState)
+void GlRenderGuiSystem::update(EngineState& engineState)
 {
+    auto& guiRegistry = engineState.guiRegistry;
+
+    const auto& shaderState = engineState.shaderState;
+    const auto& windowState = engineState.windowState;
     const auto& vaoHandle = shaderState.vaoHandle;
     const auto& projectionMatrix = glm::ortho(0.f, (float) windowState.width, 0.f, (float) windowState.height);
     const auto& renderComponentsView = guiRegistry.view<GuiMesh, GlMesh, const Position, const Rotation, const Scale>();
@@ -75,6 +77,7 @@ void GlRenderGuiSystem::update(
             glNamedBufferStorage(vertexVboHandle, newBufferSize, newBufferPtr, GL_DYNAMIC_STORAGE_BIT);
         }
 
+        glEnableVertexAttribArray(GlMesh::VERTEX_ATTRIB_INDEX);
         glVertexAttribPointer(
             GlMesh::VERTEX_ATTRIB_INDEX,
             glm::vec3::length(),
@@ -83,8 +86,7 @@ void GlRenderGuiSystem::update(
             sizeof(GuiVertex),
             (void*) offsetof(GuiVertex, position));
 
-        glEnableVertexAttribArray(GlMesh::VERTEX_ATTRIB_INDEX);
-
+        glEnableVertexAttribArray(GlMesh::COLOR_ATTRIB_INDEX);
         glVertexAttribPointer(
             GlMesh::COLOR_ATTRIB_INDEX,
             glm::vec4::length(),
@@ -93,7 +95,6 @@ void GlRenderGuiSystem::update(
             sizeof(GuiVertex),
             (void*) offsetof(GuiVertex, color));
 
-        glEnableVertexAttribArray(GlMesh::COLOR_ATTRIB_INDEX);
 
         glDrawArrays((GLenum) mesh.renderMode, 0, (GLsizei) vertices.size());
 

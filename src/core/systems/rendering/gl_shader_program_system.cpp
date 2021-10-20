@@ -1,13 +1,12 @@
 #include "gl_shader_program_system.h"
 
-#include <filesystem>
 #include <fstream>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 #include "../../../utils/file_utils.h"
 
+static constexpr const char* SHADERS_DIR_ = "shaders/";
 static constexpr const char* SPIR_V_EXT_ = ".spv";
 
 #define SHADER_EXTENSION_TO_TYPE_MAP        \
@@ -32,8 +31,11 @@ struct CompiledShaderInfo
 static GLuint compileSingleShader(const ShaderConfig& config);
 static void throwLinkError(GLuint programHandle);
 
-void GlShaderProgramSystem::init(GlShaderState& shaderState, const std::vector<ShaderConfig>& shaderConfigs)
+void GlShaderProgramSystem::init(EngineState& engineState, const EngineConfig& engineConfig)
 {
+    auto& shaderState = engineState.shaderState;
+
+    const auto& shaderConfigs = engineConfig.shaders;
     const auto configsSize = shaderConfigs.size();
     if (configsSize == 0) return;
 
@@ -73,7 +75,7 @@ static GLuint compileSingleShader(const ShaderConfig& config)
     GLuint shader = glCreateShader(static_cast<GLenum>(config.type));
     if (!shader) throw std::runtime_error {"Failed to makeDefault a shader!"};
 
-    auto shaderBin = readBytes("shaders/" + config.name + ".spv");
+    auto shaderBin = readBytes(SHADERS_DIR_ + config.name + SPIR_V_EXT_);
 
     glShaderBinary(
         1, &shader, GL_SHADER_BINARY_FORMAT_SPIR_V_ARB, shaderBin.data(), static_cast<GLsizei>(shaderBin.size()));
@@ -109,8 +111,8 @@ static void throwLinkError(GLuint programHandle)
     throw std::runtime_error {"Failed to link a shader program. Info log: \n" + error};
 }
 
-void GlShaderProgramSystem::cleanup(GlShaderState& shaderProgram)
+void GlShaderProgramSystem::cleanup(EngineState& engineState)
 {
-    glDeleteProgram(shaderProgram.programHandle);
+    glDeleteProgram(engineState.shaderState.programHandle);
 }
 

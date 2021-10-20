@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../../states/gl_shader_state.h"
-#include "../../configs/shader_config.h"
+#include "../../states/engine_state.h"
+#include "../../configs/engine_config.h"
 #include <vector>
 
 namespace GlShaderProgramSystem
 {
-    void init(GlShaderState& shaderState, const std::vector<ShaderConfig>& shaderConfigs);
-    void cleanup(GlShaderState& shaderProgram);
+    void init(EngineState& engineState, const EngineConfig& engineConfig);
+    void cleanup(EngineState& engineState);
 }
