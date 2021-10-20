@@ -10,8 +10,6 @@
 
 struct GuiMesh
 {
-    static constexpr size_t SHADER_INDEX = 0;
-
     RenderMode renderMode;
     uint32_t shaderPipelineIndex = EngineInvariants::STANDARD_SHADER_PIPELINE_INDEX;
     uint32_t vertexShaderIndex = EngineInvariants::STANDARD_VERTEX_SHADER_INDEX;

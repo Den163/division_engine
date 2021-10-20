@@ -12,14 +12,13 @@ int main()
     rendererConfig.backgroundColor = { 0, 0, 0, 1 };
     rendererConfig.targetFps = 60;
 
-    const auto STANDARD_VERTEX_SHADER_IDX = 0;
-    const auto STANDARD_FRAGMENT_SHADER_IDX = 1;
+    std::vector<ShaderConfig> shaders
+    {
+        ShaderConfig { "default_gui.vert", ShaderType::Vertex },
+        ShaderConfig { "default_gui.frag", ShaderType::Fragment }
+    };
 
-    std::vector<ShaderConfig> shaders { 2 };
-    shaders[STANDARD_VERTEX_SHADER_IDX] = ShaderConfig { "default_gui.vert", ShaderType::Vertex };
-    shaders[STANDARD_FRAGMENT_SHADER_IDX] = ShaderConfig { "default_gui.frag", ShaderType::Fragment };
-
-    ShaderPipelineConfig standardPipeline { 1 };
+    ShaderPipelineConfig pipelineConfig { 1 };
 
     LifecycleConfig lifecycle
     {
@@ -29,15 +28,13 @@ int main()
         Lifecycle::cleanup
     };
 
-    const EngineConfig& config
-    {
+    EngineCore::run(EngineConfig {
         rendererConfig,
         windowConfig,
         lifecycle,
-        standardPipeline,
+        pipelineConfig,
         shaders,
-    };
-    EngineCore::run(config);
+    });
 
     return 0;
 }
