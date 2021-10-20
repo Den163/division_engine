@@ -10,8 +10,9 @@ void OnGuiMeshEntityCreatedEventSystem::update(entt::registry& registry, const G
     {
         auto& glMesh = registry.emplace<GlMesh>(e);
 
-        ShaderQuery { shaderState.programHandle, shaderState.vaoHandle}
-            .createEmptyBuffer(glMesh.vertexVboHandle, guiMesh.vertices);
+        glMesh.vertexVboHandle = ShaderQuery { shaderState.programHandle, shaderState.vaoHandle}
+            .createEmptyBuffer(guiMesh.vertices)
+            .vboId;
 
         registry.remove<CreateGuiMeshEntity>(e);
     }

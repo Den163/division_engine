@@ -25,9 +25,9 @@ struct ShaderQuery
     }
 
     template<class TBufferObject>
-    inline auto createEmptyBuffer(uint32_t& vboHandleToWrite, const std::vector<TBufferObject>& bufferObjects)
+    inline auto createEmptyBuffer(const std::vector<TBufferObject>& bufferObjects)
     {
-        return VertexBufferQueryFactory::createEmptyBuffer(vboHandleToWrite, bufferObjects);
+        return VertexBufferQueryFactory::createEmptyBuffer(bufferObjects);
     }
 
     template<class TBufferObject>

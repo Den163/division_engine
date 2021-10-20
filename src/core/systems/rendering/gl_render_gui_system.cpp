@@ -53,4 +53,8 @@ void GlRenderGuiSystem::update(
             .bindVecAttributeToField(GlMesh::COLOR_ATTRIB_INDEX, &GuiVertex::color)
             .draw(mesh.renderShape, vertices.size());
     }
+
+    for (auto&& [e, glMesh, mesh] : guiRegistry.view<const GlMesh, const GuiMesh>().each())
+    {
+    }
 }
