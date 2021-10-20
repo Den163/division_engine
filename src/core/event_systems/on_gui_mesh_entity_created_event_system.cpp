@@ -13,7 +13,7 @@ void OnGuiMeshEntityCreatedEventSystem::update(EngineState& engineState)
         auto& glMesh = registry.emplace<GlMesh>(e);
 
         glUseProgram(shaderState.programHandle);
-        glBindVertexArray(shaderState.vaoHandle);
+        glCreateVertexArrays(1, &glMesh.vaoHandle);
         glCreateBuffers(1, &glMesh.vertexVboHandle);
         glNamedBufferStorage(
             glMesh.vertexVboHandle, guiMesh.vertices.size() * sizeof(GuiVertex), nullptr, GL_DYNAMIC_STORAGE_BIT);

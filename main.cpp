@@ -14,8 +14,8 @@ int main()
 
     std::vector<ShaderConfig> shaders
     {
-        ShaderConfig { "basic.vert", ShaderType::Vertex },
-        ShaderConfig { "basic.frag", ShaderType::Fragment },
+        ShaderConfig { "default_gui.vert", ShaderType::Vertex },
+        ShaderConfig { "default_gui.frag", ShaderType::Fragment },
     };
 
     LifecycleConfig lifecycle

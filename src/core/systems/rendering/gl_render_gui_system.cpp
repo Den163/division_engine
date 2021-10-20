@@ -1,7 +1,5 @@
 #include "gl_render_gui_system.h"
 
-#include <entt/entity/registry.hpp>
-
 #include "../../../utils/debug_utils.h"
 #include "../../../utils/math.h"
 #include "../../components/gui_mesh.h"
@@ -9,6 +7,9 @@
 #include "../../components/position.h"
 #include "../../components/rotation.h"
 #include "../../components/scale.h"
+
+static void applyVertexBuffer(const GlMesh& glMesh, const GuiMesh& mesh);
+void applyModelViewProjectionMatrix(const GlMesh& glMesh, const GuiMesh& mesh);
 
 void GlRenderGuiSystem::init(EngineState& engineState)
 {
@@ -30,13 +31,12 @@ void GlRenderGuiSystem::update(EngineState& engineState)
 
     const auto& shaderState = engineState.shaderState;
     const auto& windowState = engineState.windowState;
-    const auto& vaoHandle = shaderState.vaoHandle;
     const auto& projectionMatrix = glm::ortho(0.f, (float) windowState.width, 0.f, (float) windowState.height);
     const auto& renderComponentsView = guiRegistry.view<GuiMesh, GlMesh, const Position, const Rotation, const Scale>();
 
-    auto objectsToRender = 0;
     for (auto&& [e, mesh, glMesh, pos, rot, scale]: renderComponentsView.each())
     {
+        const auto vaoHandle = glMesh.vaoHandle;
         const auto& vertexVboHandle = glMesh.vertexVboHandle;
         const auto& vertices = mesh.vertices;
         const auto verticesSize = vertices.size();
@@ -46,58 +46,72 @@ void GlRenderGuiSystem::update(EngineState& engineState)
 
         glUseProgram(shaderState.programHandle);
         glBindVertexArray(vaoHandle);
-        glBindBuffer(GL_ARRAY_BUFFER, glMesh.modelViewProjectionVboHandle);
-        glNamedBufferSubData(
-            glMesh.modelViewProjectionVboHandle, 0, sizeof(glm::mat4), &mesh.modelViewProjection[0][0]);
 
-        for (size_t i = 0; i < 4; i++)
-        {
-            constexpr auto rowLength = glm::mat4::row_type::length();
-            auto attribId = 2 + i;
-            glVertexAttribPointer(
-                attribId, rowLength, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*) (i * rowLength * sizeof(float)));
-            glEnableVertexAttribArray(attribId);
-            glVertexAttribDivisor(attribId, verticesSize);
-        }
+        applyVertexBuffer(glMesh, mesh);
+        applyModelViewProjectionMatrix(glMesh, mesh);
+    }
 
-        glBindBuffer(GL_ARRAY_BUFFER, vertexVboHandle);
+    for (auto&& [e, mesh, glMesh, pos, rot, scale]: renderComponentsView.each())
+    {
+        glBindVertexArray(glMesh.vaoHandle);
+        glDrawArrays((GLenum) mesh.renderMode, 0, (GLsizei) mesh.vertices.size());
+    }
+}
 
-        const auto* newBufferPtr = vertices.data();
-        const auto newBufferSize = vertices.size() * sizeof(GuiVertex);
+void applyVertexBuffer(const GlMesh& glMesh, const GuiMesh& mesh)
+{
+    const auto& vertexVboHandle = glMesh.vertexVboHandle;
+    const auto& vertices = mesh.vertices;
+    const auto* newBufferPtr = vertices.data();
+    const auto newBufferSize = vertices.size() * sizeof(GuiVertex);
 
-        GLint currentBufferSize;
-        glGetNamedBufferParameteriv(vertexVboHandle, GL_BUFFER_SIZE, &currentBufferSize);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexVboHandle);
 
-        if (currentBufferSize == newBufferSize)
-        {
-            glNamedBufferSubData(vertexVboHandle, 0, newBufferSize, newBufferPtr);
-        }
-        else
-        {
-            glNamedBufferStorage(vertexVboHandle, newBufferSize, newBufferPtr, GL_DYNAMIC_STORAGE_BIT);
-        }
+    GLint currentBufferSize;
+    glGetNamedBufferParameteriv(vertexVboHandle, GL_BUFFER_SIZE, &currentBufferSize);
 
-        glEnableVertexAttribArray(GlMesh::VERTEX_ATTRIB_INDEX);
+    if (currentBufferSize == newBufferSize)
+    {
+        glNamedBufferSubData(vertexVboHandle, 0, newBufferSize, newBufferPtr);
+    }
+    else
+    {
+        glNamedBufferStorage(vertexVboHandle, newBufferSize, newBufferPtr, GL_DYNAMIC_STORAGE_BIT);
+    }
+
+    glEnableVertexAttribArray(GlMesh::VERTEX_ATTRIB_INDEX);
+    glVertexAttribPointer(
+        GlMesh::VERTEX_ATTRIB_INDEX,
+        glm::vec3::length(),
+        GL_FLOAT,
+        GL_FALSE,
+        sizeof(GuiVertex),
+        (void*) offsetof(GuiVertex, position));
+
+    glEnableVertexAttribArray(GlMesh::COLOR_ATTRIB_INDEX);
+    glVertexAttribPointer(
+        GlMesh::COLOR_ATTRIB_INDEX,
+        glm::vec4::length(),
+        GL_FLOAT,
+        GL_FALSE,
+        sizeof(GuiVertex),
+        (void*) offsetof(GuiVertex, color));
+}
+
+void applyModelViewProjectionMatrix(const GlMesh& glMesh, const GuiMesh& mesh)
+{
+    const auto rows = glm::mat4::row_type::length();
+    const auto columns = glm::mat4::col_type::length();
+
+    glBindBuffer(GL_ARRAY_BUFFER, glMesh.modelViewProjectionVboHandle);
+    glNamedBufferSubData(glMesh.modelViewProjectionVboHandle, 0, sizeof(glm::mat4), &mesh.modelViewProjection);
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        const auto attribId = GlMesh::MVP_MATRIX_UNIFORM_INDEX + i;
+        glEnableVertexAttribArray(attribId);
         glVertexAttribPointer(
-            GlMesh::VERTEX_ATTRIB_INDEX,
-            glm::vec3::length(),
-            GL_FLOAT,
-            GL_FALSE,
-            sizeof(GuiVertex),
-            (void*) offsetof(GuiVertex, position));
-
-        glEnableVertexAttribArray(GlMesh::COLOR_ATTRIB_INDEX);
-        glVertexAttribPointer(
-            GlMesh::COLOR_ATTRIB_INDEX,
-            glm::vec4::length(),
-            GL_FLOAT,
-            GL_FALSE,
-            sizeof(GuiVertex),
-            (void*) offsetof(GuiVertex, color));
-
-
-        glDrawArrays((GLenum) mesh.renderMode, 0, (GLsizei) vertices.size());
-
-        objectsToRender++;
+            attribId, columns, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*) (i * columns * sizeof(float)));
+        glVertexAttribDivisor(attribId, mesh.vertices.size());
     }
 }

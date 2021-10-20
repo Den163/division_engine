@@ -45,15 +45,16 @@ if(NOT DEFINED ENV{GLSL_LANG_VALIDATOR_COMP})
 endif()
 
 set(SHADER_SOURCES
-    basic.vert
-    basic.frag
+    shaders/default_gui.vert
+    shaders/default_gui.frag
 )
 
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/shaders)
-
 foreach(SHADER IN LISTS SHADER_SOURCES)
-    set(SHADER_INPUT ${CMAKE_SOURCE_DIR}/shaders/${SHADER})
-    set(SHADER_OUTPUT ${CMAKE_BINARY_DIR}/shaders/${SHADER}.spv)
+    set(SHADER_INPUT ${CMAKE_SOURCE_DIR}/${SHADER})
+    set(SHADER_OUTPUT ${CMAKE_BINARY_DIR}/${SHADER}.spv)
+
+    get_filename_component(SHADER_OUTPUT_DIR ${SHADER_OUTPUT} DIRECTORY)
+    file(MAKE_DIRECTORY ${SHADER_OUTPUT_DIR})
 
     add_custom_command(
             OUTPUT ${SHADER_OUTPUT}

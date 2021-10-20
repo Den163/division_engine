@@ -8,5 +8,4 @@
 struct GlShaderState
 {
     GLint programHandle;
-    GLuint vaoHandle;
 };
