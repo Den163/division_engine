@@ -34,6 +34,10 @@ include_directories(${CMAKE_SOURCE_DIR}/libs/glad/include)
 include_directories(${CMAKE_SOURCE_DIR}/libs/glfw/include)
 link_directories(${CMAKE_SOURCE_DIR}/libs/glfw)
 
+add_library(glad libs/glad/src/gl.c)
+
+#SHADERS
+
 if(NOT DEFINED ENV{GLSL_LANG_VALIDATOR_COMP})
     message(FATAL_ERROR
             "Add environment variable GLSL_LANG_VALIDATOR_COMP with path to glslangValidator compiler"
@@ -66,7 +70,6 @@ add_custom_target(shaders DEPENDS ${SHADERS_OUTPUTS})
 #ENGINE
 
 set(GL_UI_SOURCES
-    libs/glad/src/gl.c
     src/utils/debug_utils.cpp src/utils/debug_utils.h
     src/core/states/engine_state.h
     src/core/engine_core.cpp src/core/engine_core.h
@@ -115,7 +118,7 @@ set(GL_UI_SOURCES
     src/core/systems/rendering/gl_prepare_framebuffer_system.cpp
     src/core/systems/rendering/gl_prepare_framebuffer_system.h)
 
-set(GL_UI_LIBS glfw3 glm::glm EnTT::EnTT)
+set(GL_UI_LIBS glad glfw3 glm::glm EnTT::EnTT)
 
 add_library(gl_ui ${GL_UI_SOURCES})
 add_dependencies(gl_ui shaders)

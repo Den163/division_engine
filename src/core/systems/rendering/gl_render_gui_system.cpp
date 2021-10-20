@@ -51,6 +51,6 @@ void GlRenderGuiSystem::update(
         shaderQuery.modifyBuffer(glMesh.vertexVboHandle, vertices)
             .bindVecAttributeToField(GlMesh::VERTEX_ATTRIB_INDEX, &GuiVertex::position)
             .bindVecAttributeToField(GlMesh::COLOR_ATTRIB_INDEX, &GuiVertex::color)
-            .draw(mesh.renderShape);
+            .draw(mesh.renderShape, vertices.size());
     }
 }

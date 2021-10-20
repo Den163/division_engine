@@ -25,7 +25,7 @@ struct VertexBufferQueryFactory
             GL_DYNAMIC_STORAGE_BIT
         );
 
-        return VertexBufferQuery<TBufferObject> { vboHandleToWrite, bufferObjects };
+        return VertexBufferQuery<TBufferObject> { vboHandleToWrite };
     }
 
     template<typename TBufferObject>
@@ -49,14 +49,13 @@ struct VertexBufferQueryFactory
             glNamedBufferStorage(bufferId, newBufferSize, newBufferPtr, GL_DYNAMIC_STORAGE_BIT);
         }
 
-        return VertexBufferQuery<TBufferObject> { bufferId, bufferObjects };
+        return VertexBufferQuery<TBufferObject> { bufferId };
     }
 
     template<typename TBufferObject>
     struct VertexBufferQuery
     {
         const uint32_t vboHandle;
-        const std::vector<TBufferObject>& bufferObjects;
 
         template<auto VectorLength, typename TVectorType, glm::qualifier VectorQualifier>
         inline const VertexBufferQuery<TBufferObject>& bindVecAttributeToField(
@@ -78,9 +77,9 @@ struct VertexBufferQueryFactory
             return *this;
         }
 
-        inline void draw(RenderMode renderMode) const
+        inline void draw(RenderMode renderMode, const size_t bufferObjectsCount) const
         {
-            glDrawArrays(static_cast<GLenum>(renderMode), 0, static_cast<GLsizei>(bufferObjects.size()));
+            glDrawArrays(static_cast<GLenum>(renderMode), 0, bufferObjectsCount);
         }
     };
 };
