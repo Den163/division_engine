@@ -5,18 +5,28 @@
 
 namespace EngineStateHelper
 {
+    inline GLuint& shaderProgram(EngineState& engineState, uint32_t shaderIndex)
+    {
+        return engineState.shaderStates[shaderIndex].glProgramHandle;
+    }
+
     inline GLuint& standardVertexShaderProgram(EngineState& engineState)
     {
-        return engineState.shaderStates[EngineInvariants::STANDARD_VERTEX_SHADER_INDEX].glProgramHandle;
+        return shaderProgram(engineState, EngineInvariants::STANDARD_VERTEX_SHADER_INDEX);
     }
 
     inline GLuint& standardFragmentShaderProgram(EngineState& engineState)
     {
-        return engineState.shaderStates[EngineInvariants::STANDARD_FRAGMENT_SHADER_INDEX].glProgramHandle;
+        return shaderProgram(engineState, EngineInvariants::STANDARD_FRAGMENT_SHADER_INDEX);
+    }
+
+    inline GLuint& shaderPipeline(EngineState& engineState, uint32_t pipelineIndex)
+    {
+        return engineState.shaderPipelineStates[pipelineIndex].glPipelineHandle;
     }
 
     inline GLuint& standardShaderPipeline(EngineState& engineState)
     {
-        return engineState.shaderPipelineStates[EngineInvariants::STANDARD_SHADER_PIPELINE_INDEX].glPipelineHandle;
+        return shaderPipeline(engineState, EngineInvariants::STANDARD_SHADER_PIPELINE_INDEX);
     }
 }

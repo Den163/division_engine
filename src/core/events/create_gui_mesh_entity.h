@@ -1,6 +1,5 @@
 #pragma once
 
-struct CreateGuiMeshEntity
-{
+#include "../../utils/engine_invariants.h"
 
-};
+struct CreateGuiMeshEntity { };

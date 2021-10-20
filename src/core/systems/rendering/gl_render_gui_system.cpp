@@ -10,7 +10,7 @@
 #include "../../components/scale.h"
 
 static void applyVertexBuffer(const GlMesh& glMesh, const GuiMesh& mesh);
-void applyModelViewProjectionMatrix(const GlMesh& glMesh, const GuiMesh& mesh);
+void applyModelViewProjectionMatrix(const GlMesh& glMesh, const GuiMesh& mesh, const glm::mat4& mvpMatrix);
 
 void GlRenderGuiSystem::init(EngineState& engineState)
 {
@@ -33,7 +33,6 @@ void GlRenderGuiSystem::update(EngineState& engineState)
     const auto& windowState = engineState.windowState;
     const auto& projectionMatrix = glm::ortho(0.f, (float) windowState.width, 0.f, (float) windowState.height);
     const auto& renderComponentsView = guiRegistry.view<GuiMesh, GlMesh, const Position, const Rotation, const Scale>();
-    const auto shaderPipelineHandle = EngineStateHelper::standardShaderPipeline(engineState);
 
     for (auto&& [e, mesh, glMesh, pos, rot, scale]: renderComponentsView.each())
     {
@@ -43,22 +42,23 @@ void GlRenderGuiSystem::update(EngineState& engineState)
         const auto verticesSize = vertices.size();
         const auto& modelMatrix = Math::transformMatrix(pos.value, rot.value, scale.value);
         const auto& mvpMatrix = projectionMatrix * modelMatrix;
-        mesh.modelViewProjection = mvpMatrix;
+        const auto shaderPipelineHandle = EngineStateHelper::shaderPipeline(engineState, mesh.shaderPipelineIndex);
 
         glBindProgramPipeline(shaderPipelineHandle);
         glUseProgramStages(
             shaderPipelineHandle,
             GL_VERTEX_SHADER_BIT,
-            EngineStateHelper::standardVertexShaderProgram(engineState));
-        glBindVertexArray(vaoHandle);
+            EngineStateHelper::shaderProgram(engineState, mesh.vertexShaderIndex));
 
+        glBindVertexArray(vaoHandle);
+        
         applyVertexBuffer(glMesh, mesh);
-        applyModelViewProjectionMatrix(glMesh, mesh);
+        applyModelViewProjectionMatrix(glMesh, mesh, mvpMatrix);
 
         glUseProgramStages(
             shaderPipelineHandle,
             GL_FRAGMENT_SHADER_BIT,
-            EngineStateHelper::standardFragmentShaderProgram(engineState));
+            EngineStateHelper::shaderProgram(engineState, mesh.fragmentShaderIndex));
 
         glDrawArrays((GLenum) mesh.renderMode, 0, (GLsizei) mesh.vertices.size());
     }
@@ -104,13 +104,13 @@ void applyVertexBuffer(const GlMesh& glMesh, const GuiMesh& mesh)
         (void*) offsetof(GuiVertex, color));
 }
 
-void applyModelViewProjectionMatrix(const GlMesh& glMesh, const GuiMesh& mesh)
+void applyModelViewProjectionMatrix(const GlMesh& glMesh, const GuiMesh& mesh, const glm::mat4& mvpMatrix)
 {
     const auto rows = glm::mat4::row_type::length();
     const auto columns = glm::mat4::col_type::length();
 
     glBindBuffer(GL_ARRAY_BUFFER, glMesh.modelViewProjectionVboHandle);
-    glNamedBufferSubData(glMesh.modelViewProjectionVboHandle, 0, sizeof(glm::mat4), &mesh.modelViewProjection);
+    glNamedBufferSubData(glMesh.modelViewProjectionVboHandle, 0, sizeof(glm::mat4), &mvpMatrix);
 
     for (size_t i = 0; i < rows; i++)
     {
