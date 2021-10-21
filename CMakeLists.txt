@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(gl_ui)
+project(division_engine)
 
 set(CMAKE_CXX_STANDARD 17)
 include(FetchContent)
@@ -70,7 +70,7 @@ add_custom_target(shaders DEPENDS ${SHADERS_OUTPUTS})
 
 #ENGINE
 
-set(GL_UI_SOURCES
+set(DIVISION_ENGINE_SOURCES
     src/utils/debug_utils.cpp src/utils/debug_utils.h
     src/core/states/engine_state.h
     src/core/engine_core.cpp src/core/engine_core.h
@@ -118,20 +118,20 @@ set(GL_UI_SOURCES
     src/core/systems/rendering/gl_prepare_framebuffer_system.cpp
     src/core/systems/rendering/gl_prepare_framebuffer_system.h src/core/configs/shader_pipeline_config.h src/core/states/gl_shader_state.h src/utils/engine_state_helper.h src/utils/engine_invariants.h)
 
-set(GL_UI_LIBS glad glfw3 glm::glm EnTT::EnTT)
+set(DIVISION_ENGINE_LIBS glad glfw3 glm::glm EnTT::EnTT)
 
-add_library(gl_ui ${GL_UI_SOURCES})
-add_dependencies(gl_ui shaders)
-target_link_libraries(gl_ui ${GL_UI_LIBS})
+add_library(division_engine ${DIVISION_ENGINE_SOURCES})
+add_dependencies(division_engine shaders)
+target_link_libraries(division_engine ${DIVISION_ENGINE_LIBS})
 
 #RUN
 
-add_executable(gl_ui_run main.cpp test_hook/lifecycle.cpp test_hook/lifecycle.h)
-target_link_libraries(gl_ui_run gl_ui)
+add_executable(division_engine_run main.cpp test_hook/lifecycle.cpp test_hook/lifecycle.h)
+target_link_libraries(division_engine_run division_engine)
 
 #TESTS
 
-set(GL_UI_TESTS_SOURCES tests/colors_tests.cpp tests/test_sample.cpp)
+set(DIVISION_ENGINE_TESTS_SOURCES tests/colors_tests.cpp tests/test_sample.cpp)
 
-add_executable(gl_ui_tests ${GL_UI_TESTS_SOURCES})
-target_link_libraries(gl_ui_tests gl_ui gtest gtest_main ${GL_UI_LIBS})
+add_executable(division_engine_tests ${DIVISION_ENGINE_TESTS_SOURCES})
+target_link_libraries(division_engine_tests division_engine gtest gtest_main ${DIVISION_ENGINE_LIBS})
