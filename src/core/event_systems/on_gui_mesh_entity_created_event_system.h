@@ -6,5 +6,5 @@
 
 namespace OnGuiMeshEntityCreatedEventSystem
 {
-    void update(EngineState& engineState);
+    void preRender(EngineState& engineState);
 }

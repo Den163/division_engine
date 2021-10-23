@@ -110,13 +110,15 @@ set(DIVISION_ENGINE_SOURCES
     src/core/primitives/gui/gui_quad.h src/core/primitives/gui/gui_quad.cpp
     src/core/configs/engine_config.h src/core/configs/shader_config.h src/core/configs/lifecycle_config.h
     src/utils/memory.h src/utils/gl_utils.h
-    src/core/events/create_gui_mesh_entity.h src/core/events/destroy_gui_mesh_entity.h
+    src/core/events/gui_mesh_created.h src/core/events/gui_mesh_destroyed.h
     src/core/event_systems/on_gui_mesh_entity_created_event_system.cpp
     src/core/event_systems/on_gui_mesh_entity_created_event_system.h
     src/core/event_systems/on_gui_mesh_entity_destroyed_event_system.cpp
     src/core/event_systems/on_gui_mesh_entity_destroyed_event_system.h
     src/core/systems/rendering/gl_prepare_framebuffer_system.cpp
-    src/core/systems/rendering/gl_prepare_framebuffer_system.h src/core/configs/shader_pipeline_config.h src/core/states/gl_shader_state.h src/utils/engine_state_helper.h src/utils/engine_invariants.h)
+    src/core/systems/rendering/gl_prepare_framebuffer_system.h
+    src/core/configs/shader_pipeline_config.h src/core/states/gl_shader_state.h src/utils/engine_state_helper.h
+    src/utils/engine_invariants.h)
 
 set(DIVISION_ENGINE_LIBS glad glfw3 glm::glm EnTT::EnTT)
 

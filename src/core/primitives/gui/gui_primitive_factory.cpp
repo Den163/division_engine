@@ -4,8 +4,8 @@
 #include "../../components/rotation.h"
 #include "../../components/scale.h"
 #include "../../states/gl_shader_pipeline_state.h"
-#include "../../events/create_gui_mesh_entity.h"
-#include "../../events/destroy_gui_mesh_entity.h"
+#include "../../events/gui_mesh_created.h"
+#include "../../events/gui_mesh_destroyed.h"
 
 
 GuiMesh& GuiPrimitiveFactory::makeEntityMesh(
@@ -20,7 +20,7 @@ GuiMesh& GuiPrimitiveFactory::makeEntityMesh(
     newRot.value = transform.rotation;
     newScale.value = transform.scale;
 
-    registry.emplace<CreateGuiMeshEntity>(entity);
+    registry.emplace<GuiMeshCreated>(entity);
 
     return mesh;
 }
@@ -28,7 +28,7 @@ GuiMesh& GuiPrimitiveFactory::makeEntityMesh(
 
 void GuiPrimitiveFactory::deleteMeshEntity(entt::registry& registry, const entt::entity& entity)
 {
-    registry.emplace<DestroyGuiMeshEntity>(entity);
+    registry.emplace<GuiMeshDestroyed>(entity);
 }
 
 GuiMesh& GuiPrimitiveFactory::makeEntityTriangle(

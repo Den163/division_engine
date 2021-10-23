@@ -3,13 +3,13 @@
 #include "../../utils/engine_state_helper.h"
 #include "../components/gl_mesh.h"
 #include "../components/gui_mesh.h"
-#include "../events/create_gui_mesh_entity.h"
+#include "../events/gui_mesh_created.h"
 
-void OnGuiMeshEntityCreatedEventSystem::update(EngineState& engineState)
+void OnGuiMeshEntityCreatedEventSystem::preRender(EngineState& engineState)
 {
     auto& registry = engineState.guiRegistry;
 
-    for (auto&& [e, guiMesh] : registry.view<const GuiMesh, const CreateGuiMeshEntity>().each())
+    for (auto&& [e, guiMesh] : registry.view<const GuiMesh, const GuiMeshCreated>().each())
     {
         auto& glMesh = registry.emplace<GlMesh>(e);
         const auto& shaderPipelineHandle = EngineStateHelper::standardShaderPipeline(engineState);
@@ -21,7 +21,5 @@ void OnGuiMeshEntityCreatedEventSystem::update(EngineState& engineState)
 
         glCreateBuffers(1, &glMesh.modelViewProjectionVboHandle);
         glNamedBufferStorage(glMesh.modelViewProjectionVboHandle, sizeof(glm::mat4), nullptr, GL_DYNAMIC_STORAGE_BIT);
-
-        registry.remove<CreateGuiMeshEntity>(e);
     }
 }

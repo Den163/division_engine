@@ -6,5 +6,5 @@
 
 namespace OnGuiMeshEntityDestroyedEventSystem
 {
-    void update(EngineState& engineState);
+    void preRender(EngineState& engineState);
 }
