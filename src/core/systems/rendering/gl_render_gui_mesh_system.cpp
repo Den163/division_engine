@@ -1,4 +1,4 @@
-#include "gl_render_gui_system.h"
+#include "gl_render_gui_mesh_system.h"
 
 #include "../../../utils/debug_utils.h"
 #include "../../../utils/engine_state_helper.h"
@@ -8,13 +8,15 @@
 #include "../../components/position.h"
 #include "../../components/rotation.h"
 #include "../../components/scale.h"
+#include "../../components/texture_2d.h"
+#include "../../components/gl_texture.h"
 
 static void applyVertexBuffer(const GlMesh& glMesh, const GuiMesh& mesh);
 void applyModelViewProjectionMatrix(const GlMesh& glMesh, const GuiMesh& mesh, const glm::mat4& mvpMatrix);
 
-void GlRenderGuiSystem::init(EngineState& engineState)
+void GlRenderGuiMeshSystem::init(EngineState& engineState)
 {
-    auto& cameraState = engineState.cameraState;
+    auto& cameraState = engineState.camera;
 
     glEnable(GL_DEBUG_OUTPUT);
     glClipControl(GL_LOWER_LEFT, GL_NEGATIVE_ONE_TO_ONE);
@@ -26,15 +28,15 @@ void GlRenderGuiSystem::init(EngineState& engineState)
     cameraState.farPlane = 100;
 }
 
-void GlRenderGuiSystem::update(EngineState& engineState)
+void GlRenderGuiMeshSystem::update(EngineState& engineState)
 {
     auto& guiRegistry = engineState.guiRegistry;
 
-    const auto& windowState = engineState.windowState;
+    const auto& windowState = engineState.window;
     const auto& projectionMatrix = glm::ortho(0.f, (float) windowState.width, 0.f, (float) windowState.height);
-    const auto& renderComponentsView = guiRegistry.view<GuiMesh, GlMesh, const Position, const Rotation, const Scale>();
 
-    for (auto&& [e, mesh, glMesh, pos, rot, scale]: renderComponentsView.each())
+    for (auto&& [e, mesh, glMesh, pos, rot, scale]:
+         guiRegistry.view<GuiMesh, GlMesh, const Position, const Rotation, const Scale>().each())
     {
         const auto vaoHandle = glMesh.vaoHandle;
         const auto& vertexVboHandle = glMesh.vertexVboHandle;

@@ -12,7 +12,7 @@
 #include "systems/rendering/gl_prepare_framebuffer_system.h"
 #include "systems/window/glfw_window_system.h"
 #include "systems/rendering/render_tick_system.h"
-#include "systems/rendering/gl_render_gui_system.h"
+#include "systems/rendering/gl_render_gui_mesh_system.h"
 #include "systems/window/glfw_vsync_system.h"
 #include "systems/loop_tick_system.h"
 #include "systems/input/win32_register_input_system.h"
@@ -43,7 +43,7 @@ static void init(EngineState& state, const EngineConfig& config)
     GlfWindowSystem::init(state, config);
     Win32WindowSystem::init(state);
     GlShaderProgramSystem::init(state, config);
-    GlRenderGuiSystem::init(state);
+    GlRenderGuiMeshSystem::init(state);
 
     config.lifecycle.init(state);
 
@@ -54,8 +54,8 @@ static void init(EngineState& state, const EngineConfig& config)
 
 static void eventLoop(EngineState& state, const EngineConfig& config)
 {
-    const auto& rendererState = state.rendererState;
-    const auto& windowState = state.windowState;
+    const auto& rendererState = state.renderer;
+    const auto& windowState = state.window;
 
     do
     {
@@ -81,7 +81,8 @@ void renderLoop(EngineState& state, const EngineConfig& engineConfig)
     OnGuiMeshEntityDestroyedEventSystem::preRender(state);
 
     GlPrepareFramebufferSystem::update(state);
-    GlRenderGuiSystem::update(state);
+    GlRenderGuiMeshSystem::update(state);
+
     GlfwVsyncSystem::update(state);
 
     engineConfig.lifecycle.postRender(state);

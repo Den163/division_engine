@@ -6,8 +6,8 @@
 
 void GlfWindowSystem::init(EngineState& engineState, const EngineConfig& engineConfig)
 {
-    auto& windowState = engineState.windowState;
-    auto& windowHandle = engineState.glfwWindowState.windowHandle;
+    auto& windowState = engineState.window;
+    auto& windowHandle = engineState.glfwWindow.windowHandle;
     const auto& windowConfig = engineConfig.window;
 
     windowState.width = windowConfig.width;
@@ -43,8 +43,8 @@ void GlfWindowSystem::init(EngineState& engineState, const EngineConfig& engineC
 
 void GlfWindowSystem::update(EngineState& engineState)
 {
-    auto& windowState = engineState.windowState;
-    auto& windowHandle = engineState.glfwWindowState.windowHandle;
+    auto& windowState = engineState.window;
+    auto& windowHandle = engineState.glfwWindow.windowHandle;
 
     glfwPollEvents();
     windowState.shouldClose = glfwWindowShouldClose(windowHandle);
@@ -53,7 +53,7 @@ void GlfWindowSystem::update(EngineState& engineState)
 
 void GlfWindowSystem::cleanup(EngineState& engineState)
 {
-    glfwDestroyWindow(engineState.glfwWindowState.windowHandle);
+    glfwDestroyWindow(engineState.glfwWindow.windowHandle);
     glfwTerminate();
 }
 

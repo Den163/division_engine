@@ -5,7 +5,7 @@
 
 void RegisterInputSystem::init(EngineState& engineState)
 {
-    auto& inputState = engineState.inputState;
+    auto& inputState = engineState.input;
 
     for (auto& key : inputState.keyboardState.keyFlags)
     {
@@ -18,10 +18,10 @@ void RegisterInputSystem::init(EngineState& engineState)
 
 void RegisterInputSystem::eventLoop(EngineState& engineState)
 {
-    auto& inputState = engineState.inputState;
+    auto& inputState = engineState.input;
     auto& keyboardState = inputState.keyboardState;
 
-    const auto& rawInputState = engineState.rawInputState;
+    const auto& rawInputState = engineState.rawInput;
     const auto& rawKeyboardState = rawInputState.keyboardState;
 
     for (size_t i = 0; i < KeysState::KEYS_COUNT; i++)
@@ -60,8 +60,8 @@ void RegisterInputSystem::eventLoop(EngineState& engineState)
 
 void RegisterInputSystem::postRender(EngineState& engineState)
 {
-    auto& inputState = engineState.inputState;
-    const auto& rawInputState = engineState.rawInputState;
+    auto& inputState = engineState.input;
+    const auto& rawInputState = engineState.rawInput;
 
     for (size_t i = 0; i < KeysState::KEYS_COUNT; i++)
     {

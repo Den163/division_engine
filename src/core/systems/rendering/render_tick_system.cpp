@@ -6,7 +6,7 @@
 
 void RenderTickSystem::init(EngineState& engineState, const EngineConfig& engineConfig)
 {
-    auto& rendererState = engineState.rendererState;
+    auto& rendererState = engineState.renderer;
     const auto& rendererConfig = engineConfig.renderer;
 
     rendererState.backgroundColor = rendererConfig.backgroundColor;
@@ -19,10 +19,10 @@ void RenderTickSystem::init(EngineState& engineState, const EngineConfig& engine
 
 void RenderTickSystem::update(EngineState& engineState)
 {
-    auto& rendererState = engineState.rendererState;
+    auto& rendererState = engineState.renderer;
     auto& updateTimeStamp = rendererState.updateTime;
 
-    const auto& loopUpdateTimestamp = engineState.loopUpdateTimestamp;
+    const auto& loopUpdateTimestamp = engineState.loopUpdate;
     const auto& deltaTimeToUpdate = std::chrono::duration<float> { 1 / rendererState.targetFps };
     const auto& now = loopUpdateTimestamp.lastUpdateTime;
     const auto& deltaTime = now - updateTimeStamp.lastUpdateTime;

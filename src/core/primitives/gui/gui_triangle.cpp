@@ -5,7 +5,11 @@ GuiTriangle GuiTriangle::create(const std::array <glm::vec3, VERTICES_COUNT>& ve
     std::array<GuiVertex, VERTICES_COUNT> vertices {};
     for (size_t i = 0; i < vertices.size(); i++)
     {
-        vertices[i] = GuiVertex { vertexPositions[i], color };
+        GuiVertex vertex;
+        vertex.color = color;
+        vertex.position = vertexPositions[i];
+
+        vertices[i] = vertex;
     }
 
     return GuiTriangle { vertices };

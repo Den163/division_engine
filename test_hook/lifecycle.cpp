@@ -14,11 +14,11 @@
 static inline void checkMeshCreateByKeyPress(EngineState& state);
 static inline void checkMeshDeleteByKeyPress(EngineState& state);
 static inline void checkPrintCameraInfoByKeyPress(EngineState& state);
-static inline glm::vec3 randomVert(float minX, float maxX, float minY, float maxY);
+static inline glm::vec3 randomPos(const glm::vec2& min, const glm::vec2& max);
 
 void Lifecycle::init(EngineState& state)
 {
-    auto& cameraState = state.cameraState;
+    auto& cameraState = state.camera;
 
     auto& tm = GuiPrimitiveFactory::makeEntityTriangle(
         state.guiRegistry,
@@ -50,26 +50,33 @@ void Lifecycle::postRenderUpdate(EngineState& state)
 
 void checkMeshCreateByKeyPress(EngineState& state)
 {
-    if (!state.inputState.keyboardState.keyHasFlag('C', InputState::KEY_STATE_PRESSED)) return;
+    if (!state.input.keyboardState.keyHasFlag('C', InputState::KEY_STATE_PRESSED)) return;
 
-    auto halfWidth = state.windowState.width * 0.5f;
-    auto halfHeight = state.windowState.height * 0.5f;
+    const auto& windowState = state.window;
     auto& mesh = GuiPrimitiveFactory::makeEntityMesh(
         state.guiRegistry,
         state.guiRegistry.create(),
         Transform::makeDefault());
 
+    const auto& minPos = glm::vec2 { 0 };
+    const auto& maxPos = glm::vec2 { windowState.width, windowState.height };
+
     mesh.renderMode = RenderMode::Triangles;
+
+    const auto& p0 = randomPos(minPos, maxPos);
+    const auto& p1 = randomPos(minPos, maxPos);
+    const auto& p2 = randomPos(minPos, maxPos);
+
     mesh.vertices = {
-        {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight), Color::blue },
-        {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight), Color::blue },
-        {randomVert(-halfWidth, halfWidth, -halfHeight, halfHeight), Color::blue },
+        {Color::blue, p0, { 0,0 } },
+        {Color::blue, p1, { 0.5f, 1 } },
+        {Color::blue, p2, { 1, 1 } },
     };
 }
 
 void checkMeshDeleteByKeyPress(EngineState& state)
 {
-    if (!state.inputState.keyboardState.keyHasFlag('D', InputState::KEY_STATE_PRESSED)) return;
+    if (!state.input.keyboardState.keyHasFlag('D', InputState::KEY_STATE_PRESSED)) return;
 
     for (auto&& [e, mesh] : state.guiRegistry.view<GuiMesh>().each())
     {
@@ -78,11 +85,11 @@ void checkMeshDeleteByKeyPress(EngineState& state)
     }
 }
 
-glm::vec3 randomVert(float minX, float maxX, float minY, float maxY)
+glm::vec3 randomPos(const glm::vec2& min, const glm::vec2& max)
 {
     std::uniform_real_distribution<float> dists[2] = {
-        std::uniform_real_distribution { minX, maxX },
-        std::uniform_real_distribution { minY, maxY },
+        std::uniform_real_distribution { min.x, max.x },
+        std::uniform_real_distribution { min.y, max.y },
     };
 
     glm::vec3 v { 0.0f };
@@ -99,13 +106,13 @@ glm::vec3 randomVert(float minX, float maxX, float minY, float maxY)
 
 void checkPrintCameraInfoByKeyPress(EngineState& state)
 {
-    const auto& cameraState = state.cameraState;
+    const auto& cameraState = state.camera;
 
-    if (state.inputState.keyPressed('P'))
+    if (state.input.keyPressed('P'))
     {
        std::cout << "Camera position        : " << cameraState.position << std::endl
                  << "Camera rotation (euler): " << glm::degrees(glm::eulerAngles(cameraState.rotation)) << std::endl
-                 << "Mouse screen position  : " << state.inputState.postRenderMousePosition << std::endl;
+                 << "Mouse screen position  : " << state.input.postRenderMousePosition << std::endl;
     }
 }
 

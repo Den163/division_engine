@@ -7,7 +7,7 @@ namespace EngineStateHelper
 {
     inline GLuint& shaderProgram(EngineState& engineState, uint32_t shaderIndex)
     {
-        return engineState.shaderStates[shaderIndex].glProgramHandle;
+        return engineState.shaders[shaderIndex].glProgramHandle;
     }
 
     inline GLuint& standardVertexShaderProgram(EngineState& engineState)
@@ -22,7 +22,7 @@ namespace EngineStateHelper
 
     inline GLuint& shaderPipeline(EngineState& engineState, uint32_t pipelineIndex)
     {
-        return engineState.shaderPipelineStates[pipelineIndex].glPipelineHandle;
+        return engineState.shaderPipelines[pipelineIndex].glPipelineHandle;
     }
 
     inline GLuint& standardShaderPipeline(EngineState& engineState)
