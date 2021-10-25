@@ -1,6 +1,6 @@
 #include "on_gui_mesh_entity_created_event_system.h"
 
-#include "../../utils/engine_state_helper.h"
+#include "../utils/engine_state_helper.h"
 #include "../components/gl_mesh.h"
 #include "../components/gui_mesh.h"
 #include "../events/gui_mesh_created.h"

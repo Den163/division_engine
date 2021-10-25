@@ -8,9 +8,9 @@
 
 #include "../src/core/components/gui_mesh.h"
 #include "../src/core/primitives/gui/gui_primitive_factory.h"
-#include "../src/utils/debug_utils.h"
-#include "../src/utils/color.h"
-#include "../src/utils/engine_state_helper.h"
+#include "../src/core/utils/debug_utils.h"
+#include "../src/core/utils/color.h"
+#include "../src/core/utils/engine_state_helper.h"
 
 static inline void checkMeshCreateByKeyPress(GlobalState& state);
 static inline void checkMeshDeleteByKeyPress(GlobalState& state);
@@ -24,7 +24,7 @@ void Lifecycle::init(GlobalState& state)
     auto& cameraState = engineState.camera;
 
     auto& tm = GuiPrimitiveFactory::makeEntityTriangle(
-        guiRegistry,
+        engineState,
         guiRegistry.create(),
         Transform::makeDefault(),
         GuiTriangle::create(
@@ -34,13 +34,13 @@ void Lifecycle::init(GlobalState& state)
 
     const auto& qe = guiRegistry.create();
     auto& qm = GuiPrimitiveFactory::makeEntityQuad(
-        guiRegistry,
+        engineState,
         qe,
         Transform::makeDefault().withPosition({400, 400, 0}),
         GuiQuad::create(300, 400, Color::yellow)
     );
-    qm.fragmentShaderIndex = EngineInvariants::STANDARD_TEXTURE_FRAGMENT_SHADER_INDEX;
-    GuiPrimitiveFactory::addTexture(guiRegistry, qe, EngineStateHelper::texture2d(engineState, 0).handle);
+    qm.fragmentShaderHandle = EngineStateHelper::standardTextureFragmentShaderProgram(engineState).programHandle;
+    GuiPrimitiveFactory::addTexture(engineState, qe, EngineStateHelper::texture2d(engineState, 0).handle);
 }
 
 void Lifecycle::preRenderUpdate(GlobalState& state)
@@ -62,7 +62,7 @@ void checkMeshCreateByKeyPress(GlobalState& state)
 
     const auto& windowState = engineState.window;
     auto& mesh = GuiPrimitiveFactory::makeEntityMesh(
-        engineState.guiRegistry,
+        engineState,
         engineState.guiRegistry.create(),
         Transform::makeDefault());
 
@@ -90,7 +90,7 @@ void checkMeshDeleteByKeyPress(GlobalState& state)
 
     for (auto&& [e, mesh] : engineState.guiRegistry.view<GuiMesh>().each())
     {
-        GuiPrimitiveFactory::deleteMeshEntity(engineState.guiRegistry, e);
+        GuiPrimitiveFactory::deleteMeshEntity(engineState, e);
         return;
     }
 }

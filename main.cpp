@@ -12,13 +12,6 @@ int main()
     rendererConfig.backgroundColor = { 0, 0, 0, 1 };
     rendererConfig.targetFps = 60;
 
-    std::vector<ShaderConfig> shaders
-    {
-        ShaderConfig { "default_gui.vert", ShaderType::Vertex },
-        ShaderConfig { "default_gui_colored.frag", ShaderType::Fragment },
-        ShaderConfig { "default_gui_texture.frag", ShaderType::Fragment }
-    };
-
     ShaderPipelineConfig pipelineConfig { 1 };
 
     std::vector<Texture2dConfig> textures
@@ -32,7 +25,6 @@ int main()
             rendererConfig,
             windowConfig,
             pipelineConfig,
-            shaders,
             textures
         },
         LifecycleConfig<GlobalState> {

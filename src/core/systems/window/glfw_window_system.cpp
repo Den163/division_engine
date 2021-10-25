@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-#include "../../../utils/debug_utils.h"
+#include "../../utils/debug_utils.h"
 
 void GlfWindowSystem::init(EngineState& engineState, const EngineConfig& engineConfig)
 {

@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <Windows.h>
 
-#include "../../../utils/math.h"
+#include "../../utils/math.h"
 #include "math.h"
 
 constexpr auto BITS_IN_BYTES = 8;

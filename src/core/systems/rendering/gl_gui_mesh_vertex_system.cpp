@@ -1,8 +1,8 @@
 #include "gl_gui_mesh_vertex_system.h"
 
-#include "../../../utils/debug_utils.h"
-#include "../../../utils/engine_state_helper.h"
-#include "../../../utils/math.h"
+#include "../../utils/debug_utils.h"
+#include "../../utils/engine_state_helper.h"
+#include "../../utils/math.h"
 #include "../../components/gui_mesh.h"
 #include "../../components/gl_mesh.h"
 #include "../../components/position.h"
@@ -42,7 +42,6 @@ void GlGuiMeshVerticesSystem::update(EngineState& engineState)
         const auto verticesSize = vertices.size();
         const auto& modelMatrix = Math::transformMatrix(pos.value, rot.value, scale.value);
         const auto& mvpMatrix = projectionMatrix * modelMatrix;
-        const auto shaderPipelineHandle = EngineStateHelper::shaderPipeline(engineState, mesh.shaderPipelineIndex);
 
         glBindVertexArray(vaoHandle);
         

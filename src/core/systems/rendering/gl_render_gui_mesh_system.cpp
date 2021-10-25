@@ -2,7 +2,7 @@
 
 #include "../../components/gl_mesh.h"
 #include "../../components/gui_mesh.h"
-#include "../../../utils/engine_state_helper.h"
+#include "../../utils/engine_state_helper.h"
 
 void GlRenderGuiMeshSystem::update(EngineState& engineState)
 {
@@ -10,18 +10,18 @@ void GlRenderGuiMeshSystem::update(EngineState& engineState)
 
     for (auto&& [e, glMesh, mesh] : registry.view<const GlMesh, const GuiMesh>().each())
     {
-        const auto shaderPipelineHandle = EngineStateHelper::shaderPipeline(engineState, mesh.shaderPipelineIndex);
+        const auto shaderPipelineHandle = mesh.shaderPipelineHandle;
 
         glBindVertexArray(glMesh.vaoHandle);
         glBindProgramPipeline(shaderPipelineHandle);
         glUseProgramStages(
             shaderPipelineHandle,
             GL_VERTEX_SHADER_BIT,
-            EngineStateHelper::shaderProgram(engineState, mesh.vertexShaderIndex));
+            mesh.vertexShaderHandle);
         glUseProgramStages(
             shaderPipelineHandle,
             GL_FRAGMENT_SHADER_BIT,
-            EngineStateHelper::shaderProgram(engineState, mesh.fragmentShaderIndex));
+            mesh.fragmentShaderHandle);
 
         glDrawArrays((GLenum) mesh.renderMode, 0, (GLsizei) mesh.vertices.size());
     }

@@ -3,15 +3,21 @@
 #include "../../components/position.h"
 #include "../../components/rotation.h"
 #include "../../components/scale.h"
-#include "../../states/gl_shader_pipeline_state.h"
+#include "../../states/shader_pipeline_state.h"
 #include "../../events/gui_mesh_created.h"
 #include "../../events/gui_mesh_destroyed.h"
 #include "../../components/gl_texture.h"
+#include "../../utils/engine_state_helper.h"
 
 GuiMesh& GuiPrimitiveFactory::makeEntityMesh(
-    entt::registry& registry, const entt::entity& entity, const Transform& transform)
+    EngineState& engineState, const entt::entity& entity, const Transform& transform)
 {
+    auto& registry = engineState.guiRegistry;
     auto& mesh = registry.emplace<GuiMesh>(entity);
+    mesh.shaderPipelineHandle = EngineStateHelper::standardShaderPipeline(engineState).handle;
+    mesh.vertexShaderHandle = EngineStateHelper::standardVertexShaderProgram(engineState).programHandle;
+    mesh.fragmentShaderHandle = EngineStateHelper::standardColorFragmentShaderProgram(engineState).programHandle;
+
     auto& newPos = registry.emplace<Position>(entity);
     auto& newRot = registry.emplace<Rotation>(entity);
     auto& newScale = registry.emplace<Scale>(entity);
@@ -26,15 +32,15 @@ GuiMesh& GuiPrimitiveFactory::makeEntityMesh(
 }
 
 
-void GuiPrimitiveFactory::deleteMeshEntity(entt::registry& registry, const entt::entity& entity)
+void GuiPrimitiveFactory::deleteMeshEntity(EngineState& engineState, const entt::entity& entity)
 {
-    registry.emplace<GuiMeshDestroyed>(entity);
+    engineState.guiRegistry.emplace<GuiMeshDestroyed>(entity);
 }
 
 GuiMesh& GuiPrimitiveFactory::makeEntityTriangle(
-    entt::registry& guiRegistry, const entt::entity& entity, const Transform& transform, const GuiTriangle& triangle)
+    EngineState& engineState, const entt::entity& entity, const Transform& transform, const GuiTriangle& triangle)
 {
-    auto& mesh = makeEntityMesh(guiRegistry, entity, transform);
+    auto& mesh = makeEntityMesh(engineState, entity, transform);
     mesh.renderMode = RenderMode::Triangles;
     mesh.vertices = std::vector<GuiVertex> { triangle.vertices.begin(), triangle.vertices.end() };
 
@@ -42,18 +48,18 @@ GuiMesh& GuiPrimitiveFactory::makeEntityTriangle(
 }
 
 GuiMesh& GuiPrimitiveFactory::makeEntityQuad(
-    entt::registry& guiRegistry, const entt::entity& entity, const Transform& transform, const GuiQuad& quad)
+    EngineState& engineState, const entt::entity& entity, const Transform& transform, const GuiQuad& quad)
 {
-    auto& mesh = makeEntityMesh(guiRegistry, entity, transform);
+    auto& mesh = makeEntityMesh(engineState, entity, transform);
     mesh.renderMode = RenderMode::TrianglesFan;
     mesh.vertices = std::vector<GuiVertex> { quad.vertices.begin(), quad.vertices.end() };
 
     return mesh;
 }
 
-void GuiPrimitiveFactory::addTexture(entt::registry& registry, const entt::entity& entity, uint32_t handle)
+void GuiPrimitiveFactory::addTexture(EngineState& engineState, const entt::entity& entity, uint32_t handle)
 {
-    auto& tex = registry.emplace<GlTexture>(entity);
+    auto& tex = engineState.guiRegistry.emplace<GlTexture>(entity);
     tex.handle = handle;
 }
 

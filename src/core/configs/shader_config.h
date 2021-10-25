@@ -12,7 +12,7 @@ enum class ShaderType
 
 struct ShaderConfig
 {
-    std::string name;
+    const char* name;
     ShaderType type;
 
     GLbitfield getTypeBit() const

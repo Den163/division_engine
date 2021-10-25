@@ -5,7 +5,8 @@
 #include "glfw_window_state.h"
 
 #include "camera_state.h"
-#include "gl_shader_pipeline_state.h"
+#include "default_shaders_state.h"
+#include "shader_pipeline_state.h"
 #include "input_state.h"
 #include "raw_input_state.h"
 #include "renderer_state.h"
@@ -26,9 +27,8 @@ struct EngineState
     UpdateTimeState loopUpdate;
     InputState input;
     RawInputState rawInput;
+    DefaultShaderState defaultShader;
 
-    std::vector<GlShaderPipelineState> shaderPipelines;
-    std::vector<GlShaderState> shaders;
     std::vector<Texture2dState> textures;
 
     entt::registry guiRegistry;

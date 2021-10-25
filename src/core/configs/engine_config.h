@@ -17,6 +17,5 @@ struct EngineConfig
     WindowConfig window;
     ShaderPipelineConfig shaderPipeline;
 
-    std::vector<ShaderConfig> shaders;
     std::vector<Texture2dConfig> textures;
 };
