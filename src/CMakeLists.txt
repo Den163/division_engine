@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(division_engine)
+project(division_engine_core)
 
 set(CMAKE_CXX_STANDARD 20)
 include(FetchContent)
@@ -38,10 +38,6 @@ set(SHADER_SOURCES
     shaders/default_gui_colored.frag
     shaders/default_gui_texture.frag
 )
-
-function(Division_AddShader)
-    list(APPEND SHADER_SOURCES ${arg1})
-endfunction()
 
 foreach(SHADER IN LISTS SHADER_SOURCES)
     set(SHADER_INPUT ${PROJECT_SOURCE_DIR}/${SHADER})
@@ -116,17 +112,19 @@ set(DIVISION_ENGINE_SOURCES
     core/configs/color_mode.h core/states/texture2d_state.h
     core/systems/rendering/gl_render_gui_mesh_system.cpp core/systems/rendering/gl_render_gui_mesh_system.h
     core/systems/rendering/gl_texture2d_system.cpp core/systems/rendering/gl_texture2d_system.h
-    core/components/gl_texture.h core/configs/default_shaders_config.h core/states/default_shaders_state.h core/utils/shader_compiler.h core/utils/shader_compiler.cpp core/utils/texture_utils.cpp core/utils/texture_utils.h)
+    core/components/gl_texture.h core/configs/default_shaders_config.h core/states/default_shaders_state.h
+    core/utils/shader_compiler.h core/utils/shader_compiler.cpp
+    core/utils/texture_utils.cpp core/utils/texture_utils.h)
 
 set(DIVISION_ENGINE_LIBS glad glfw3 glm::glm EnTT::EnTT stb_image)
 
-add_library(division_engine ${DIVISION_ENGINE_SOURCES})
-add_dependencies(division_engine shaders)
-target_link_libraries(division_engine ${DIVISION_ENGINE_LIBS})
+add_library(division_engine_core ${DIVISION_ENGINE_SOURCES})
+add_dependencies(division_engine_core shaders)
+target_link_libraries(division_engine_core ${DIVISION_ENGINE_LIBS})
 
-target_link_directories(division_engine PUBLIC ${PROJECT_SOURCE_DIR}/libs/glfw)
-target_include_directories(division_engine PUBLIC ${PROJECT_SOURCE_DIR}/libs/glfw/include)
+target_link_directories(division_engine_core PUBLIC ${PROJECT_SOURCE_DIR}/libs/glfw)
+target_include_directories(division_engine_core PUBLIC ${PROJECT_SOURCE_DIR}/libs/glfw/include)
 
-add_custom_command(TARGET division_engine PRE_BUILD
+add_custom_command(TARGET division_engine_core PRE_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
                    ${PROJECT_SOURCE_DIR}/assets ${PROJECT_BINARY_DIR}/assets)

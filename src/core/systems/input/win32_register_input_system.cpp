@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <stdexcept>
-#include <Windows.h>
 
 #include "../../utils/math.h"
 #include "math.h"

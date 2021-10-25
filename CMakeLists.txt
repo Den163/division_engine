@@ -25,9 +25,8 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(benchmark)
 
 #RUN
-
 add_executable(division_engine_run main.cpp test_hook/lifecycle.cpp test_hook/lifecycle.h test_hook/global_state.h)
-target_link_libraries(division_engine_run division_engine)
+target_link_libraries(division_engine_run division_engine_core)
 
 add_custom_command(TARGET division_engine_run PRE_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -38,11 +37,11 @@ add_custom_command(TARGET division_engine_run PRE_BUILD
 set(DIVISION_ENGINE_TESTS_SOURCES tests/colors_tests.cpp tests/test_sample.cpp)
 
 add_executable(division_engine_tests ${DIVISION_ENGINE_TESTS_SOURCES})
-target_link_libraries(division_engine_tests division_engine gtest gtest_main)
+target_link_libraries(division_engine_tests division_engine_core gtest gtest_main)
 
 #BENCHMARKS
 
 set(DIVISION_ENGINE_BENCHMARKS_SOURCES tests_benchmarks/sample_benchmark.cpp)
 
 add_executable(division_engine_benchmarks ${DIVISION_ENGINE_BENCHMARKS_SOURCES})
-target_link_libraries(division_engine_benchmarks division_engine benchmark::benchmark)
+target_link_libraries(division_engine_benchmarks division_engine_core benchmark::benchmark)
