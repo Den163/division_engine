@@ -13,6 +13,7 @@ void GlTexture2dSystem::init(EngineState& engineState, const EngineConfig& engin
 
     textureStates.resize(texturesCount);
 
+    stbi_set_flip_vertically_on_load(true);
     for (size_t i = 0; i < texturesCount; i++)
     {
         const auto& textureConfig = textureConfigs[i];
@@ -21,6 +22,7 @@ void GlTexture2dSystem::init(EngineState& engineState, const EngineConfig& engin
 
         int32_t channels;
         uint8_t* imageData = stbi_load(filePath.data(), &textureState.width, &textureState.height, &channels, 0);
+
         if (imageData == nullptr)
         {
             throw std::runtime_error { "Failed to load texture: " + filePath };
