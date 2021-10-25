@@ -21,23 +21,9 @@ int main()
 
     ShaderPipelineConfig pipelineConfig { 1 };
 
-    LifecycleConfig lifecycle
-    {
-        Lifecycle::init,
-        Lifecycle::preRenderUpdate,
-        Lifecycle::postRenderUpdate,
-        Lifecycle::cleanup
-    };
-
     std::vector<Texture2dConfig> textures
     {
         Texture2dConfig { "assets/images/img.jpg" }
-    };
-
-    struct GlobalState
-    {
-        EngineState engineState;
-        EngineConfig engineConfig;
     };
 
     GlobalState globalState {
@@ -45,10 +31,15 @@ int main()
         EngineConfig {
             rendererConfig,
             windowConfig,
-            lifecycle,
             pipelineConfig,
             shaders,
             textures
+        },
+        LifecycleConfig<GlobalState> {
+            Lifecycle::init,
+            Lifecycle::preRenderUpdate,
+            Lifecycle::postRenderUpdate,
+            Lifecycle::cleanup
         }
     };
 

@@ -84,7 +84,7 @@ add_custom_target(shaders DEPENDS ${SHADERS_OUTPUTS})
 set(DIVISION_ENGINE_SOURCES
     src/utils/debug_utils.cpp src/utils/debug_utils.h
     src/core/states/engine_state.h
-    src/core/engine_core.cpp src/core/engine_core.h
+    src/core/engine_core.h
     src/core/systems/rendering/gl_shader_program_system.cpp src/core/systems/rendering/gl_shader_program_system.h
     src/utils/file_utils.cpp src/utils/file_utils.h
     src/core/systems/window/glfw_window_system.cpp src/core/systems/window/glfw_window_system.h
@@ -147,7 +147,7 @@ add_custom_command(TARGET division_engine PRE_BUILD
 
 #RUN
 
-add_executable(division_engine_run main.cpp test_hook/lifecycle.cpp test_hook/lifecycle.h)
+add_executable(division_engine_run main.cpp test_hook/lifecycle.cpp test_hook/lifecycle.h test_hook/global_state.h)
 target_link_libraries(division_engine_run division_engine)
 
 #TESTS

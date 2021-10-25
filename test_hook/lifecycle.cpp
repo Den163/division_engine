@@ -12,55 +12,58 @@
 #include "../src/utils/color.h"
 #include "../src/utils/engine_state_helper.h"
 
-static inline void checkMeshCreateByKeyPress(EngineState& state);
-static inline void checkMeshDeleteByKeyPress(EngineState& state);
-static inline void checkPrintCameraInfoByKeyPress(EngineState& state);
+static inline void checkMeshCreateByKeyPress(GlobalState& state);
+static inline void checkMeshDeleteByKeyPress(GlobalState& state);
+static inline void checkPrintCameraInfoByKeyPress(GlobalState& state);
 static inline glm::vec3 randomPos(const glm::vec2& min, const glm::vec2& max);
 
-void Lifecycle::init(EngineState& state)
+void Lifecycle::init(GlobalState& state)
 {
-    auto& cameraState = state.camera;
-    auto& registry = state.guiRegistry;
+    auto& engineState = state.engineState;
+    auto& guiRegistry = engineState.guiRegistry;
+    auto& cameraState = engineState.camera;
 
     auto& tm = GuiPrimitiveFactory::makeEntityTriangle(
-        state.guiRegistry,
-        state.guiRegistry.create(),
+        guiRegistry,
+        guiRegistry.create(),
         Transform::makeDefault(),
         GuiTriangle::create(
             {glm::vec3 {100, 100, 0.f}, {100, 200, 0.f}, {200, 200, 0.f}},
             Color::red
         ));
 
-    const auto& qe = state.guiRegistry.create();
+    const auto& qe = guiRegistry.create();
     auto& qm = GuiPrimitiveFactory::makeEntityQuad(
-        registry,
+        guiRegistry,
         qe,
         Transform::makeDefault().withPosition({400, 400, 0}),
         GuiQuad::create(300, 400, Color::yellow)
     );
     qm.fragmentShaderIndex = EngineInvariants::STANDARD_TEXTURE_FRAGMENT_SHADER_INDEX;
-    GuiPrimitiveFactory::addTexture(registry, qe, EngineStateHelper::texture2d(state, 0).handle);
+    GuiPrimitiveFactory::addTexture(guiRegistry, qe, EngineStateHelper::texture2d(engineState, 0).handle);
 }
 
-void Lifecycle::preRenderUpdate(EngineState& state)
+void Lifecycle::preRenderUpdate(GlobalState& state)
 {
 }
 
-void Lifecycle::postRenderUpdate(EngineState& state)
+void Lifecycle::postRenderUpdate(GlobalState& state)
 {
     checkPrintCameraInfoByKeyPress(state);
     checkMeshCreateByKeyPress(state);
     checkMeshDeleteByKeyPress(state);
 }
 
-void checkMeshCreateByKeyPress(EngineState& state)
+void checkMeshCreateByKeyPress(GlobalState& state)
 {
-    if (!state.input.keyboardState.keyHasFlag('C', InputState::KEY_STATE_PRESSED)) return;
+    auto& engineState = state.engineState;
 
-    const auto& windowState = state.window;
+    if (!engineState.input.keyboardState.keyHasFlag('C', InputState::KEY_STATE_PRESSED)) return;
+
+    const auto& windowState = engineState.window;
     auto& mesh = GuiPrimitiveFactory::makeEntityMesh(
-        state.guiRegistry,
-        state.guiRegistry.create(),
+        engineState.guiRegistry,
+        engineState.guiRegistry.create(),
         Transform::makeDefault());
 
     const auto& minPos = glm::vec2 { 0 };
@@ -79,13 +82,15 @@ void checkMeshCreateByKeyPress(EngineState& state)
     };
 }
 
-void checkMeshDeleteByKeyPress(EngineState& state)
+void checkMeshDeleteByKeyPress(GlobalState& state)
 {
-    if (!state.input.keyboardState.keyHasFlag('D', InputState::KEY_STATE_PRESSED)) return;
+    auto& engineState = state.engineState;
 
-    for (auto&& [e, mesh] : state.guiRegistry.view<GuiMesh>().each())
+    if (!engineState.input.keyboardState.keyHasFlag('D', InputState::KEY_STATE_PRESSED)) return;
+
+    for (auto&& [e, mesh] : engineState.guiRegistry.view<GuiMesh>().each())
     {
-        GuiPrimitiveFactory::deleteMeshEntity(state.guiRegistry, e);
+        GuiPrimitiveFactory::deleteMeshEntity(engineState.guiRegistry, e);
         return;
     }
 }
@@ -109,19 +114,20 @@ glm::vec3 randomPos(const glm::vec2& min, const glm::vec2& max)
     return v;
 }
 
-void checkPrintCameraInfoByKeyPress(EngineState& state)
+void checkPrintCameraInfoByKeyPress(GlobalState& state)
 {
-    const auto& cameraState = state.camera;
+    auto& engineState = state.engineState;
+    const auto& cameraState = engineState.camera;
 
-    if (state.input.keyPressed('P'))
+    if (engineState.input.keyPressed('P'))
     {
        std::cout << "Camera position        : " << cameraState.position << std::endl
                  << "Camera rotation (euler): " << glm::degrees(glm::eulerAngles(cameraState.rotation)) << std::endl
-                 << "Mouse screen position  : " << state.input.postRenderMousePosition << std::endl;
+                 << "Mouse screen position  : " << engineState.input.postRenderMousePosition << std::endl;
     }
 }
 
-void Lifecycle::cleanup(EngineState& state)
+void Lifecycle::cleanup(GlobalState& state)
 {
 
 }

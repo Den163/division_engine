@@ -15,7 +15,6 @@ struct EngineConfig
 {
     RendererConfig renderer;
     WindowConfig window;
-    LifecycleConfig lifecycle;
     ShaderPipelineConfig shaderPipeline;
 
     std::vector<ShaderConfig> shaders;

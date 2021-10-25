@@ -1,5 +1,9 @@
 #pragma once
 
+#if defined(WIN32) || defined(_WIN32)
+#include <windows.h>
+#endif
+
 #include "configs/renderer_config.h"
 #include "configs/window_config.h"
 #include "configs/engine_config.h"
@@ -22,23 +26,100 @@
 
 #include <type_traits>
 
-namespace EngineCore
+class EngineCore
 {
-    namespace __Impl
+public:
+    template<typename TState>
+    static inline void run(TState& state)
     {
-        void init(EngineState& state, const EngineConfig& config);
-        void eventLoop(EngineState& state, const EngineConfig& config);
-        void cleanup(EngineState& state, const EngineConfig& config);
+        init(state);
+        eventLoop(state);
+        cleanup(state);
+    }
+
+private:
+    template<typename TState>
+    static inline void init(TState& globalState)
+    {
+        EngineState& state = globalState.engineState;
+        EngineConfig& config = globalState.engineConfig;
+        const LifecycleConfig<TState>& lifecycle = globalState.lifecycle;
+
+        Win32RegisterInputSystem::init(state);
+        RegisterInputSystem::init(state);
+        LoopTickSystem::init(state);
+        RenderTickSystem::init(state, config);
+        GlfWindowSystem::init(state, config);
+        Win32WindowSystem::init(state);
+        GlShaderProgramSystem::init(state, config);
+        GlGuiMeshVerticesSystem::init(state);
+        GlTexture2dSystem::init(state, config);
+
+        lifecycle.init(globalState);
+
+#ifdef PRINT_OPENGL_INFO
+        DebugUtils::printRendererInfo();
+#endif
     }
 
     template<typename TState>
-    void run(TState& globalState)
+    static inline void eventLoop(TState& globalState)
     {
-        auto& engineState = globalState.engineState;
-        const auto& engineConfig = globalState.engineConfig;
+        EngineState& state = globalState.engineState;
+        const EngineConfig& config = globalState.engineConfig;
+        const LifecycleConfig<TState>& lifecycle = globalState.lifecycle;
 
-        __Impl::init(engineState, engineConfig);
-        __Impl::eventLoop(engineState, engineConfig);
-        __Impl::cleanup(engineState, engineConfig);
+        const auto& rendererState = state.renderer;
+        const auto& windowState = state.window;
+
+        do
+        {
+            LoopTickSystem::update(state);
+            RenderTickSystem::update(state);
+            Win32RegisterInputSystem::update(state);
+            RegisterInputSystem::eventLoop(state);
+
+            if (rendererState.shouldUpdate)
+            {
+                renderLoop(globalState);
+            }
+
+            GlfWindowSystem::update(state);
+        }
+        while (!windowState.shouldClose);
     }
-}
+
+    template<typename TState>
+    static inline void renderLoop(TState& globalState)
+    {
+        EngineState& state = globalState.engineState;
+        const LifecycleConfig<TState>& lifecycle = globalState.lifecycle;
+
+        lifecycle.preRender(globalState);
+        OnGuiMeshEntityCreatedEventSystem::preRender(state);
+        OnGuiMeshEntityDestroyedEventSystem::preRender(state);
+
+        GlPrepareFramebufferSystem::update(state);
+        GlGuiMeshVerticesSystem::update(state);
+        GlTexture2dSystem::update(state);
+        GlRenderGuiMeshSystem::update(state);
+
+        GlfwVsyncSystem::update(state);
+
+        lifecycle.postRender(globalState);
+        RegisterInputSystem::postRender(state);
+
+        state.guiRegistry.clear<GuiMeshCreated, GuiMeshDestroyed>();
+    }
+
+    template<typename TState>
+    static inline void cleanup(TState& globalState)
+    {
+        EngineState& state = globalState.engineState;
+        const LifecycleConfig<TState>& lifecycle = globalState.lifecycle;
+
+        lifecycle.cleanup(globalState);
+        GlShaderProgramSystem::cleanup(state);
+        GlfWindowSystem::cleanup(state);
+    }
+};
