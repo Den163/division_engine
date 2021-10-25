@@ -10,6 +10,7 @@
 #include "../src/core/primitives/gui/gui_primitive_factory.h"
 #include "../src/utils/debug_utils.h"
 #include "../src/utils/color.h"
+#include "../src/core/components/texture_2d.h"
 
 static inline void checkMeshCreateByKeyPress(EngineState& state);
 static inline void checkMeshDeleteByKeyPress(EngineState& state);
@@ -19,6 +20,7 @@ static inline glm::vec3 randomPos(const glm::vec2& min, const glm::vec2& max);
 void Lifecycle::init(EngineState& state)
 {
     auto& cameraState = state.camera;
+    auto& registry = state.guiRegistry;
 
     auto& tm = GuiPrimitiveFactory::makeEntityTriangle(
         state.guiRegistry,
@@ -29,12 +31,15 @@ void Lifecycle::init(EngineState& state)
             Color::red
         ));
 
+    const auto& qe = state.guiRegistry.create();
     auto& qm = GuiPrimitiveFactory::makeEntityQuad(
-        state.guiRegistry,
-        state.guiRegistry.create(),
+        registry,
+        qe,
         Transform::makeDefault().withPosition({400, 400, 0}),
         GuiQuad::create(300, 400, Color::yellow)
     );
+    qm.fragmentShaderIndex = EngineInvariants::STANDARD_TEXTURE_FRAGMENT_SHADER_INDEX;
+    GuiPrimitiveFactory::addTexture(registry, qe, 0);
 }
 
 void Lifecycle::preRenderUpdate(EngineState& state)

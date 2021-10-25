@@ -5,5 +5,5 @@
 
 struct Texture2d
 {
-    uint32_t textureIndex;
+    uint32_t index;
 };

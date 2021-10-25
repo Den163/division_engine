@@ -12,12 +12,14 @@
 #include "systems/rendering/gl_prepare_framebuffer_system.h"
 #include "systems/window/glfw_window_system.h"
 #include "systems/rendering/render_tick_system.h"
-#include "systems/rendering/gl_render_gui_mesh_system.h"
+#include "systems/rendering/gl_gui_mesh_vertex_system.h"
 #include "systems/window/glfw_vsync_system.h"
 #include "systems/loop_tick_system.h"
 #include "systems/input/win32_register_input_system.h"
 #include "systems/input/register_input_system.h"
 #include "systems/window/win32_window_system.h"
+#include "systems/rendering/gl_render_gui_mesh_system.h"
+#include "systems/rendering/gl_texture2d_system.h"
 
 static inline void init(EngineState& state, const EngineConfig& config);
 static inline void eventLoop(EngineState& state, const EngineConfig& config);
@@ -43,7 +45,8 @@ static void init(EngineState& state, const EngineConfig& config)
     GlfWindowSystem::init(state, config);
     Win32WindowSystem::init(state);
     GlShaderProgramSystem::init(state, config);
-    GlRenderGuiMeshSystem::init(state);
+    GlGuiMeshVerticesSystem::init(state);
+    GlTexture2dSystem::init(state, config);
 
     config.lifecycle.init(state);
 
@@ -81,6 +84,7 @@ void renderLoop(EngineState& state, const EngineConfig& engineConfig)
     OnGuiMeshEntityDestroyedEventSystem::preRender(state);
 
     GlPrepareFramebufferSystem::update(state);
+    GlGuiMeshVerticesSystem::update(state);
     GlRenderGuiMeshSystem::update(state);
 
     GlfwVsyncSystem::update(state);

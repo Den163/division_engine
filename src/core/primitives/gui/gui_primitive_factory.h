@@ -7,6 +7,7 @@
 #include <tuple>
 
 #include "../../components/gui_mesh.h"
+#include "../../components/texture_2d.h"
 #include "gui_triangle.h"
 #include "gui_quad.h"
 
@@ -25,5 +26,7 @@ namespace GuiPrimitiveFactory
 
     GuiMesh& makeEntityQuad(
         entt::registry& guiRegistry, const entt::entity& entity, const Transform& transform, const GuiQuad& quad);
+
+    Texture2d& addTexture(entt::registry& registry, const entt::entity& entity, uint32_t textureIndex);
 
 }

@@ -50,3 +50,11 @@ GuiMesh& GuiPrimitiveFactory::makeEntityQuad(
 
     return mesh;
 }
+
+Texture2d& GuiPrimitiveFactory::addTexture(entt::registry& registry, const entt::entity& entity, uint32_t textureIndex)
+{
+    auto& tex = registry.emplace<Texture2d>(entity);
+    tex.index = textureIndex;
+    return tex;
+}
+

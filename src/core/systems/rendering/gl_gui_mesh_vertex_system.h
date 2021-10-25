@@ -2,7 +2,8 @@
 
 #include "../../states/engine_state.h"
 
-namespace GlRenderGuiMeshSystem
+namespace GlGuiMeshVerticesSystem
 {
+    void init(EngineState& engineState);
     void update(EngineState& engineState);
 }

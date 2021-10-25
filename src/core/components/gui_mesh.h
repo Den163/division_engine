@@ -13,7 +13,7 @@ struct GuiMesh
     RenderMode renderMode;
     uint32_t shaderPipelineIndex = EngineInvariants::STANDARD_SHADER_PIPELINE_INDEX;
     uint32_t vertexShaderIndex = EngineInvariants::STANDARD_VERTEX_SHADER_INDEX;
-    uint32_t fragmentShaderIndex = EngineInvariants::STANDARD_FRAGMENT_SHADER_INDEX;
+    uint32_t fragmentShaderIndex = EngineInvariants::STANDARD_COLORED_FRAGMENT_SHADER_INDEX;
 
     std::vector<GuiVertex> vertices;
 };

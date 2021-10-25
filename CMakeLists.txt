@@ -40,7 +40,7 @@ FetchContent_MakeAvailable(EnTT)
 include_directories(${CMAKE_SOURCE_DIR}/libs/glad/include)
 include_directories(${CMAKE_SOURCE_DIR}/libs/glfw/include)
 link_directories(${CMAKE_SOURCE_DIR}/libs/glfw)
-include_directories(${CMAKE_SOURCE_DIR}/libs/stb_image/stb_image.h)
+include_directories(${CMAKE_SOURCE_DIR}/libs/stb_image)
 
 add_library(glad libs/glad/src/gl.c)
 
@@ -56,7 +56,8 @@ endif()
 
 set(SHADER_SOURCES
     shaders/default_gui.vert
-    shaders/default_gui.frag
+    shaders/default_gui_colored.frag
+    shaders/default_gui_texture.frag
 )
 
 foreach(SHADER IN LISTS SHADER_SOURCES)
@@ -87,7 +88,7 @@ set(DIVISION_ENGINE_SOURCES
     src/core/systems/rendering/gl_shader_program_system.cpp src/core/systems/rendering/gl_shader_program_system.h
     src/utils/file_utils.cpp src/utils/file_utils.h
     src/core/systems/window/glfw_window_system.cpp src/core/systems/window/glfw_window_system.h
-    src/core/systems/rendering/gl_render_gui_mesh_system.cpp src/core/systems/rendering/gl_render_gui_mesh_system.h
+    src/core/systems/rendering/gl_gui_mesh_vertex_system.cpp src/core/systems/rendering/gl_gui_mesh_vertex_system.h
     src/core/states/gl_shader_pipeline_state.h
     src/core/states/glfw_window_state.h
     src/core/states/window_state.h
@@ -128,15 +129,20 @@ set(DIVISION_ENGINE_SOURCES
     src/core/systems/rendering/gl_prepare_framebuffer_system.cpp
     src/core/systems/rendering/gl_prepare_framebuffer_system.h
     src/core/configs/shader_pipeline_config.h src/core/states/gl_shader_state.h src/utils/engine_state_helper.h
-    src/utils/engine_invariants.h src/core/components/gl_texture.h src/core/components/texture_2d.h
+    src/utils/engine_invariants.h src/core/components/texture_2d.h
     src/core/configs/color_mode.h src/core/states/texture2d_state.h src/core/configs/texture2d_config.h
-    )
+    src/core/systems/rendering/gl_render_gui_mesh_system.cpp src/core/systems/rendering/gl_render_gui_mesh_system.h
+    src/core/systems/rendering/gl_texture2d_system.cpp src/core/systems/rendering/gl_texture2d_system.h)
 
 set(DIVISION_ENGINE_LIBS glad glfw3 glm::glm EnTT::EnTT stb_image)
 
 add_library(division_engine ${DIVISION_ENGINE_SOURCES})
 add_dependencies(division_engine shaders)
 target_link_libraries(division_engine ${DIVISION_ENGINE_LIBS})
+
+add_custom_command(TARGET division_engine PRE_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                   ${CMAKE_SOURCE_DIR}/assets ${CMAKE_BINARY_DIR}/assets)
 
 #RUN
 
