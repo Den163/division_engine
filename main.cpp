@@ -34,14 +34,25 @@ int main()
         Texture2dConfig { "assets/images/img.jpg" }
     };
 
-    EngineCore::run(EngineConfig {
-        rendererConfig,
-        windowConfig,
-        lifecycle,
-        pipelineConfig,
-        shaders,
-        textures
-    });
+    struct GlobalState
+    {
+        EngineState engineState;
+        EngineConfig engineConfig;
+    };
+
+    GlobalState globalState {
+        EngineState {},
+        EngineConfig {
+            rendererConfig,
+            windowConfig,
+            lifecycle,
+            pipelineConfig,
+            shaders,
+            textures
+        }
+    };
+
+    EngineCore::run(globalState);
 
     return 0;
 }
