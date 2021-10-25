@@ -12,20 +12,11 @@ int main()
     rendererConfig.backgroundColor = { 0, 0, 0, 1 };
     rendererConfig.targetFps = 60;
 
-    ShaderPipelineConfig pipelineConfig { 1 };
-
-    std::vector<Texture2dConfig> textures
-    {
-        Texture2dConfig { "assets/images/img.jpg" }
-    };
-
     GlobalState globalState {
         EngineState {},
         EngineConfig {
             rendererConfig,
             windowConfig,
-            pipelineConfig,
-            textures
         },
         LifecycleConfig<GlobalState> {
             Lifecycle::init,

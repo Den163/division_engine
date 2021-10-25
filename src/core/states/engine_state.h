@@ -29,7 +29,5 @@ struct EngineState
     RawInputState rawInput;
     DefaultShaderState defaultShader;
 
-    std::vector<Texture2dState> textures;
-
     entt::registry guiRegistry;
 };

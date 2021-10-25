@@ -3,8 +3,7 @@
 #include "../../configs/engine_config.h"
 #include "../../states/engine_state.h"
 
-namespace GlTexture2dSystem
+namespace GlTextureSystem
 {
-    void init(EngineState& engineState, const EngineConfig& engineConfig);
     void update(EngineState& engineState);
 }

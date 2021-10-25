@@ -53,7 +53,6 @@ private:
         Win32WindowSystem::init(state);
         GlShaderProgramSystem::init(state, config);
         GlGuiMeshVerticesSystem::init(state);
-        GlTexture2dSystem::init(state, config);
 
         lifecycle.init(globalState);
 
@@ -101,7 +100,7 @@ private:
 
         GlPrepareFramebufferSystem::update(state);
         GlGuiMeshVerticesSystem::update(state);
-        GlTexture2dSystem::update(state);
+        GlTextureSystem::update(state);
         GlRenderGuiMeshSystem::update(state);
 
         GlfwVsyncSystem::update(state);

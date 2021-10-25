@@ -24,9 +24,4 @@ namespace EngineStateHelper
     {
         return engineState.defaultShader.pipeline;
     }
-
-    inline Texture2dState& texture2d(EngineState& engineState, uint32_t textureIndex)
-    {
-        return engineState.textures[textureIndex];
-    }
 }
