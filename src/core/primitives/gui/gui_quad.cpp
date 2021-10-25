@@ -17,8 +17,17 @@ GuiQuad GuiQuad::create(const std::array<glm::vec3, VERTICES_COUNT>& vertexPosit
     std::array<GuiVertex, VERTICES_COUNT> vertices {};
     for (size_t i = 0; i < vertices.size(); i++)
     {
-        vertices[i] = GuiVertex { vertexPositions[i], color };
+        GuiVertex vertex;
+        vertex.position = vertexPositions[i];
+        vertex.color = color;
+
+        vertices[i] = vertex;
     }
+
+    vertices[0].uv = {0,0};
+    vertices[1].uv = {0,1};
+    vertices[2].uv = {1,1};
+    vertices[3].uv = {1,0};
 
     return GuiQuad { vertices };
 }

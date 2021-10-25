@@ -1,7 +1,5 @@
 #include "debug_utils.h"
 
-#include <glad/gl.h>
-
 void DebugUtils::windowErrorCallback(int error, const char* description)
 {
     std::cerr << "Error with code: " << error << "\nDescription: " << description << std::endl;

@@ -1,13 +1,13 @@
 #include "on_gui_mesh_entity_destroyed_event_system.h"
 
 #include "../components/gl_mesh.h"
-#include "../events/destroy_gui_mesh_entity.h"
+#include "../events/gui_mesh_destroyed.h"
 
-void OnGuiMeshEntityDestroyedEventSystem::update(EngineState& engineState)
+void OnGuiMeshEntityDestroyedEventSystem::preRender(EngineState& engineState)
 {
     auto& registry = engineState.guiRegistry;
 
-    for (auto&& [e, glMesh] : registry.view<const GlMesh, const DestroyGuiMeshEntity>().each())
+    for (auto&& [e, glMesh] : registry.view<const GlMesh, const GuiMeshDestroyed>().each())
     {
         glBindVertexArray(glMesh.vaoHandle);
         glDeleteBuffers(1, &glMesh.vertexVboHandle);

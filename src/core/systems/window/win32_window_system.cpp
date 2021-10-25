@@ -5,5 +5,5 @@
 
 void Win32WindowSystem::init(EngineState& engineState)
 {
-    engineState.win32State.windowHandle = glfwGetWin32Window(engineState.glfwWindowState.windowHandle);
+    engineState.win32.windowHandle = glfwGetWin32Window(engineState.glfwWindow.windowHandle);
 }

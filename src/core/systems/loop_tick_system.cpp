@@ -2,7 +2,7 @@
 
 void LoopTickSystem::init(EngineState& engineState)
 {
-    auto& loopUpdateTimestamp = engineState.loopUpdateTimestamp;
+    auto& loopUpdateTimestamp = engineState.loopUpdate;
 
     loopUpdateTimestamp.lastUpdateTime = std::chrono::steady_clock::now();
     loopUpdateTimestamp.deltaTime = std::chrono::duration<float> { 0 };
@@ -10,7 +10,7 @@ void LoopTickSystem::init(EngineState& engineState)
 
 void LoopTickSystem::update(EngineState& engineState)
 {
-    auto& loopUpdateTimestamp = engineState.loopUpdateTimestamp;
+    auto& loopUpdateTimestamp = engineState.loopUpdate;
     const auto& now = std::chrono::steady_clock::now();
 
     loopUpdateTimestamp.deltaTime = now - loopUpdateTimestamp.lastUpdateTime;

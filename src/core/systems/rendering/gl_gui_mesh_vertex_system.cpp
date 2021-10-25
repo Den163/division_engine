@@ -1,4 +1,4 @@
-#include "gl_render_gui_system.h"
+#include "gl_gui_mesh_vertex_system.h"
 
 #include "../../../utils/debug_utils.h"
 #include "../../../utils/engine_state_helper.h"
@@ -12,9 +12,9 @@
 static void applyVertexBuffer(const GlMesh& glMesh, const GuiMesh& mesh);
 void applyModelViewProjectionMatrix(const GlMesh& glMesh, const GuiMesh& mesh, const glm::mat4& mvpMatrix);
 
-void GlRenderGuiSystem::init(EngineState& engineState)
+void GlGuiMeshVerticesSystem::init(EngineState& engineState)
 {
-    auto& cameraState = engineState.cameraState;
+    auto& cameraState = engineState.camera;
 
     glEnable(GL_DEBUG_OUTPUT);
     glClipControl(GL_LOWER_LEFT, GL_NEGATIVE_ONE_TO_ONE);
@@ -26,15 +26,15 @@ void GlRenderGuiSystem::init(EngineState& engineState)
     cameraState.farPlane = 100;
 }
 
-void GlRenderGuiSystem::update(EngineState& engineState)
+void GlGuiMeshVerticesSystem::update(EngineState& engineState)
 {
     auto& guiRegistry = engineState.guiRegistry;
 
-    const auto& windowState = engineState.windowState;
+    const auto& windowState = engineState.window;
     const auto& projectionMatrix = glm::ortho(0.f, (float) windowState.width, 0.f, (float) windowState.height);
-    const auto& renderComponentsView = guiRegistry.view<GuiMesh, GlMesh, const Position, const Rotation, const Scale>();
 
-    for (auto&& [e, mesh, glMesh, pos, rot, scale]: renderComponentsView.each())
+    for (auto&& [e, mesh, glMesh, pos, rot, scale]:
+         guiRegistry.view<GuiMesh, GlMesh, const Position, const Rotation, const Scale>().each())
     {
         const auto vaoHandle = glMesh.vaoHandle;
         const auto& vertexVboHandle = glMesh.vertexVboHandle;
@@ -44,23 +44,10 @@ void GlRenderGuiSystem::update(EngineState& engineState)
         const auto& mvpMatrix = projectionMatrix * modelMatrix;
         const auto shaderPipelineHandle = EngineStateHelper::shaderPipeline(engineState, mesh.shaderPipelineIndex);
 
-        glBindProgramPipeline(shaderPipelineHandle);
-        glUseProgramStages(
-            shaderPipelineHandle,
-            GL_VERTEX_SHADER_BIT,
-            EngineStateHelper::shaderProgram(engineState, mesh.vertexShaderIndex));
-
         glBindVertexArray(vaoHandle);
         
         applyVertexBuffer(glMesh, mesh);
         applyModelViewProjectionMatrix(glMesh, mesh, mvpMatrix);
-
-        glUseProgramStages(
-            shaderPipelineHandle,
-            GL_FRAGMENT_SHADER_BIT,
-            EngineStateHelper::shaderProgram(engineState, mesh.fragmentShaderIndex));
-
-        glDrawArrays((GLenum) mesh.renderMode, 0, (GLsizei) mesh.vertices.size());
     }
 }
 
@@ -92,7 +79,7 @@ void applyVertexBuffer(const GlMesh& glMesh, const GuiMesh& mesh)
         GL_FLOAT,
         GL_FALSE,
         sizeof(GuiVertex),
-        (void*) offsetof(GuiVertex, position));
+        reinterpret_cast<void*>(offsetof(GuiVertex, position)));
 
     glEnableVertexAttribArray(EngineInvariants::VERTEX_COLOR_ATTRIBUTE_LOCATION);
     glVertexAttribPointer(
@@ -101,7 +88,16 @@ void applyVertexBuffer(const GlMesh& glMesh, const GuiMesh& mesh)
         GL_FLOAT,
         GL_FALSE,
         sizeof(GuiVertex),
-        (void*) offsetof(GuiVertex, color));
+        reinterpret_cast<void*>(offsetof(GuiVertex, color)));
+
+    glEnableVertexAttribArray(EngineInvariants::VERTEX_UV_ATTRIBUTE_LOCATION);
+    glVertexAttribPointer(
+        EngineInvariants::VERTEX_UV_ATTRIBUTE_LOCATION,
+        glm::vec2::length(),
+        GL_FLOAT,
+        GL_FALSE,
+        sizeof(GuiVertex),
+        reinterpret_cast<void*>(offsetof(GuiVertex, uv)));
 }
 
 void applyModelViewProjectionMatrix(const GlMesh& glMesh, const GuiMesh& mesh, const glm::mat4& mvpMatrix)

@@ -26,4 +26,6 @@ namespace GuiPrimitiveFactory
     GuiMesh& makeEntityQuad(
         entt::registry& guiRegistry, const entt::entity& entity, const Transform& transform, const GuiQuad& quad);
 
+    void addTexture(entt::registry& registry, const entt::entity& entity, uint32_t textureIndex);
+
 }

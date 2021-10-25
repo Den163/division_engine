@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(division_engine)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 include(FetchContent)
 
 #LIBS
@@ -15,6 +15,13 @@ FetchContent_Declare(
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
+
+FetchContent_Declare(
+        benchmark
+        GIT_REPOSITORY https://github.com/google/benchmark.git
+        GIT_TAG v1.6.0
+)
+FetchContent_MakeAvailable(benchmark)
 
 FetchContent_Declare(
         glm
@@ -33,8 +40,11 @@ FetchContent_MakeAvailable(EnTT)
 include_directories(${CMAKE_SOURCE_DIR}/libs/glad/include)
 include_directories(${CMAKE_SOURCE_DIR}/libs/glfw/include)
 link_directories(${CMAKE_SOURCE_DIR}/libs/glfw)
+include_directories(${CMAKE_SOURCE_DIR}/libs/stb_image)
 
 add_library(glad libs/glad/src/gl.c)
+
+add_library(stb_image libs/stb_image/stb_image.h libs/stb_image/stb_image.h.cpp)
 
 #SHADERS
 
@@ -46,7 +56,8 @@ endif()
 
 set(SHADER_SOURCES
     shaders/default_gui.vert
-    shaders/default_gui.frag
+    shaders/default_gui_colored.frag
+    shaders/default_gui_texture.frag
 )
 
 foreach(SHADER IN LISTS SHADER_SOURCES)
@@ -57,10 +68,10 @@ foreach(SHADER IN LISTS SHADER_SOURCES)
     file(MAKE_DIRECTORY ${SHADER_OUTPUT_DIR})
 
     add_custom_command(
-            OUTPUT ${SHADER_OUTPUT}
-            COMMAND $ENV{GLSL_LANG_VALIDATOR_COMP}/glslangValidator.exe -G100 -e main ${SHADER_INPUT} -o ${SHADER_OUTPUT}
-            DEPENDS ${SHADER_INPUT}
-            VERBATIM
+        OUTPUT ${SHADER_OUTPUT}
+        COMMAND $ENV{GLSL_LANG_VALIDATOR_COMP}/glslangValidator.exe -G100 -e main ${SHADER_INPUT} -o ${SHADER_OUTPUT}
+        DEPENDS ${SHADER_INPUT}
+        VERBATIM
     )
 
     list(APPEND SHADERS_OUTPUTS ${SHADER_OUTPUT})
@@ -77,7 +88,7 @@ set(DIVISION_ENGINE_SOURCES
     src/core/systems/rendering/gl_shader_program_system.cpp src/core/systems/rendering/gl_shader_program_system.h
     src/utils/file_utils.cpp src/utils/file_utils.h
     src/core/systems/window/glfw_window_system.cpp src/core/systems/window/glfw_window_system.h
-    src/core/systems/rendering/gl_render_gui_system.cpp src/core/systems/rendering/gl_render_gui_system.h
+    src/core/systems/rendering/gl_gui_mesh_vertex_system.cpp src/core/systems/rendering/gl_gui_mesh_vertex_system.h
     src/core/states/gl_shader_pipeline_state.h
     src/core/states/glfw_window_state.h
     src/core/states/window_state.h
@@ -110,19 +121,29 @@ set(DIVISION_ENGINE_SOURCES
     src/core/primitives/gui/gui_quad.h src/core/primitives/gui/gui_quad.cpp
     src/core/configs/engine_config.h src/core/configs/shader_config.h src/core/configs/lifecycle_config.h
     src/utils/memory.h src/utils/gl_utils.h
-    src/core/events/create_gui_mesh_entity.h src/core/events/destroy_gui_mesh_entity.h
+    src/core/events/gui_mesh_created.h src/core/events/gui_mesh_destroyed.h
     src/core/event_systems/on_gui_mesh_entity_created_event_system.cpp
     src/core/event_systems/on_gui_mesh_entity_created_event_system.h
     src/core/event_systems/on_gui_mesh_entity_destroyed_event_system.cpp
     src/core/event_systems/on_gui_mesh_entity_destroyed_event_system.h
     src/core/systems/rendering/gl_prepare_framebuffer_system.cpp
-    src/core/systems/rendering/gl_prepare_framebuffer_system.h src/core/configs/shader_pipeline_config.h src/core/states/gl_shader_state.h src/utils/engine_state_helper.h src/utils/engine_invariants.h)
+    src/core/systems/rendering/gl_prepare_framebuffer_system.h
+    src/core/configs/shader_pipeline_config.h src/core/states/gl_shader_state.h src/utils/engine_state_helper.h
+    src/utils/engine_invariants.h
+    src/core/configs/color_mode.h src/core/states/texture2d_state.h src/core/configs/texture2d_config.h
+    src/core/systems/rendering/gl_render_gui_mesh_system.cpp src/core/systems/rendering/gl_render_gui_mesh_system.h
+    src/core/systems/rendering/gl_texture2d_system.cpp src/core/systems/rendering/gl_texture2d_system.h
+    src/core/components/gl_texture.h)
 
-set(DIVISION_ENGINE_LIBS glad glfw3 glm::glm EnTT::EnTT)
+set(DIVISION_ENGINE_LIBS glad glfw3 glm::glm EnTT::EnTT stb_image)
 
 add_library(division_engine ${DIVISION_ENGINE_SOURCES})
 add_dependencies(division_engine shaders)
 target_link_libraries(division_engine ${DIVISION_ENGINE_LIBS})
+
+add_custom_command(TARGET division_engine PRE_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                   ${CMAKE_SOURCE_DIR}/assets ${CMAKE_BINARY_DIR}/assets)
 
 #RUN
 
@@ -134,4 +155,11 @@ target_link_libraries(division_engine_run division_engine)
 set(DIVISION_ENGINE_TESTS_SOURCES tests/colors_tests.cpp tests/test_sample.cpp)
 
 add_executable(division_engine_tests ${DIVISION_ENGINE_TESTS_SOURCES})
-target_link_libraries(division_engine_tests division_engine gtest gtest_main ${DIVISION_ENGINE_LIBS})
+target_link_libraries(division_engine_tests division_engine gtest gtest_main)
+
+#BENCHMARKS
+
+set(DIVISION_ENGINE_BENCHMARKS_SOURCES tests_benchmarks/sample_benchmark.cpp)
+
+add_executable(division_engine_benchmarks ${DIVISION_ENGINE_BENCHMARKS_SOURCES})
+target_link_libraries(division_engine_benchmarks division_engine benchmark::benchmark)

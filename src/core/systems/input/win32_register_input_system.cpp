@@ -12,7 +12,7 @@ constexpr uint8_t WIN32_KEY_PRESSED_MASK = 1 << (sizeof(BYTE) * BITS_IN_BYTES - 
 
 void Win32RegisterInputSystem::init(EngineState& engineState)
 {
-    auto& rawInputState = engineState.rawInputState;
+    auto& rawInputState = engineState.rawInput;
 
     for (auto& keyFlag : rawInputState.keyboardState.keyFlags)
     {
@@ -24,8 +24,8 @@ void Win32RegisterInputSystem::init(EngineState& engineState)
 
 void Win32RegisterInputSystem::update(EngineState& engineState)
 {
-    auto& rawInputState = engineState.rawInputState;
-    const auto& win32State = engineState.win32State;
+    auto& rawInputState = engineState.rawInput;
+    const auto& win32State = engineState.win32;
 
     BYTE winKeyboardState[KeysState::KEYS_COUNT];
     if (!GetKeyboardState(winKeyboardState))

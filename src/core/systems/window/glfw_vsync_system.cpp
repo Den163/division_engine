@@ -2,6 +2,6 @@
 
 void GlfwVsyncSystem::update(EngineState& engineState)
 {
-    glfwSwapBuffers(engineState.glfwWindowState.windowHandle);
+    glfwSwapBuffers(engineState.glfwWindow.windowHandle);
 }
 

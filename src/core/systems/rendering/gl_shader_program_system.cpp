@@ -26,9 +26,9 @@ void GlShaderProgramSystem::init(EngineState& engineState, const EngineConfig& e
         throw std::runtime_error { "Can't run engine, because shaders or shader pipelines are not configured" };
     }
 
-    engineState.shaderStates = makeShaders(engineConfig.shaders);
-    engineState.shaderPipelineStates = makeShaderPipelines(
-        engineConfig.shaderPipeline, engineConfig.shaders, engineState.shaderStates);
+    engineState.shaders = makeShaders(engineConfig.shaders);
+    engineState.shaderPipelines = makeShaderPipelines(
+        engineConfig.shaderPipeline, engineConfig.shaders, engineState.shaders);
 }
 
 std::vector<GlShaderState> makeShaders(const std::vector<ShaderConfig>& shaderConfigs)
@@ -134,12 +134,12 @@ std::vector<GlShaderPipelineState> makeShaderPipelines(
 
 void GlShaderProgramSystem::cleanup(EngineState& engineState)
 {
-    for (const auto& pipelineState: engineState.shaderPipelineStates)
+    for (const auto& pipelineState: engineState.shaderPipelines)
     {
         glDeleteProgramPipelines(1, &pipelineState.glPipelineHandle);
     }
 
-    for (const auto& shaderState: engineState.shaderStates)
+    for (const auto& shaderState: engineState.shaders)
     {
         glDeleteProgram(shaderState.glProgramHandle);
     }

@@ -15,7 +15,8 @@ int main()
     std::vector<ShaderConfig> shaders
     {
         ShaderConfig { "default_gui.vert", ShaderType::Vertex },
-        ShaderConfig { "default_gui.frag", ShaderType::Fragment }
+        ShaderConfig { "default_gui_colored.frag", ShaderType::Fragment },
+        ShaderConfig { "default_gui_texture.frag", ShaderType::Fragment }
     };
 
     ShaderPipelineConfig pipelineConfig { 1 };
@@ -28,12 +29,18 @@ int main()
         Lifecycle::cleanup
     };
 
+    std::vector<Texture2dConfig> textures
+    {
+        Texture2dConfig { "assets/images/img.jpg" }
+    };
+
     EngineCore::run(EngineConfig {
         rendererConfig,
         windowConfig,
         lifecycle,
         pipelineConfig,
         shaders,
+        textures
     });
 
     return 0;
