@@ -4,7 +4,7 @@
 Just some personal researches with try to minimize an OOP complexity and performance penalties 
 without readability and maintainability overheads.
 
-###TODO:
+### TODO:
 - Text rendering
 - Division Composer for better UI creation experience
 - Data oriented GUI tools
