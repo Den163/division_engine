@@ -6,7 +6,7 @@
 #include "../../states/gl_shader_pipeline_state.h"
 #include "../../events/gui_mesh_created.h"
 #include "../../events/gui_mesh_destroyed.h"
-
+#include "../../components/gl_texture.h"
 
 GuiMesh& GuiPrimitiveFactory::makeEntityMesh(
     entt::registry& registry, const entt::entity& entity, const Transform& transform)
@@ -51,10 +51,9 @@ GuiMesh& GuiPrimitiveFactory::makeEntityQuad(
     return mesh;
 }
 
-Texture2d& GuiPrimitiveFactory::addTexture(entt::registry& registry, const entt::entity& entity, uint32_t textureIndex)
+void GuiPrimitiveFactory::addTexture(entt::registry& registry, const entt::entity& entity, uint32_t handle)
 {
-    auto& tex = registry.emplace<Texture2d>(entity);
-    tex.index = textureIndex;
-    return tex;
+    auto& tex = registry.emplace<GlTexture>(entity);
+    tex.handle = handle;
 }
 

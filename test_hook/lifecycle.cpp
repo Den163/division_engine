@@ -10,7 +10,7 @@
 #include "../src/core/primitives/gui/gui_primitive_factory.h"
 #include "../src/utils/debug_utils.h"
 #include "../src/utils/color.h"
-#include "../src/core/components/texture_2d.h"
+#include "../src/utils/engine_state_helper.h"
 
 static inline void checkMeshCreateByKeyPress(EngineState& state);
 static inline void checkMeshDeleteByKeyPress(EngineState& state);
@@ -39,7 +39,7 @@ void Lifecycle::init(EngineState& state)
         GuiQuad::create(300, 400, Color::yellow)
     );
     qm.fragmentShaderIndex = EngineInvariants::STANDARD_TEXTURE_FRAGMENT_SHADER_INDEX;
-    GuiPrimitiveFactory::addTexture(registry, qe, 0);
+    GuiPrimitiveFactory::addTexture(registry, qe, EngineStateHelper::texture2d(state, 0).handle);
 }
 
 void Lifecycle::preRenderUpdate(EngineState& state)

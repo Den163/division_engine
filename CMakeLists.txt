@@ -129,10 +129,11 @@ set(DIVISION_ENGINE_SOURCES
     src/core/systems/rendering/gl_prepare_framebuffer_system.cpp
     src/core/systems/rendering/gl_prepare_framebuffer_system.h
     src/core/configs/shader_pipeline_config.h src/core/states/gl_shader_state.h src/utils/engine_state_helper.h
-    src/utils/engine_invariants.h src/core/components/texture_2d.h
+    src/utils/engine_invariants.h
     src/core/configs/color_mode.h src/core/states/texture2d_state.h src/core/configs/texture2d_config.h
     src/core/systems/rendering/gl_render_gui_mesh_system.cpp src/core/systems/rendering/gl_render_gui_mesh_system.h
-    src/core/systems/rendering/gl_texture2d_system.cpp src/core/systems/rendering/gl_texture2d_system.h)
+    src/core/systems/rendering/gl_texture2d_system.cpp src/core/systems/rendering/gl_texture2d_system.h
+    src/core/components/gl_texture.h)
 
 set(DIVISION_ENGINE_LIBS glad glfw3 glm::glm EnTT::EnTT stb_image)
 

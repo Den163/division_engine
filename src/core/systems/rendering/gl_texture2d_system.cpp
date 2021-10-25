@@ -1,7 +1,9 @@
 #include "gl_texture2d_system.h"
-#include "../../components/texture_2d.h"
 
 #include <stb_image.h>
+
+#include "../../components/gl_mesh.h"
+#include "../../components/gl_texture.h"
 
 static inline ColorMode getColorMode(int channels);
 
@@ -52,3 +54,13 @@ ColorMode getColorMode(int channels)
     }
 }
 
+
+void GlTexture2dSystem::update(EngineState& engineState)
+{
+    auto& registry = engineState.guiRegistry;
+    for (auto&& [e, glMesh, texture] : registry.view<const GlMesh, const GlTexture>().each())
+    {
+        glBindVertexArray(glMesh.vaoHandle);
+        glBindTexture(GL_TEXTURE_2D, texture.handle);
+    }
+}

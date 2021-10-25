@@ -85,6 +85,7 @@ void renderLoop(EngineState& state, const EngineConfig& engineConfig)
 
     GlPrepareFramebufferSystem::update(state);
     GlGuiMeshVerticesSystem::update(state);
+    GlTexture2dSystem::update(state);
     GlRenderGuiMeshSystem::update(state);
 
     GlfwVsyncSystem::update(state);

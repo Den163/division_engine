@@ -6,4 +6,5 @@
 namespace GlTexture2dSystem
 {
     void init(EngineState& engineState, const EngineConfig& engineConfig);
+    void update(EngineState& engineState);
 }
