@@ -21,7 +21,7 @@
 #include "systems/input/win32_register_input_system.h"
 #include "systems/input/register_input_system.h"
 #include "systems/window/win32_window_system.h"
-#include "systems/rendering/gl_render_gui_mesh_system.h"
+#include "systems/rendering/gl_gui_mesh_render_system.h"
 #include "systems/rendering/gl_texture2d_system.h"
 
 #include <type_traits>
@@ -52,7 +52,6 @@ private:
         GlfWindowSystem::init(state, config);
         Win32WindowSystem::init(state);
         GlShaderProgramSystem::init(state, config);
-        GlGuiMeshVerticesSystem::init(state);
 
         lifecycle.init(globalState);
 

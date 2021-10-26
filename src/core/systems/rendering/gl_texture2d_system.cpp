@@ -2,6 +2,7 @@
 
 #include "../../components/gl_mesh.h"
 #include "../../components/gl_texture.h"
+#include "../../utils/engine_invariants.h"
 
 void GlTextureSystem::update(EngineState& engineState)
 {
@@ -10,5 +11,6 @@ void GlTextureSystem::update(EngineState& engineState)
     {
         glBindVertexArray(glMesh.vaoHandle);
         glBindTexture(GL_TEXTURE_2D, texture.handle);
+        glBindTextureUnit(EngineInvariants::DEFAULT_TEXTURE_UNIT, texture.handle);
     }
 }

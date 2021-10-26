@@ -22,7 +22,6 @@ void Lifecycle::init(GlobalState& state)
 {
     auto& engineState = state.engineState;
     auto& guiRegistry = engineState.guiRegistry;
-    auto& cameraState = engineState.camera;
 
     auto& tm = GuiPrimitiveFactory::makeEntityTriangle(
         engineState,
@@ -41,8 +40,7 @@ void Lifecycle::init(GlobalState& state)
         GuiQuad::create(300, 400, Color::yellow)
     );
     qm.fragmentShaderHandle = EngineStateHelper::standardTextureFragmentShaderProgram(engineState).programHandle;
-    GuiPrimitiveFactory::addTexture(
-        engineState, qe, TextureUtils::loadTextureFromFile("assets/images/img.jpg").handle);
+    GuiPrimitiveFactory::addTexture(engineState, qe, TextureUtils::loadFromFile("assets/images/img.jpg").handle);
 }
 
 void Lifecycle::preRenderUpdate(GlobalState& state)

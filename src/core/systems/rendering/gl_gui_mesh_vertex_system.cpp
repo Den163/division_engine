@@ -1,6 +1,5 @@
 #include "gl_gui_mesh_vertex_system.h"
 
-#include "../../utils/debug_utils.h"
 #include "../../utils/engine_state_helper.h"
 #include "../../utils/math.h"
 #include "../../components/gui_mesh.h"
@@ -12,20 +11,6 @@
 static void applyVertexBuffer(const GlMesh& glMesh, const GuiMesh& mesh);
 void applyModelViewProjectionMatrix(const GlMesh& glMesh, const GuiMesh& mesh, const glm::mat4& mvpMatrix);
 
-void GlGuiMeshVerticesSystem::init(EngineState& engineState)
-{
-    auto& cameraState = engineState.camera;
-
-    glEnable(GL_DEBUG_OUTPUT);
-    glClipControl(GL_LOWER_LEFT, GL_NEGATIVE_ONE_TO_ONE);
-    glDebugMessageCallback(DebugUtils::glRendererMessageCallback, nullptr);
-
-    cameraState.position = glm::vec3 {0};
-    cameraState.rotation = glm::identity<glm::quat>();
-    cameraState.nearPlane = 0.1f;
-    cameraState.farPlane = 100;
-}
-
 void GlGuiMeshVerticesSystem::update(EngineState& engineState)
 {
     auto& guiRegistry = engineState.guiRegistry;
@@ -34,7 +19,7 @@ void GlGuiMeshVerticesSystem::update(EngineState& engineState)
     const auto& projectionMatrix = glm::ortho(0.f, (float) windowState.width, 0.f, (float) windowState.height);
 
     for (auto&& [e, mesh, glMesh, pos, rot, scale]:
-         guiRegistry.view<GuiMesh, GlMesh, const Position, const Rotation, const Scale>().each())
+         guiRegistry.view<const GuiMesh, const GlMesh, const Position, const Rotation, const Scale>().each())
     {
         const auto vaoHandle = glMesh.vaoHandle;
         const auto& vertexVboHandle = glMesh.vertexVboHandle;

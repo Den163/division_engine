@@ -110,20 +110,26 @@ set(DIVISION_ENGINE_SOURCES
     core/configs/shader_pipeline_config.h core/states/shader_state.h core/utils/engine_state_helper.h
     core/utils/engine_invariants.h
     core/configs/color_mode.h core/states/texture2d_state.h
-    core/systems/rendering/gl_render_gui_mesh_system.cpp core/systems/rendering/gl_render_gui_mesh_system.h
+    core/systems/rendering/gl_gui_mesh_render_system.cpp core/systems/rendering/gl_gui_mesh_render_system.h
     core/systems/rendering/gl_texture2d_system.cpp core/systems/rendering/gl_texture2d_system.h
     core/components/gl_texture.h core/configs/default_shaders_config.h core/states/default_shaders_state.h
     core/utils/shader_compiler.h core/utils/shader_compiler.cpp
-    core/utils/texture_utils.cpp core/utils/texture_utils.h)
+    core/utils/texture_utils.cpp core/utils/texture_utils.h
+    core/primitives/gui/font.h core/primitives/gui/glyph.h core/utils/font_utils.cpp core/utils/font_utils.h core/configs/texture_2d_config.h)
 
-set(DIVISION_ENGINE_LIBS glad glfw3 glm::glm EnTT::EnTT stb_image)
+set(DIVISION_ENGINE_LIBS glfw3 freetype glad glm::glm EnTT::EnTT stb_image)
 
 add_library(division_engine_core ${DIVISION_ENGINE_SOURCES})
 add_dependencies(division_engine_core shaders)
-target_link_libraries(division_engine_core ${DIVISION_ENGINE_LIBS})
 
-target_link_directories(division_engine_core PUBLIC ${PROJECT_SOURCE_DIR}/libs/glfw)
-target_include_directories(division_engine_core PUBLIC ${PROJECT_SOURCE_DIR}/libs/glfw/include)
+target_link_directories(division_engine_core PUBLIC
+                        ${PROJECT_SOURCE_DIR}/libs/glfw
+                        ${PROJECT_SOURCE_DIR}/libs/freetype)
+target_include_directories(division_engine_core PUBLIC
+                           ${PROJECT_SOURCE_DIR}/libs/glfw/include
+                           ${PROJECT_SOURCE_DIR}/libs/freetype/include)
+
+target_link_libraries(division_engine_core ${DIVISION_ENGINE_LIBS})
 
 add_custom_command(TARGET division_engine_core PRE_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory

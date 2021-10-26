@@ -29,8 +29,9 @@ add_executable(division_engine_run main.cpp test_hook/lifecycle.cpp test_hook/li
 target_link_libraries(division_engine_run division_engine_core)
 
 add_custom_command(TARGET division_engine_run PRE_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory
-                   ${CMAKE_SOURCE_DIR}/assets ${CMAKE_BINARY_DIR}/assets)
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets ${CMAKE_BINARY_DIR}/assets
+                   DEPENDS ${CMAKE_BINARY_DIR}/assets
+)
 
 #TESTS
 

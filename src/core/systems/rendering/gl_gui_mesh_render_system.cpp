@@ -1,8 +1,7 @@
-#include "gl_render_gui_mesh_system.h"
+#include "gl_gui_mesh_render_system.h"
 
 #include "../../components/gl_mesh.h"
 #include "../../components/gui_mesh.h"
-#include "../../utils/engine_state_helper.h"
 
 void GlRenderGuiMeshSystem::update(EngineState& engineState)
 {
