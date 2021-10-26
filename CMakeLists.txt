@@ -35,7 +35,7 @@ add_custom_command(TARGET division_engine_run PRE_BUILD
 
 #TESTS
 
-set(DIVISION_ENGINE_TESTS_SOURCES tests/colors_tests.cpp tests/test_sample.cpp)
+set(DIVISION_ENGINE_TESTS_SOURCES tests/colors_tests.cpp tests/test_sample.cpp tests/sparse_set_tests.cpp)
 
 add_executable(division_engine_tests ${DIVISION_ENGINE_TESTS_SOURCES})
 target_link_libraries(division_engine_tests division_engine_core gtest gtest_main)

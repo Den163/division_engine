@@ -11,7 +11,7 @@ void FontUtils::initializeFont(const std::string& fontFilePath, Font& font, cons
 {
     if (size.x == 0 && size.y == 0)
     {
-        throw std::runtime_error { "At least one dimension in the size required to be greater than zero" };
+        throw std::runtime_error { "At least one dimension in the division_engine_core required to be greater than zero" };
     }
 
     FT_Library ft;
