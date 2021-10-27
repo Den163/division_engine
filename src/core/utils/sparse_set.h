@@ -5,6 +5,13 @@
 #include <concepts>
 #include <thread>
 
+template<typename T> requires std::is_pod<T>::value
+struct DenseElement
+{
+    uint32_t sparseIndex;
+    T value;
+};
+
 template<typename TAlloc, typename T>
 concept AllocatorType = requires(TAlloc alloc, const size_t n, T* memPtr)
 {
@@ -14,7 +21,7 @@ concept AllocatorType = requires(TAlloc alloc, const size_t n, T* memPtr)
 
 template< typename T,
           AllocatorType<uint32_t> TSparseAlloc = std::allocator<uint32_t>,
-          AllocatorType<T> TDenseAlloc = std::allocator<T> >
+          AllocatorType<DenseElement<T>> TDenseAlloc = std::allocator<DenseElement<T>> >
 class SparseSet
 {
 private:
@@ -24,8 +31,12 @@ private:
     static constexpr size_t NULL_INDEX = std::numeric_limits<uint32_t>::max();
 
 public:
-    explicit SparseSet(size_t capacity = 0) :
-        sparse_size_(0), dense_size_(0), capacity_(capacity), sparseAlloc_(TSparseAlloc{}), denseAlloc_(TDenseAlloc{})
+    explicit SparseSet(
+        size_t capacity = 0,
+        TSparseAlloc sparseAlloc = TSparseAlloc{},
+        TDenseAlloc denseAlloc = TDenseAlloc {}
+    ) :
+        sparse_size_(0), dense_size_(0), capacity_(capacity), sparseAlloc_(sparseAlloc), denseAlloc_(denseAlloc)
     {
         sparse_ = sparseAlloc_.allocate(capacity);
         dense_ = denseAlloc_.allocate(capacity);
@@ -61,23 +72,26 @@ public:
         return insert_fast(std::move(element));
     }
 
+    /*
+     * Push next element and returns index associated with it. Doesn't try to do indices defragmentation
+     */
     uint32_t insert_fast(const T&& element)
     {
-        auto newSparseSize = sparse_size_ + 1;
+        const auto newSparseSize = sparse_size_ + 1;
         if (newSparseSize > capacity_)
         {
             reserve(newSparseSize * 2);
         }
 
-        auto nextSparseIdx = sparse_size_;
-        auto nextDenseIdx = dense_size_;
+        const auto nextSparseIdx = sparse_size_;
+        const auto nextDenseIdx = dense_size_;
 
-        if (nextDenseIdx == NULL_INDEX)
-        {
-            throw std::runtime_error { "Exceed limit of the maximum element index: " + std::to_string(max_index()) };
-        }
+        throw_if_exceed_max_dense_index(nextDenseIdx);
 
-        dense_[nextDenseIdx] = element;
+        auto& nextDense = dense_[nextDenseIdx];
+        nextDense.value = element;
+        nextDense.sparseIndex = nextSparseIdx;
+
         sparse_[nextSparseIdx] = nextDenseIdx;
 
         sparse_size_ = newSparseSize;
@@ -87,11 +101,48 @@ public:
     }
 
     /*
+     * Insert using defragmentation of sparse indices to improve value locality. May be slower than insert_fast
+     */
+    uint32_t insert_defragment(const T& element)
+    {
+        return insert_defragment(std::move(element));
+    }
+
+    /*
+     * Insert using defragmentation of sparse indices to improve value locality. May be slower than insert_fast
+     */
+    uint32_t insert_defragment(const T&& element)
+    {
+        for (uint32_t i = 0; i < sparse_size_; i++)
+        {
+            uint32_t currDenseIndex = sparse_[i];
+            if (currDenseIndex != null_index())
+            {
+                continue;
+            }
+            uint32_t newDenseIndex = dense_size_;
+            throw_if_exceed_max_dense_index(newDenseIndex);
+
+            auto& newDense = dense_[newDenseIndex];
+            newDense.value = element;
+            newDense.sparseIndex = i;
+
+            sparse_[i] = newDenseIndex;
+            dense_size_++;
+
+            return i;
+        }
+
+        return insert_fast(element);
+    }
+
+    /*
      * Returns true if set contains element associated with the given index
      */
     inline bool contains(uint32_t index)
     {
-        return index < sparse_size_ && sparse_[index] != null_index();
+        uint32_t denseIndex;
+        return index < sparse_size_ && (denseIndex = sparse_[index]) < dense_size_ && denseIndex != null_index();
     }
 
     /*
@@ -104,9 +155,12 @@ public:
             throw_no_index(index);
         }
 
-        return dense_[sparse_[index]];
+        return dense_[sparse_[index]].value;
     }
 
+    /*
+     * Removes element associated with the given index
+     */
     void remove(uint32_t index)
     {
         if (!contains(index))
@@ -114,12 +168,22 @@ public:
             throw_no_index(index);
         }
 
+        auto denseIndex = sparse_[index];
         sparse_[index] = null_index();
 
         if (index == sparse_size_ - 1)
         {
             sparse_size_--;
         }
+
+        for (auto i = denseIndex; i < dense_size_ - 1; i++)
+        {
+            auto& currDense = dense_[i];
+
+            currDense = dense_[i+1];
+            sparse_[currDense.sparseIndex] = i;
+        }
+
         dense_size_--;
     }
 
@@ -134,7 +198,7 @@ public:
         }
 
         uint32_t* newSparse = sparseAlloc_.allocate(newCapacity);
-        T* newDense = denseAlloc_.allocate(newCapacity);
+        DenseElement<T>* newDense = denseAlloc_.allocate(newCapacity);
 
         copy_data(sparse_, dense_, newSparse, newDense, sparse_size_, dense_size_);
 
@@ -151,7 +215,7 @@ public:
     inline uint32_t indices_size() const { return sparse_size_; }
     inline bool empty() const { return dense_size_ == 0; }
     inline const uint32_t* indices_data() const { return sparse_; }
-    inline const T* data() const { return dense_; }
+    inline const DenseElement<T>* data() const { return dense_; }
     static constexpr inline uint32_t null_index() { return NULL_INDEX; }
     static constexpr inline uint32_t max_index() { return NULL_INDEX - 1; }
 
@@ -179,8 +243,8 @@ private:
     }
 
     static inline void copy_data(
-        const uint32_t* sparseFrom, const T* denseFrom,
-        uint32_t* sparseTo, T* denseTo, uint32_t sparseSize, uint32_t denseSize)
+        const uint32_t* sparseFrom, const DenseElement<T>* denseFrom,
+        uint32_t* sparseTo, DenseElement<T>* denseTo, uint32_t sparseSize, uint32_t denseSize)
     {
         std::copy(sparseFrom, sparseFrom + sparseSize, sparseTo);
         std::copy(denseFrom, denseFrom + denseSize, denseTo);
@@ -191,12 +255,20 @@ private:
         throw std::runtime_error{"There is no elements by a given index: " + std::to_string(index)};
     }
 
+    static inline void throw_if_exceed_max_dense_index(uint32_t index)
+    {
+        if (index == NULL_INDEX)
+        {
+            throw std::runtime_error { "Exceed limit of the maximum element index: " + std::to_string(max_index()) };
+        }
+    }
+
 private:
     sparse_allocator sparseAlloc_;
     dense_allocator denseAlloc_;
 
     uint32_t* sparse_;
-    T* dense_;
+    DenseElement<T>* dense_;
     uint32_t sparse_size_;
     uint32_t dense_size_;
     uint32_t capacity_;

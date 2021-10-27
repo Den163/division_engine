@@ -99,7 +99,7 @@ TEST(SPARSE_SET, fast_insert_WhenFitToCapacity_IncreasesSizeAndAddedCorrectlyEle
 
     ASSERT_EQ(idx, 0);
     ASSERT_EQ(s.size(), 1);
-    ASSERT_EQ(*s.data(), elem);
+    ASSERT_EQ(s.data()->value, elem);
 }
 
 TEST(SPARSE_SET, fast_insert_WhenCapacityIsZero_IncreasesSizeAndCapacityAndAddedCorrectlyElement)
@@ -110,7 +110,7 @@ TEST(SPARSE_SET, fast_insert_WhenCapacityIsZero_IncreasesSizeAndCapacityAndAdded
 
     ASSERT_EQ(idx, 0);
     ASSERT_EQ(s.size(), 1);
-    ASSERT_EQ(*s.data(), elem);
+    ASSERT_EQ(s.data()->value, elem);
 }
 
 TEST(SPARSE_SET, contains_WhenInsertElement_ReturnsTrueIfElementExistsByIndexAndFalseIfNot)
@@ -146,7 +146,7 @@ TEST(SPARSE_SET, remove_WhenInsertElement_ContainsReturnsFalseForGivenIndexAndSi
     ASSERT_EQ(s.indices_size(), 0);
 }
 
-TEST(SPARSE_SET, remove_fromCenterDoesntViolateOtherData)
+TEST(SPARSE_SET, remove_FromCenterDoesntViolateOtherData)
 {
     SparseSet<TestType> s;
     const auto t1 = TestType { 1 };
@@ -166,4 +166,31 @@ TEST(SPARSE_SET, remove_fromCenterDoesntViolateOtherData)
     ASSERT_EQ(s.indices_size(), 3);
     ASSERT_EQ(s.get(i1), t1);
     ASSERT_EQ(s.get(i3), t3);
+}
+
+TEST(SPARSE_SET, insert_defragment_DoesntViolateOtherData)
+{
+    SparseSet<TestType> s;
+    const auto t1 = TestType { 1 };
+    const auto t2 = TestType { 2 };
+    const auto t3 = TestType { 3 };
+    const auto t4 = TestType { 4 };
+
+    const auto i1 = s.insert_defragment(t1);
+    const auto i2 = s.insert_defragment(t2);
+    const auto i3 = s.insert_defragment(t3);
+    s.remove(i2);
+    const auto i4 = s.insert_defragment(t4);
+
+    ASSERT_TRUE(s.contains(i1));
+    ASSERT_TRUE(s.contains(i4));
+    ASSERT_TRUE(s.contains(i3));
+    ASSERT_EQ(i2, i4);
+
+    ASSERT_EQ(s.size(), 3);
+    ASSERT_EQ(s.indices_size(), 3);
+
+    ASSERT_EQ(t1, s.get(i1));
+    ASSERT_EQ(t3, s.get(i3));
+    ASSERT_EQ(t4, s.get(i4));
 }

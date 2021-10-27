@@ -41,8 +41,6 @@ void Lifecycle::init(GlobalState& state)
     );
     qm.fragmentShaderHandle = EngineStateHelper::standardTextureFragmentShaderProgram(engineState).programHandle;
     GuiPrimitiveFactory::addTexture(engineState, qe, TextureUtils::loadFromFile("assets/images/img.jpg").handle);
-
-    entt::registry
 }
 
 void Lifecycle::preRenderUpdate(GlobalState& state)
