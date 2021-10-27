@@ -24,15 +24,9 @@ template< typename T,
           AllocatorType<DenseElement<T>> TDenseAlloc = std::allocator<DenseElement<T>> >
 class SparseSet
 {
-private:
+public:
     class iterator
     {
-        using value_type = T;
-        using difference_type = T*;
-        using pointer = T*;
-        using reference = T&;
-        using iterator_category = std::forward_iterator_tag;
-
         DenseElement<T>* ptr_;
 
     public:
@@ -49,7 +43,6 @@ private:
 
     static constexpr size_t NULL_INDEX = std::numeric_limits<uint32_t>::max();
 
-public:
     explicit SparseSet(
         size_t capacity = 0,
         TSparseAlloc sparseAlloc = TSparseAlloc{},
