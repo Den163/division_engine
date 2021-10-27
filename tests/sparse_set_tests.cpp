@@ -1,13 +1,7 @@
 #include <gtest/gtest.h>
-#include "../src/core/utils/sparse_set.h"
+#include "test_type.h"
+#include "../src/core/data_structures/sparse_set.h"
 
-struct TestType
-{
-    int32_t x;
-    int32_t y;
-
-    bool operator==(const TestType& other) const { return x == other.x && y == other.y; }
-};
 
 template<typename T>
 static void assertSetsDataPointersDifferentAndNotNull(const SparseSet<T>& s1, const SparseSet<T>& s2)
@@ -20,7 +14,7 @@ static void assertSetsDataPointersDifferentAndNotNull(const SparseSet<T>& s1, co
     ASSERT_NE(s1.data(), s2.data());
 }
 
-TEST(SPARSE_SET, SizeConstructor_AfterConstructing_Data_Pointers_Are_Not_Null)
+TEST(SPARSE_SET, SizeConstructor_AfterConstructingWithNonZeroSize_DataPointerAreNotNull)
 {
     SparseSet<TestType> s { 1 };
 
@@ -95,7 +89,7 @@ TEST(SPARSE_SET, fast_insert_WhenFitToCapacity_IncreasesSizeAndAddedCorrectlyEle
 {
     SparseSet<TestType> s { 2 };
     const auto elem = TestType { 1,2 };
-    auto idx = s.insert_fast(elem);
+    auto idx = s.push_back(elem);
 
     ASSERT_EQ(idx, 0);
     ASSERT_EQ(s.size(), 1);
@@ -106,7 +100,7 @@ TEST(SPARSE_SET, fast_insert_WhenCapacityIsZero_IncreasesSizeAndCapacityAndAdded
 {
     SparseSet<TestType> s;
     const auto elem = TestType { 1,2 };
-    auto idx = s.insert_fast(elem);
+    auto idx = s.push_back(elem);
 
     ASSERT_EQ(idx, 0);
     ASSERT_EQ(s.size(), 1);
@@ -116,7 +110,7 @@ TEST(SPARSE_SET, fast_insert_WhenCapacityIsZero_IncreasesSizeAndCapacityAndAdded
 TEST(SPARSE_SET, contains_WhenInsertElement_ReturnsTrueIfElementExistsByIndexAndFalseIfNot)
 {
     SparseSet<TestType> s;
-    auto idx = s.insert_fast(TestType {1, 2});
+    auto idx = s.push_back(TestType {1, 2});
 
     ASSERT_TRUE(s.contains(idx));
     ASSERT_FALSE(s.contains(idx + 1));
@@ -126,7 +120,7 @@ TEST(SPARSE_SET, get_WhenInsertElement_ReturnsElementOrThrowsExceptionIfNotExist
 {
     SparseSet<TestType> s;
     const auto& expectedElement = TestType { 1,2 };
-    auto idx = s.insert_fast(expectedElement);
+    auto idx = s.push_back(expectedElement);
 
     std::vector<float> v;
 
@@ -138,7 +132,7 @@ TEST(SPARSE_SET, get_WhenInsertElement_ReturnsElementOrThrowsExceptionIfNotExist
 TEST(SPARSE_SET, remove_WhenInsertElement_ContainsReturnsFalseForGivenIndexAndSizeDecrease)
 {
     SparseSet<TestType> s;
-    auto idx = s.insert_fast(TestType {1, 2});
+    auto idx = s.push_back(TestType {1, 2});
     s.remove(idx);
 
     ASSERT_FALSE(s.contains(idx));
@@ -153,9 +147,9 @@ TEST(SPARSE_SET, remove_FromCenterDoesntViolateOtherData)
     const auto t2 = TestType { 2 };
     const auto t3 = TestType { 3 };
 
-    auto i1 = s.insert_fast(t1);
-    auto i2 = s.insert_fast(t2);
-    auto i3 = s.insert_fast(t3);
+    auto i1 = s.push_back(t1);
+    auto i2 = s.push_back(t2);
+    auto i3 = s.push_back(t3);
 
     s.remove(i2);
 
@@ -176,11 +170,11 @@ TEST(SPARSE_SET, insert_defragment_DoesntViolateOtherData)
     const auto t3 = TestType { 3 };
     const auto t4 = TestType { 4 };
 
-    const auto i1 = s.insert_defragment(t1);
-    const auto i2 = s.insert_defragment(t2);
-    const auto i3 = s.insert_defragment(t3);
+    const auto i1 = s.insert(t1);
+    const auto i2 = s.insert(t2);
+    const auto i3 = s.insert(t3);
     s.remove(i2);
-    const auto i4 = s.insert_defragment(t4);
+    const auto i4 = s.insert(t4);
 
     ASSERT_TRUE(s.contains(i1));
     ASSERT_TRUE(s.contains(i4));
@@ -201,7 +195,7 @@ TEST(SPARSE_SET, iterator_ReadSequenceCorrectly)
     SparseSet<TestType> s { ELEMENTS_COUNT };
     for (auto i = 0; i < ELEMENTS_COUNT; i++)
     {
-        s.insert_fast(TestType { i,i });
+        s.push_back(TestType {i, i});
     }
 
     auto i = 0;

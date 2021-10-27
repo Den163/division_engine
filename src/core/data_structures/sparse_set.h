@@ -54,11 +54,10 @@ public:
         dense_ = denseAlloc_.allocate(capacity);
     }
 
-    SparseSet(SparseSet&& sparseSet) noexcept = default;
+    SparseSet(SparseSet&&) noexcept = default;
 
     SparseSet(const SparseSet& other)
     {
-        capacity_ = 0;
         copy(other, *this);
     }
 
@@ -66,6 +65,8 @@ public:
     {
         if (this == &other) return *this;
 
+        sparseAlloc_.deallocate(sparse_, capacity_);
+        denseAlloc_.deallocate(dense_, capacity_);
         copy(other, *this);
         return *this;
     }
@@ -79,15 +80,15 @@ public:
     /*
      * Push next element and returns index associated with it. Doesn't try to do indices defragmentation
      */
-    uint32_t insert_fast(const T& element)
+    uint32_t push_back(const T& element)
     {
-        return insert_fast(std::move(element));
+        return push_back(std::move(element));
     }
 
     /*
      * Push next element and returns index associated with it. Doesn't try to do indices defragmentation
      */
-    uint32_t insert_fast(const T&& element)
+    uint32_t push_back(const T&& element)
     {
         const auto newSparseSize = sparse_size_ + 1;
         if (newSparseSize > capacity_)
@@ -113,17 +114,17 @@ public:
     }
 
     /*
-     * Insert using defragmentation of sparse indices to improve value locality. May be slower than insert_fast
+     * Insert using defragmentation of sparse indices to improve value locality. May be slower than push_back
      */
-    uint32_t insert_defragment(const T& element)
+    uint32_t insert(const T& element)
     {
-        return insert_defragment(std::move(element));
+        return insert(std::move(element));
     }
 
     /*
-     * Insert using defragmentation of sparse indices to improve value locality. May be slower than insert_fast
+     * Insert using defragmentation of sparse indices to improve value locality. May be slower than push_back
      */
-    uint32_t insert_defragment(const T&& element)
+    uint32_t insert(const T&& element)
     {
         for (uint32_t i = 0; i < sparse_size_; i++)
         {
@@ -145,16 +146,7 @@ public:
             return i;
         }
 
-        return insert_fast(element);
-    }
-
-    /*
-     * Returns true if set contains element associated with the given index
-     */
-    inline bool contains(uint32_t index)
-    {
-        uint32_t denseIndex;
-        return index < sparse_size_ && (denseIndex = sparse_[index]) < dense_size_ && denseIndex != null_index();
+        return push_back(element);
     }
 
     /*
@@ -182,7 +174,6 @@ public:
 
         auto denseIndex = sparse_[index];
         sparse_[index] = null_index();
-
         if (index == sparse_size_ - 1)
         {
             sparse_size_--;
@@ -225,6 +216,15 @@ public:
     iterator begin() { return iterator{ dense_ }; }
     iterator end() { return iterator{dense_ + dense_size_}; }
 
+    /*
+     * Returns true if set contains element associated with the given index
+     */
+    inline bool contains(uint32_t index) const
+    {
+        uint32_t denseIndex;
+        return index < sparse_size_ && (denseIndex = sparse_[index]) < dense_size_ && denseIndex != null_index();
+    }
+
     inline uint32_t capacity() const { return capacity_; }
     inline uint32_t size() const { return dense_size_; }
     inline uint32_t indices_size() const { return sparse_size_; }
@@ -237,12 +237,6 @@ public:
 private:
     static inline void copy(const SparseSet& from, SparseSet& to)
     {
-        if (to.capacity_ > 0)
-        {
-            to.sparseAlloc_.deallocate(to.sparse_, to.capacity_);
-            to.denseAlloc_.deallocate(to.dense_, to.capacity_);
-        }
-
         to.sparseAlloc_ = from.sparseAlloc_;
         to.denseAlloc_ = from.denseAlloc_;
         to.sparse_size_ = from.sparse_size_;

@@ -115,7 +115,7 @@ set(DIVISION_ENGINE_SOURCES
     core/components/gl_texture.h core/configs/default_shaders_config.h core/states/default_shaders_state.h
     core/utils/shader_compiler.h core/utils/shader_compiler.cpp
     core/utils/texture_utils.cpp core/utils/texture_utils.h
-    core/primitives/gui/font.h core/primitives/gui/glyph.h core/utils/font_utils.cpp core/utils/font_utils.h core/configs/texture_2d_config.h core/utils/sparse_set.h)
+    core/primitives/gui/font.h core/primitives/gui/glyph.h core/utils/font_utils.cpp core/utils/font_utils.h core/configs/texture_2d_config.h core/data_structures/sparse_set.h core/data_structures/versioned_sparse_set.h)
 
 set(DIVISION_ENGINE_LIBS glfw3 freetype glad glm::glm EnTT::EnTT stb_image)
 
