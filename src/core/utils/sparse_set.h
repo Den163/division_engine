@@ -27,6 +27,12 @@ class SparseSet
 private:
     class iterator
     {
+        using value_type = T;
+        using difference_type = T*;
+        using pointer = T*;
+        using reference = T&;
+        using iterator_category = std::forward_iterator_tag;
+
         DenseElement<T>* ptr_;
 
     public:

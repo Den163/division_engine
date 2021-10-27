@@ -205,7 +205,7 @@ TEST(SPARSE_SET, iterator_ReadSequenceCorrectly)
     }
 
     auto i = 0;
-    for (auto& el : s)
+    for (const auto& el : s)
     {
         ASSERT_EQ(el.x, i);
         ASSERT_EQ(el.y, i);
