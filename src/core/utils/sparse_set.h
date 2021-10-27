@@ -1,9 +1,9 @@
 #pragma once
 
-#include <vector>
-#include <memory>
 #include <concepts>
-#include <thread>
+#include <iterator>
+#include <memory>
+#include <vector>
 
 template<typename T> requires std::is_pod<T>::value
 struct DenseElement
@@ -25,6 +25,19 @@ template< typename T,
 class SparseSet
 {
 private:
+    class iterator
+    {
+        DenseElement<T>* ptr_;
+
+    public:
+        explicit iterator(DenseElement<T>* ptr) : ptr_(ptr) {}
+        iterator(const iterator& other) = default;
+        void operator++() { ptr_++; }
+        bool operator==(const iterator& other) const { return ptr_ == other.ptr_; }
+        bool operator!=(const iterator& other) const { return ptr_ != other.ptr_; }
+        T& operator*() { return ptr_->value; }
+    };
+
     using sparse_allocator = typename std::allocator_traits<TSparseAlloc>::allocator_type;
     using dense_allocator = typename std::allocator_traits<TDenseAlloc>::allocator_type;
 
@@ -209,6 +222,9 @@ public:
         dense_ = newDense;
         capacity_ = newCapacity;
     }
+
+    iterator begin() { return iterator{ dense_ }; }
+    iterator end() { return iterator{dense_ + dense_size_}; }
 
     inline uint32_t capacity() const { return capacity_; }
     inline uint32_t size() const { return dense_size_; }

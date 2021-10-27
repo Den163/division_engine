@@ -194,3 +194,21 @@ TEST(SPARSE_SET, insert_defragment_DoesntViolateOtherData)
     ASSERT_EQ(t3, s.get(i3));
     ASSERT_EQ(t4, s.get(i4));
 }
+
+TEST(SPARSE_SET, iterator_ReadSequenceCorrectly)
+{
+    const auto ELEMENTS_COUNT = 10;
+    SparseSet<TestType> s { ELEMENTS_COUNT };
+    for (auto i = 0; i < ELEMENTS_COUNT; i++)
+    {
+        s.insert_fast(TestType { i,i });
+    }
+
+    auto i = 0;
+    for (auto& el : s)
+    {
+        ASSERT_EQ(el.x, i);
+        ASSERT_EQ(el.y, i);
+        i++;
+    }
+}
