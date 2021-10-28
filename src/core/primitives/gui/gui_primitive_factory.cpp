@@ -62,6 +62,7 @@ void GuiPrimitiveFactory::addTexture(EngineState& engineState, const entt::entit
     tex.handle = handle;
 }
 
+// TODO: Replace this shit with normal text rendering system!
 void GuiPrimitiveFactory::makeTextQuads(
     EngineState& engineState,
     const std::string& text,
