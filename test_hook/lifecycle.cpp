@@ -4,14 +4,14 @@
 
 #include <iostream>
 #include <random>
-#include <stdexcept>
 
 #include "../src/core/components/gui_mesh.h"
 #include "../src/core/primitives/gui/gui_primitive_factory.h"
 #include "../src/core/utils/debug_utils.h"
-#include "../src/core/utils/color.h"
 #include "../src/core/utils/engine_state_helper.h"
 #include "../src/core/utils/texture_utils.h"
+#include "../src/core/utils/font_utils.h"
+#include "../src/core/utils/color.h"
 
 static inline void checkMeshCreateByKeyPress(GlobalState& state);
 static inline void checkMeshDeleteByKeyPress(GlobalState& state);
@@ -41,6 +41,9 @@ void Lifecycle::init(GlobalState& state)
     );
     qm.fragmentShaderHandle = EngineStateHelper::standardTextureFragmentShaderProgram(engineState).programHandle;
     GuiPrimitiveFactory::addTexture(engineState, qe, TextureUtils::loadFromFile("assets/images/img.jpg").handle);
+
+    auto fontIndex = engineState.fonts.insert(FontUtils::makeFont("assets/fonts/Roboto-Black.ttf", { 0, 120 }));
+    GuiPrimitiveFactory::makeTextQuads(engineState, "Hello world", fontIndex);
 }
 
 void Lifecycle::preRenderUpdate(GlobalState& state)

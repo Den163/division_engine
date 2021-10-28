@@ -7,6 +7,6 @@ struct Glyph
 {
     glm::ivec2 size;
     glm::ivec2 bearing;
-    uint8_t advance;
-    uint8_t textureHandle;
+    uint32_t advance;
+    uint32_t textureHandle;
 };

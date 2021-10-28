@@ -37,6 +37,7 @@ set(SHADER_SOURCES
     shaders/default_gui.vert
     shaders/default_gui_colored.frag
     shaders/default_gui_texture.frag
+    shaders/default_gui_font.frag
 )
 
 foreach(SHADER IN LISTS SHADER_SOURCES)
@@ -111,23 +112,24 @@ set(DIVISION_ENGINE_SOURCES
     core/utils/engine_invariants.h
     core/configs/color_mode.h core/states/texture2d_state.h
     core/systems/rendering/gl_gui_mesh_render_system.cpp core/systems/rendering/gl_gui_mesh_render_system.h
-    core/systems/rendering/gl_texture2d_system.cpp core/systems/rendering/gl_texture2d_system.h
     core/components/gl_texture.h core/configs/default_shaders_config.h core/states/default_shaders_state.h
     core/utils/shader_compiler.h core/utils/shader_compiler.cpp
     core/utils/texture_utils.cpp core/utils/texture_utils.h
-    core/primitives/gui/font.h core/primitives/gui/glyph.h core/utils/font_utils.cpp core/utils/font_utils.h core/configs/texture_2d_config.h core/data_structures/sparse_set.h core/data_structures/versioned_sparse_set.h)
+    core/primitives/gui/font.h core/primitives/gui/glyph.h core/utils/font_utils.cpp core/utils/font_utils.h
+    core/configs/texture_2d_config.h core/data_structures/sparse_set.h core/data_structures/versioned_sparse_set.h)
 
-set(DIVISION_ENGINE_LIBS glfw3 freetype glad glm::glm EnTT::EnTT stb_image)
+set(DIVISION_ENGINE_LIBS glad glfw3 freetype glm::glm EnTT::EnTT stb_image)
 
 add_library(division_engine_core ${DIVISION_ENGINE_SOURCES})
 add_dependencies(division_engine_core shaders)
 
-target_link_directories(division_engine_core PUBLIC
-                        ${PROJECT_SOURCE_DIR}/libs/glfw
-                        ${PROJECT_SOURCE_DIR}/libs/freetype)
 target_include_directories(division_engine_core PUBLIC
                            ${PROJECT_SOURCE_DIR}/libs/glfw/include
                            ${PROJECT_SOURCE_DIR}/libs/freetype/include)
+
+target_link_directories(division_engine_core PUBLIC
+                        ${PROJECT_SOURCE_DIR}/libs/glfw
+                        ${PROJECT_SOURCE_DIR}/libs/freetype)
 
 target_link_libraries(division_engine_core ${DIVISION_ENGINE_LIBS})
 

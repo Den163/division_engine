@@ -5,5 +5,5 @@
 
 namespace FontUtils
 {
-    void initializeFont(const std::string& fontFilePath, Font& font, const glm::ivec2& size);
+    Font makeFont(const std::string& fontFilePath, const glm::ivec2& size);
 }

@@ -69,7 +69,7 @@ GLenum getInternalFormat(ColorMode colorMode)
     {
         case ColorMode::RGB: return GL_RGB8;
         case ColorMode::RGBA: return GL_RGBA8;
-        case ColorMode::R: return GL_R8;
+        case ColorMode::Red: return GL_R8;
         default: throw std::runtime_error {"Unrecognized color mode"};
     }
 }

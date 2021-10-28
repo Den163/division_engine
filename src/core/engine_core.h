@@ -22,14 +22,21 @@
 #include "systems/input/register_input_system.h"
 #include "systems/window/win32_window_system.h"
 #include "systems/rendering/gl_gui_mesh_render_system.h"
-#include "systems/rendering/gl_texture2d_system.h"
 
 #include <type_traits>
+
+template<typename T>
+concept EngineStateAggregate = requires(T& aggr)
+{
+    { aggr.engineState } -> std::same_as<EngineState&>;
+    { aggr.engineConfig } -> std::same_as<EngineConfig&>;
+};
+
 
 class EngineCore
 {
 public:
-    template<typename TState>
+    template<EngineStateAggregate TState>
     static inline void run(TState& state)
     {
         init(state);
@@ -38,7 +45,7 @@ public:
     }
 
 private:
-    template<typename TState>
+    template<EngineStateAggregate TState>
     static inline void init(TState& globalState)
     {
         EngineState& state = globalState.engineState;
@@ -60,7 +67,7 @@ private:
 #endif
     }
 
-    template<typename TState>
+    template<EngineStateAggregate TState>
     static inline void eventLoop(TState& globalState)
     {
         EngineState& state = globalState.engineState;
@@ -87,7 +94,7 @@ private:
         while (!windowState.shouldClose);
     }
 
-    template<typename TState>
+    template<EngineStateAggregate TState>
     static inline void renderLoop(TState& globalState)
     {
         EngineState& state = globalState.engineState;
@@ -99,7 +106,6 @@ private:
 
         GlPrepareFramebufferSystem::update(state);
         GlGuiMeshVerticesSystem::update(state);
-        GlTextureSystem::update(state);
         GlRenderGuiMeshSystem::update(state);
 
         GlfwVsyncSystem::update(state);
@@ -110,7 +116,7 @@ private:
         state.guiRegistry.clear<GuiMeshCreated, GuiMeshDestroyed>();
     }
 
-    template<typename TState>
+    template<EngineStateAggregate TState>
     static inline void cleanup(TState& globalState)
     {
         EngineState& state = globalState.engineState;

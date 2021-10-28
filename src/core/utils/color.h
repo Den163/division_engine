@@ -17,7 +17,7 @@ namespace Color
     const glm::vec4 black = { 0,0,0,1 };
     const glm::vec4 white = { 1,1,1,1 };
 
-    glm::vec4 fromRgbaHex(uint32_t hexRgba)
+    inline glm::vec4 fromRgbaHex(uint32_t hexRgba)
     {
         return glm::vec4 {
             (double) (hexRgba & R_MASK) / R_MASK,
@@ -27,7 +27,7 @@ namespace Color
         };
     }
 
-    uint32_t toRgbaHex(const glm::vec4& color)
+    inline uint32_t toRgbaHex(const glm::vec4& color)
     {
         auto r = (uint32_t) ((double) color.r * R_MASK) & R_MASK;
         auto g = (uint32_t) (color.g * G_MASK) & G_MASK;

@@ -2,16 +2,18 @@
 
 #include <glad/gl.h>
 #include <stdexcept>
+#include "texture_utils.h"
+#include "color.h"
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include "texture_utils.h"
+static Glyph makeGlyph(FT_Face ftFace, uint8_t character);
 
-void FontUtils::initializeFont(const std::string& fontFilePath, Font& font, const glm::ivec2& size)
+Font FontUtils::makeFont(const std::string& fontFilePath, const glm::ivec2& size)
 {
     if (size.x == 0 && size.y == 0)
     {
-        throw std::runtime_error { "At least one dimension in the division_engine_core required to be greater than zero" };
+        throw std::runtime_error{"At least one dimension in the size required to be greater than zero"};
     }
 
     FT_Library ft;
@@ -31,27 +33,51 @@ void FontUtils::initializeFont(const std::string& fontFilePath, Font& font, cons
     FT_Set_Pixel_Sizes(face, size.x, size.y);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    for (uint8_t character = 0; character <= Font::MAX_CHARACTER; character++)
+    Font font;
+    for (size_t character = 0; character <= Font::MAX_CHARACTER; character++)
     {
-        auto charError = FT_Load_Char(face, character, FT_LOAD_RENDER);
-        if (charError)
-        {
-            throw std::runtime_error { "Failed to load FreeType character" };
-        }
-
         auto& glyph = font.glyphs[character];
-        const auto& bitmap = face->glyph->bitmap;
 
-        auto texState = TextureUtils::loadFromBitmap(Texture2dConfig{
-            .bitmapPtr = bitmap.buffer,
-            .width = static_cast<int32_t>(bitmap.width),
-            .height = static_cast<int32_t>(bitmap.rows),
-            .coordinateFlags = { Texture2dConfig::CLAMP_TO_EDGE, Texture2dConfig::CLAMP_TO_EDGE },
-        });
-
-        glyph.textureHandle = texState.handle;
+        glyph = makeGlyph(face, character);
     }
 
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
+
+    return font;
+}
+
+Glyph makeGlyph(FT_Face ftFace, uint8_t character)
+{
+    auto charError = FT_Load_Char(ftFace, character, FT_LOAD_RENDER);
+    if (charError)
+    {
+        throw std::runtime_error { "Failed to load FreeType character" };
+    }
+
+    const auto& glyph = ftFace->glyph;
+    const auto& bitmap = glyph->bitmap;
+    const auto width = bitmap.width;
+    const auto height = bitmap.rows;
+
+    if (width == 0 && height == 0)
+    {
+        return Glyph { .textureHandle = 0 };
+    }
+
+    auto texState = TextureUtils::loadFromBitmap(Texture2dConfig{
+        .bitmapPtr = bitmap.buffer,
+        .width = static_cast<int32_t>(width),
+        .height = static_cast<int32_t>(height),
+        .colorMode = ColorMode::Red,
+        .coordinateFlags = Texture2dConfig::st_flags { Texture2dConfig::CLAMP_TO_EDGE },
+    });
+
+    return Glyph
+    {
+        .size = { width, height },
+        .bearing = { glyph->bitmap_left, glyph->bitmap_top },
+        .advance = static_cast<uint32_t>(glyph->advance.x),
+        .textureHandle = texState.handle
+    };
 }

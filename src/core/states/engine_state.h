@@ -13,6 +13,8 @@
 #include "window_state.h"
 #include "texture2d_state.h"
 #include "win32_state.h"
+#include "../data_structures/versioned_sparse_set.h"
+#include "../primitives/gui/font.h"
 
 #include <entt/entt.hpp>
 
@@ -28,6 +30,8 @@ struct EngineState
     InputState input;
     RawInputState rawInput;
     DefaultShaderState defaultShader;
+
+    VersionedSparseSet<Font> fonts { 10 };
 
     entt::registry guiRegistry;
 };
