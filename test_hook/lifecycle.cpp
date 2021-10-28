@@ -37,7 +37,7 @@ void Lifecycle::init(GlobalState& state)
         engineState,
         qe,
         Transform::makeDefault().withPosition({400, 400, 0}),
-        GuiQuad::create(300, 400, Color::yellow)
+        GuiQuad::atBottomLeft(glm::vec2{0}, {300, 400}, Color::yellow)
     );
     qm.fragmentShaderHandle = EngineStateHelper::standardTextureFragmentShaderProgram(engineState).programHandle;
     GuiPrimitiveFactory::addTexture(engineState, qe, TextureUtils::loadFromFile("assets/images/img.jpg").handle);

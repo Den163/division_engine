@@ -50,8 +50,8 @@ GuiMesh& GuiPrimitiveFactory::makeEntityQuad(
     EngineState& engineState, const entt::entity& entity, const Transform& transform, const GuiQuad& quad)
 {
     auto& mesh = makeEntityMesh(engineState, entity, transform);
-    mesh.renderMode = RenderMode::TrianglesFan;
-    mesh.vertices = std::vector<GuiVertex> { quad.vertices.begin(), quad.vertices.end() };
+    mesh.renderMode = RenderMode::TrianglesStrip;
+    mesh.vertices = std::vector<GuiVertex> { &quad.topLeft, &quad.bottomRight + 1 };
 
     return mesh;
 }
@@ -84,13 +84,12 @@ void GuiPrimitiveFactory::makeTextQuads(
 
         const auto& width = glyph.size.x;
         const auto& height = glyph.size.y;
-        GuiQuad quad;
-        quad.vertices = {
-            GuiVertex { color, { 0, 0 },          { 0, 1 }  },
-            GuiVertex { color, { 0, height },     { 0, 0 }  },
-            GuiVertex { color, { width, height }, { 1, 0 }  },
-            GuiVertex { color, { width, 0 },      { 1, 1 }  },
-        };
+        const auto& quad = GuiQuad::bottomLeftTopLeftTopRightBottomRight({
+            GuiVertex {color, {0, 0}, {0, 1}},
+            GuiVertex {color, {0, height}, {0, 0}},
+            GuiVertex {color, {width, height}, {1, 0}},
+            GuiVertex {color, {width, 0}, {1, 1}},
+        });
 
         auto& mesh = makeEntityQuad(engineState, e, transform.withPosition(quadPosition), quad);
         mesh.fragmentShaderHandle =

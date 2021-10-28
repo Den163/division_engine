@@ -1,33 +1,23 @@
 #include "gui_quad.h"
 
-GuiQuad GuiQuad::create(float width, float height, const glm::vec4& color)
+GuiQuad GuiQuad::atBottomLeft(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& color)
 {
-    std::array<glm::vec2, VERTICES_COUNT> vertexPositions = {
-        glm::vec2 {0.f},
-        {0.f, height},
-        {width, height},
-        {width, 0.f}
+    return GuiQuad
+    {
+        .topLeft = GuiVertex  { color, { pos.x, pos.y + size.y }, { 0, 1 }  },
+        .bottomLeft = GuiVertex { color, pos, { 0, 0 }  },
+        .topRight = GuiVertex { color, {pos.x + size.x, pos.y + size.y }, { 1, 1 } },
+        .bottomRight = GuiVertex { color, { pos.x + size.x, pos.y }, { 1, 0 } }
     };
-
-    return create(vertexPositions, color);
 }
 
-GuiQuad GuiQuad::create(const std::array<glm::vec2, VERTICES_COUNT>& vertexPositions, const glm::vec4& color)
+GuiQuad GuiQuad::bottomLeftTopLeftTopRightBottomRight(const std::array<GuiVertex, 4>& vertices)
 {
-    std::array<GuiVertex, VERTICES_COUNT> vertices {};
-    for (size_t i = 0; i < vertices.size(); i++)
+    return GuiQuad
     {
-        GuiVertex vertex;
-        vertex.position = vertexPositions[i];
-        vertex.color = color;
-
-        vertices[i] = vertex;
-    }
-
-    vertices[0].uv = {0,0};
-    vertices[1].uv = {0,1};
-    vertices[2].uv = {1,1};
-    vertices[3].uv = {1,0};
-
-    return GuiQuad { vertices };
+        .topLeft = vertices[1],
+        .bottomLeft = vertices[0],
+        .topRight = vertices[2],
+        .bottomRight = vertices[3]
+    };
 }
