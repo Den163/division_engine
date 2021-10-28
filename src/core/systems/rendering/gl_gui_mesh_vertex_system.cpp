@@ -9,7 +9,7 @@
 #include "../../components/scale.h"
 
 static void applyVertexBuffer(const GlMesh& glMesh, const GuiMesh& mesh);
-void applyModelViewProjectionMatrix(const GlMesh& glMesh, const GuiMesh& mesh, const glm::mat4& mvpMatrix);
+static void applyModelViewProjectionMatrix(const GlMesh& glMesh, const GuiMesh& mesh, const glm::mat4& mvpMatrix);
 
 void GlGuiMeshVerticesSystem::update(EngineState& engineState)
 {
