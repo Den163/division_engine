@@ -13,7 +13,12 @@ std::vector<uint8_t> readBytes(const std::string& filePath)
 
     std::vector<uint8_t> bytes(file.tellg());
     file.seekg(0, std::ifstream::beg);
-    if (!file.read(reinterpret_cast<char*>(bytes.data()), static_cast<std::streamsize>(bytes.size())))
+    const auto& readResult = file.read(
+        reinterpret_cast<char*>(bytes.data()),
+        static_cast<std::streamsize>(bytes.size())
+    );
+
+    if (!readResult)
     {
         throw std::runtime_error { "Failed to read file " + filePath };
     }

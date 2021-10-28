@@ -4,14 +4,14 @@
 
 #include <iostream>
 #include <random>
-#include <stdexcept>
 
 #include "../src/core/components/gui_mesh.h"
 #include "../src/core/primitives/gui/gui_primitive_factory.h"
 #include "../src/core/utils/debug_utils.h"
-#include "../src/core/utils/color.h"
 #include "../src/core/utils/engine_state_helper.h"
 #include "../src/core/utils/texture_utils.h"
+#include "../src/core/utils/font_utils.h"
+#include "../src/core/utils/color.h"
 
 static inline void checkMeshCreateByKeyPress(GlobalState& state);
 static inline void checkMeshDeleteByKeyPress(GlobalState& state);
@@ -22,7 +22,6 @@ void Lifecycle::init(GlobalState& state)
 {
     auto& engineState = state.engineState;
     auto& guiRegistry = engineState.guiRegistry;
-    auto& cameraState = engineState.camera;
 
     auto& tm = GuiPrimitiveFactory::makeEntityTriangle(
         engineState,
@@ -41,8 +40,10 @@ void Lifecycle::init(GlobalState& state)
         GuiQuad::create(300, 400, Color::yellow)
     );
     qm.fragmentShaderHandle = EngineStateHelper::standardTextureFragmentShaderProgram(engineState).programHandle;
-    GuiPrimitiveFactory::addTexture(
-        engineState, qe, TextureUtils::loadTextureFromFile("assets/images/img.jpg").handle);
+    GuiPrimitiveFactory::addTexture(engineState, qe, TextureUtils::loadFromFile("assets/images/img.jpg").handle);
+
+    auto fontIndex = engineState.fonts.insert(FontUtils::makeFont("assets/fonts/Roboto-Black.ttf", { 0, 120 }));
+    GuiPrimitiveFactory::makeTextQuads(engineState, "Hello world", fontIndex);
 }
 
 void Lifecycle::preRenderUpdate(GlobalState& state)

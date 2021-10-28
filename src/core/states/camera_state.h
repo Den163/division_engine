@@ -6,8 +6,6 @@
 
 struct CameraState
 {
-    glm::vec3 position;
-    glm::quat rotation;
-    float nearPlane;
-    float farPlane;
+    glm::vec3 position = glm::vec3 {0};
+    glm::quat rotation = glm::identity<glm::quat>();
 };

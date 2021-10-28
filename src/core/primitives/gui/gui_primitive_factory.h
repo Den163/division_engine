@@ -8,6 +8,7 @@
 
 #include "../../components/gui_mesh.h"
 #include "../../states/engine_state.h"
+#include "../../utils/color.h"
 #include "gui_triangle.h"
 #include "gui_quad.h"
 
@@ -29,4 +30,10 @@ namespace GuiPrimitiveFactory
 
     void addTexture(EngineState& engineState, const entt::entity& entity, uint32_t textureIndex);
 
+    void makeTextQuads(
+        EngineState& engineState,
+        const std::string& text,
+        VersionedIndex fontIndex,
+        const Transform& transform = Transform::makeDefault(),
+        const glm::vec4& color = Color::white);
 }

@@ -3,7 +3,6 @@
 #include "../../components/position.h"
 #include "../../components/rotation.h"
 #include "../../components/scale.h"
-#include "../../states/shader_pipeline_state.h"
 #include "../../events/gui_mesh_created.h"
 #include "../../events/gui_mesh_destroyed.h"
 #include "../../components/gl_texture.h"
@@ -61,5 +60,43 @@ void GuiPrimitiveFactory::addTexture(EngineState& engineState, const entt::entit
 {
     auto& tex = engineState.guiRegistry.emplace<GlTexture>(entity);
     tex.handle = handle;
+}
+
+void GuiPrimitiveFactory::makeTextQuads(
+    EngineState& engineState,
+    const std::string& text,
+    const VersionedIndex fontIndex,
+    const Transform& transform,
+    const glm::vec4& color)
+{
+    const auto& font = engineState.fonts.get(fontIndex);
+
+    float x = 0;
+    for(const uint8_t c: text)
+    {
+        const auto& glyph = font.glyphs[c];
+        if (glyph.textureHandle == 0) continue;
+
+        const auto& e = engineState.guiRegistry.create();
+        auto quadPosition = transform.position;
+        quadPosition.x += x;
+
+        const auto& width = glyph.size.x;
+        const auto& height = glyph.size.y;
+        GuiQuad quad;
+        quad.vertices = {
+            GuiVertex { color, { 0, 0 },          { 0, 1 }  },
+            GuiVertex { color, { 0, height },     { 0, 0 }  },
+            GuiVertex { color, { width, height }, { 1, 0 }  },
+            GuiVertex { color, { width, 0 },      { 1, 1 }  },
+        };
+
+        auto& mesh = makeEntityQuad(engineState, e, transform.withPosition(quadPosition), quad);
+        mesh.fragmentShaderHandle =
+            engineState.defaultShader.shaders[EngineInvariants::STANDARD_FONT_FRAGMENT_SHADER_INDEX].programHandle;
+
+        addTexture(engineState, e, glyph.textureHandle);
+        x += glyph.advance >> 6;
+    }
 }
 

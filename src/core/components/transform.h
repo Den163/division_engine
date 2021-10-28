@@ -11,7 +11,7 @@ struct Transform
     /*
      * Returns transform with zero position, zero rotation and identity scale
     */
-    static Transform makeDefault() { return Transform { {}, {}, glm::vec3{1.f} }; }
+    static constexpr inline Transform makeDefault() { return Transform { {}, {}, glm::vec3{1.f} }; }
 
     Transform withPosition(const glm::vec3& position) const
     {
