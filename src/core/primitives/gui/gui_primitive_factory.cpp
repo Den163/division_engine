@@ -73,7 +73,7 @@ void GuiPrimitiveFactory::makeTextQuads(
     const auto& font = engineState.fonts.get(fontIndex);
 
     float x = 0;
-    for(const uint8_t c: text)
+    for(const Font::char_type c: text)
     {
         const auto& glyph = font.glyphs[c];
         if (glyph.textureHandle == 0) continue;

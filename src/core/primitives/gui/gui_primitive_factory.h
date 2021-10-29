@@ -4,6 +4,7 @@
 #include <entt/entt.hpp>
 #include <glm/vec3.hpp>
 #include <glm/ext/quaternion_float.hpp>
+#include <string>
 #include <tuple>
 
 #include "../../components/gui_mesh.h"
@@ -33,7 +34,7 @@ namespace GuiPrimitiveFactory
     void makeTextQuads(
         EngineState& engineState,
         const std::string& text,
-        VersionedIndex fontIndex,
+        const VersionedIndex fontIndex,
         const Transform& transform = Transform::makeDefault(),
         const glm::vec4& color = Color::white);
 }

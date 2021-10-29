@@ -2,13 +2,15 @@
 
 #include "glyph.h"
 #include "gui_quad.h"
+#include "memory"
 
 struct Font
 {
-    static constexpr uint8_t MAX_CHARACTER = 255;
+    using char_type = uint8_t;
+    static constexpr char_type MAX_CHARACTER = 255;
     static constexpr size_t CHARACTERS_SIZE = MAX_CHARACTER + 1;
 
-    const Glyph& getGlyph(uint8_t character) const { return glyphs[character]; }
+    const Glyph& getGlyph(char_type character) const { return glyphs[character]; }
 
     Glyph glyphs[CHARACTERS_SIZE];
 };

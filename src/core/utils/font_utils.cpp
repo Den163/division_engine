@@ -3,11 +3,11 @@
 #include <glad/gl.h>
 #include <stdexcept>
 #include "texture_utils.h"
-#include "color.h"
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-static Glyph makeGlyph(FT_Face ftFace, uint8_t character);
+static Glyph makeGlyph(FT_Face ftFace, Font::char_type character, const glm::vec2& size);
+static Glyph makeEmptyGlyph(const glm::ivec2& size);
 
 Font FontUtils::makeFont(const std::string& fontFilePath, const glm::ivec2& size)
 {
@@ -34,11 +34,16 @@ Font FontUtils::makeFont(const std::string& fontFilePath, const glm::ivec2& size
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     Font font;
-    for (size_t character = 0; character <= Font::MAX_CHARACTER; character++)
+    auto emptyGlyph = makeEmptyGlyph(glm::vec2 {static_cast<float>(face->size->face->max_advance_width >> 6)});
+    for (auto character = 0; character < Font::CHARACTERS_SIZE; character++)
     {
         auto& glyph = font.glyphs[character];
 
-        glyph = makeGlyph(face, character);
+        glyph = makeGlyph(face, character, size);
+        if (glyph.textureHandle == 0)
+        {
+            glyph = emptyGlyph;
+        }
     }
 
     FT_Done_Face(face);
@@ -47,12 +52,16 @@ Font FontUtils::makeFont(const std::string& fontFilePath, const glm::ivec2& size
     return font;
 }
 
-Glyph makeGlyph(FT_Face ftFace, uint8_t character)
+Glyph makeGlyph(FT_Face ftFace, Font::char_type character, const glm::vec2& size)
 {
     auto charError = FT_Load_Char(ftFace, character, FT_LOAD_RENDER);
     if (charError)
     {
-        throw std::runtime_error { "Failed to load FreeType character" };
+        auto errorString = FT_Error_String(charError);
+        throw std::runtime_error
+        {
+            "Failed to load FreeType character: " + std::string(errorString != nullptr ? errorString : "")
+        };
     }
 
     const auto& glyph = ftFace->glyph;
@@ -78,6 +87,30 @@ Glyph makeGlyph(FT_Face ftFace, uint8_t character)
         .size = { width, height },
         .bearing = { glyph->bitmap_left, glyph->bitmap_top },
         .advance = static_cast<uint32_t>(glyph->advance.x),
+        .textureHandle = texState.handle
+    };
+}
+
+Glyph makeEmptyGlyph(const glm::ivec2& size)
+{
+    auto memSize = sizeof(uint8_t) * size.x * size.y;
+    auto* emptyBitmapPtr = malloc(memSize);
+    memset(emptyBitmapPtr, 0, memSize);
+    auto texState = TextureUtils::loadFromBitmap(Texture2dConfig{
+        .bitmapPtr = (uint8_t*) emptyBitmapPtr,
+        .width = size.x,
+        .height = size.y,
+        .colorMode = ColorMode::Red,
+        .coordinateFlags = Texture2dConfig::st_flags { Texture2dConfig::CLAMP_TO_EDGE }
+    });
+
+    free(emptyBitmapPtr);
+
+    return Glyph
+    {
+        .size = size,
+        .bearing = size,
+        .advance = static_cast<uint32_t>(size.x) << 6,
         .textureHandle = texState.handle
     };
 }
