@@ -34,7 +34,8 @@ Font FontUtils::makeFont(const std::string& fontFilePath, const glm::ivec2& size
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     Font font;
-    auto emptyGlyph = makeEmptyGlyph(glm::vec2 {static_cast<float>(face->size->face->max_advance_width >> 6)});
+    auto emptinessSize = advanceToPixels(face->size->face->max_advance_width);
+    auto emptyGlyph = makeEmptyGlyph(glm::vec2 {static_cast<float>(emptinessSize)});
     for (auto character = 0; character < Font::CHARACTERS_SIZE; character++)
     {
         auto& glyph = font.glyphs[character];

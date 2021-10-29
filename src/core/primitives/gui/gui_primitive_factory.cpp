@@ -7,6 +7,7 @@
 #include "../../events/gui_mesh_destroyed.h"
 #include "../../components/gl_texture.h"
 #include "../../utils/engine_state_helper.h"
+#include "../../utils/font_utils.h"
 
 GuiMesh& GuiPrimitiveFactory::makeEntityMesh(
     EngineState& engineState, const entt::entity& entity, const Transform& transform)
@@ -96,7 +97,7 @@ void GuiPrimitiveFactory::makeTextQuads(
             engineState.defaultShader.shaders[EngineInvariants::STANDARD_FONT_FRAGMENT_SHADER_INDEX].programHandle;
 
         addTexture(engineState, e, glyph.textureHandle);
-        x += glyph.advance >> 6;
+        x += FontUtils::advanceToPixels(glyph.advance);
     }
 }
 
