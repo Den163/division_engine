@@ -77,8 +77,6 @@ void GuiPrimitiveFactory::makeTextQuads(
     for(const Font::char_type c: text)
     {
         const auto& glyph = font.glyphs[c];
-        if (glyph.textureHandle == 0) continue;
-
         const auto& e = engineState.guiRegistry.create();
         auto quadPosition = transform.position;
         quadPosition.x += x;
@@ -96,7 +94,7 @@ void GuiPrimitiveFactory::makeTextQuads(
         mesh.fragmentShaderHandle =
             engineState.defaultShader.shaders[EngineInvariants::STANDARD_FONT_FRAGMENT_SHADER_INDEX].programHandle;
 
-        addTexture(engineState, e, glyph.textureHandle);
+        addTexture(engineState, e, font.textureHandle);
         x += FontUtils::advanceToPixels(glyph.advance);
     }
 }

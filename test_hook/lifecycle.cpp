@@ -57,11 +57,10 @@ void Lifecycle::init(GlobalState& state)
     qm.renderMode = RenderMode::TrianglesStrip;
     qm.fragmentShaderHandle = EngineStateHelper::standardTextureFragmentShaderProgram(engineState).programHandle;
 
-
     auto textureHandle = TextureUtils::loadFromFile("assets/images/img.jpg").handle;
     GuiPrimitiveFactory::addTexture(engineState, qe, textureHandle);
 
-    auto fontIndex = engineState.fonts.insert(FontUtils::makeFont("assets/fonts/Roboto-Black.ttf", { 0, 120 }));
+    auto fontIndex = engineState.fonts.insert(FontUtils::makeFont("assets/fonts/Roboto-Black.ttf", { 0, 88 }));
     GuiPrimitiveFactory::makeTextQuads(engineState, "Hello world", fontIndex);
 }
 

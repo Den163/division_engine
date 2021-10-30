@@ -13,4 +13,5 @@ struct Font
     const Glyph& getGlyph(char_type character) const { return glyphs[character]; }
 
     Glyph glyphs[CHARACTERS_SIZE];
+    uint32_t textureHandle;
 };

@@ -1,13 +1,16 @@
 #include "font_utils.h"
 
+#include <format>
 #include <glad/gl.h>
 #include <stdexcept>
-#include "texture_utils.h"
+#include <vector>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-static Glyph makeGlyph(FT_Face ftFace, Font::char_type character, const glm::vec2& size);
-static Glyph makeEmptyGlyph(const glm::ivec2& size);
+#include "texture_utils.h"
+
+static inline void loadFontAtlas(FT_Face ftFace, Font& font, const glm::ivec2& glyphSize);
+static inline void throwFreetypeException(const char* formattedExceptionText, int freetypeErrorCode);
 
 Font FontUtils::makeFont(const std::string& fontFilePath, const glm::ivec2& size)
 {
@@ -18,100 +21,89 @@ Font FontUtils::makeFont(const std::string& fontFilePath, const glm::ivec2& size
 
     FT_Library ft;
     auto initError = FT_Init_FreeType(&ft);
-    if (initError)
-    {
-        throw std::runtime_error { "Failed to init FreeType library" };
-    }
+    if (initError) throwFreetypeException("Failed to init FreeType library: {}", initError);
 
     FT_Face face;
     auto faceError = FT_New_Face(ft, fontFilePath.data(), 0, &face);
-    if (faceError)
-    {
-        throw std::runtime_error { "Failed to load FreeType font face" };
-    }
+    if (faceError) throwFreetypeException("Failed to load Freetype font face: {}", faceError);
 
     FT_Set_Pixel_Sizes(face, size.x, size.y);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     Font font;
-    auto emptinessSize = advanceToPixels(face->size->face->max_advance_width);
-    auto emptyGlyph = makeEmptyGlyph(glm::vec2 {static_cast<float>(emptinessSize)});
-    for (auto character = 0; character < Font::CHARACTERS_SIZE; character++)
-    {
-        auto& glyph = font.glyphs[character];
+    loadFontAtlas(face, font, size.x == 0 ? glm::ivec2{size.y} : glm::ivec2{size.x});
 
-        glyph = makeGlyph(face, character, size);
-        if (glyph.textureHandle == 0)
-        {
-            glyph = emptyGlyph;
-        }
-    }
-
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
     return font;
 }
 
-Glyph makeGlyph(FT_Face ftFace, Font::char_type character, const glm::vec2& size)
+void loadFontAtlas(FT_Face ftFace, Font& font, const glm::ivec2& glyphSize)
 {
-    auto charError = FT_Load_Char(ftFace, character, FT_LOAD_RENDER);
-    if (charError)
+    const auto reservedCharacters = 256;
+    const auto maxAdvance = ftFace->max_advance_width;
+    const auto glyphPixels = glyphSize.x * glyphSize.y;
+    const int bitmapRows = sqrt(reservedCharacters);
+    const int bitmapColumns = bitmapRows;
+    const auto bitmapPixelWidth = glyphSize.x * bitmapRows;
+    const auto bitmapPixelHeight = glyphSize.y * bitmapColumns;
+    auto* bitmap = (uint8_t*) std::malloc(glyphPixels * reservedCharacters);
+
+    for (size_t character = 0; character < reservedCharacters; character++)
     {
-        auto errorString = FT_Error_String(charError);
-        throw std::runtime_error
+        auto charErr = FT_Load_Char(ftFace, character, FT_LOAD_RENDER);
+        if (charErr) throwFreetypeException("Can't load character: {}", charErr);
+
+        const auto bmpCol = character % bitmapColumns;
+        const auto bmpRow = character / bitmapRows;
+        const auto* ftGlyph = ftFace->glyph;
+        const auto& ftBitmap = ftGlyph->bitmap;
+
+        font.glyphs[character] = Glyph
         {
-            "Failed to load FreeType character: " + std::string(errorString != nullptr ? errorString : "")
+            .size = { ftBitmap.width, ftBitmap.rows },
+            .offset = { bmpCol * glyphSize.x, bmpRow * glyphSize.y },
+            .bearing = { ftGlyph->bitmap_left, ftGlyph->bitmap_top },
+            .advance = static_cast<uint32_t>(ftGlyph->advance.x),
         };
-    }
 
-    const auto& glyph = ftFace->glyph;
-    const auto& bitmap = glyph->bitmap;
-    const auto width = bitmap.width;
-    const auto height = bitmap.rows;
+        for (auto row = 0; row < glyphSize.x; row++)
+        {
+            for (auto column = 0; column < glyphSize.y; column++)
+            {
+                const auto x = bmpCol * glyphSize.x + column;
+                const auto y = bmpRow * glyphSize.y + row;
+                const auto i = x + bitmapPixelWidth * y;
 
-    if (width == 0 && height == 0)
-    {
-        return Glyph { .textureHandle = 0 };
+                if (row >= ftBitmap.rows || column >= ftBitmap.width)
+                {
+                    bitmap[i] = 0;
+                }
+                else
+                {
+                    bitmap[i] = ftBitmap.buffer[column + ftBitmap.width * row];
+                }
+            }
+        }
     }
 
     auto texState = TextureUtils::loadFromBitmap(Texture2dConfig{
-        .bitmapPtr = bitmap.buffer,
-        .width = static_cast<int32_t>(width),
-        .height = static_cast<int32_t>(height),
-        .colorMode = ColorMode::Red,
-        .coordinateFlags = Texture2dConfig::st_flags { Texture2dConfig::CLAMP_TO_EDGE },
+       .size = { bitmapPixelWidth, bitmapPixelHeight },
+       .offset = glm::ivec2 { 0 },
+       .coordinateFlags = Texture2dConfig::st_flags { Texture2dConfig::CLAMP_TO_EDGE },
+       .colorMode = ColorMode::Red,
+       .bitmapPtr = bitmap
     });
 
-    return Glyph
-    {
-        .size = { width, height },
-        .bearing = { glyph->bitmap_left, glyph->bitmap_top },
-        .advance = static_cast<uint32_t>(glyph->advance.x),
-        .textureHandle = texState.handle
-    };
+    std::free(bitmap);
+    font.textureHandle = texState.handle;
 }
 
-Glyph makeEmptyGlyph(const glm::ivec2& size)
+void throwFreetypeException(const char* formattedExceptionText, int freetypeErrorCode)
 {
-    auto memSize = sizeof(uint8_t) * size.x * size.y;
-    auto* emptyBitmapPtr = malloc(memSize);
-    memset(emptyBitmapPtr, 0, memSize);
-    auto texState = TextureUtils::loadFromBitmap(Texture2dConfig{
-        .bitmapPtr = (uint8_t*) emptyBitmapPtr,
-        .width = size.x,
-        .height = size.y,
-        .colorMode = ColorMode::Red,
-        .coordinateFlags = Texture2dConfig::st_flags { Texture2dConfig::CLAMP_TO_EDGE }
-    });
-
-    free(emptyBitmapPtr);
-
-    return Glyph
-    {
-        .size = size,
-        .bearing = size,
-        .advance = static_cast<uint32_t>(size.x) << 6,
-        .textureHandle = texState.handle
-    };
+    auto err = FT_Error_String(freetypeErrorCode);
+    if (err == nullptr) err = "";
+    throw std::runtime_error{ std::format(std::string {formattedExceptionText}, err) };
 }
