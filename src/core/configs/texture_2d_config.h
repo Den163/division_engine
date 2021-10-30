@@ -17,10 +17,9 @@ struct Texture2dConfig
 
     using st_flags = glm::vec<2, TextureCoordinateFlags>;
 
-    uint8_t* bitmapPtr;
-    int32_t width;
-    int32_t height;
-    ColorMode colorMode;
-
+    glm::ivec2 size;
+    glm::ivec2 offset;
     st_flags coordinateFlags = { DEFAULT, DEFAULT };
+    ColorMode colorMode;
+    uint8_t* bitmapPtr;
 };

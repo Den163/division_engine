@@ -32,7 +32,6 @@ concept EngineStateAggregate = requires(T& aggr)
     { aggr.engineConfig } -> std::same_as<EngineConfig&>;
 };
 
-
 class EngineCore
 {
 public:

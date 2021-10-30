@@ -6,4 +6,6 @@
 namespace FontUtils
 {
     Font makeFont(const std::string& fontFilePath, const glm::ivec2& size);
+    inline int32_t advanceToPixels(int32_t advance) { return advance >> 6; }
+    inline int32_t pixelsToAdvance(int32_t pixels) { return pixels << 6; }
 }

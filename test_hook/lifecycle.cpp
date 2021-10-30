@@ -33,17 +33,34 @@ void Lifecycle::init(GlobalState& state)
         ));
 
     const auto& qe = guiRegistry.create();
-    auto& qm = GuiPrimitiveFactory::makeEntityQuad(
-        engineState,
-        qe,
-        Transform::makeDefault().withPosition({400, 400, 0}),
-        GuiQuad::atBottomLeft(glm::vec2{0}, {300, 400}, Color::yellow)
-    );
-    qm.fragmentShaderHandle = EngineStateHelper::standardTextureFragmentShaderProgram(engineState).programHandle;
-    GuiPrimitiveFactory::addTexture(engineState, qe, TextureUtils::loadFromFile("assets/images/img.jpg").handle);
 
-    auto fontIndex = engineState.fonts.insert(FontUtils::makeFont("assets/fonts/Roboto-Black.ttf", { 0, 120 }));
+    auto& qm = GuiPrimitiveFactory::makeEntityMesh(
+        engineState, qe, Transform::makeDefault().withPosition({400, 400, 0}));
+    qm.vertices = {
+        GuiVertex { .position = { 0,100 }, .uv = { 0.2, 0.4 } },
+        GuiVertex { .position = { 0,0 }, .uv = { 0.2, 0.2 } },
+        GuiVertex { .position = { 100,100 }, .uv = { 0.4, 0.4 } },
+        GuiVertex { .position = { 100,0 }, .uv = { 0.4, 0.2 } },
+        GuiVertex { .position = { 100,100 }, .uv = { 0.6, 0.8 } },
+        GuiVertex { .position = { 100,0 }, .uv = { 0.6, 0.6 } },
+        GuiVertex { .position = { 200,100 }, .uv = { 0.8, 0.8 } },
+        GuiVertex { .position = { 200,0 }, .uv = { 0.8, 0.6 } },
+    };
+    qm.renderMode = RenderMode::TrianglesStrip;
+    qm.fragmentShaderHandle = EngineStateHelper::standardTextureFragmentShaderProgram(engineState).programHandle;
+
+    auto textureHandle = TextureUtils::loadFromFile("assets/images/img.jpg").handle;
+    GuiPrimitiveFactory::addTexture(engineState, qe, textureHandle);
+
+    auto fontIndex = engineState.fonts.insert(FontUtils::makeFont("assets/fonts/Roboto-Black.ttf", { 0, 88 }));
+    auto start = std::chrono::steady_clock::now();
     GuiPrimitiveFactory::makeTextQuads(engineState, "Hello world", fontIndex);
+    auto diff = std::chrono::steady_clock::now() - start;
+
+    std::cout
+        << "Make text quads time: "
+        << std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(diff).count()
+        << std::endl;
 }
 
 void Lifecycle::preRenderUpdate(GlobalState& state)

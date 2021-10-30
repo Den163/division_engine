@@ -24,6 +24,8 @@ add_library(glad ${PROJECT_SOURCE_DIR}/libs/glad/src/gl.c)
 target_include_directories(glad PUBLIC ${PROJECT_SOURCE_DIR}/libs/glad/include)
 add_library(stb_image libs/stb_image/stb_image.h libs/stb_image/stb_image.h.cpp)
 target_include_directories(stb_image PUBLIC ${PROJECT_SOURCE_DIR}/libs/stb_image)
+add_library(stb_image_write libs/stb_image_write/stb_image_write.h libs/stb_image_write/stb_image_write.cpp)
+target_include_directories(stb_image_write PUBLIC libs/stb_image_write)
 
 #SHADERS
 
@@ -116,9 +118,10 @@ set(DIVISION_ENGINE_SOURCES
     core/utils/shader_compiler.h core/utils/shader_compiler.cpp
     core/utils/texture_utils.cpp core/utils/texture_utils.h
     core/primitives/gui/font.h core/primitives/gui/glyph.h core/utils/font_utils.cpp core/utils/font_utils.h
-    core/configs/texture_2d_config.h core/data_structures/sparse_set.h core/data_structures/versioned_sparse_set.h)
+    core/configs/texture_2d_config.h core/data_structures/sparse_set.h core/data_structures/versioned_sparse_set.h
+)
 
-set(DIVISION_ENGINE_LIBS glad glfw3 freetype glm::glm EnTT::EnTT stb_image)
+set(DIVISION_ENGINE_LIBS glad glfw3 freetype glm::glm EnTT::EnTT stb_image stb_image_write)
 
 add_library(division_engine_core ${DIVISION_ENGINE_SOURCES})
 add_dependencies(division_engine_core shaders)
