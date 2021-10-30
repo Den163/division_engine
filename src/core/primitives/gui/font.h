@@ -13,5 +13,6 @@ struct Font
     const Glyph& getGlyph(char_type character) const { return glyphs[character]; }
 
     Glyph glyphs[CHARACTERS_SIZE];
+    glm::ivec2 textureSize;
     uint32_t textureHandle;
 };

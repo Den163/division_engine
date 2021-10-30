@@ -16,6 +16,7 @@ namespace Color
     const glm::vec4 yellow = { 1,1,0,1 };
     const glm::vec4 black = { 0,0,0,1 };
     const glm::vec4 white = { 1,1,1,1 };
+    const glm::vec4 transparency = glm::vec4{ 0 };
 
     inline glm::vec4 fromRgbaHex(uint32_t hexRgba)
     {

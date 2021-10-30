@@ -89,8 +89,9 @@ void loadFontAtlas(FT_Face ftFace, Font& font, const glm::ivec2& glyphSize)
         }
     }
 
+    const auto& textureSize = glm::ivec2 { bitmapPixelWidth, bitmapPixelHeight };
     auto texState = TextureUtils::loadFromBitmap(Texture2dConfig{
-       .size = { bitmapPixelWidth, bitmapPixelHeight },
+       .size = textureSize,
        .offset = glm::ivec2 { 0 },
        .coordinateFlags = Texture2dConfig::st_flags { Texture2dConfig::CLAMP_TO_EDGE },
        .colorMode = ColorMode::Red,
@@ -98,6 +99,8 @@ void loadFontAtlas(FT_Face ftFace, Font& font, const glm::ivec2& glyphSize)
     });
 
     std::free(bitmap);
+
+    font.textureSize = textureSize;
     font.textureHandle = texState.handle;
 }
 

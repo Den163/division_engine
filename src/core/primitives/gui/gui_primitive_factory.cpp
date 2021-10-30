@@ -63,7 +63,6 @@ void GuiPrimitiveFactory::addTexture(EngineState& engineState, const entt::entit
     tex.handle = handle;
 }
 
-// TODO: Replace this shit with normal text rendering system!
 void GuiPrimitiveFactory::makeTextQuads(
     EngineState& engineState,
     const std::string& text,
@@ -72,30 +71,58 @@ void GuiPrimitiveFactory::makeTextQuads(
     const glm::vec4& color)
 {
     const auto& font = engineState.fonts.get(fontIndex);
+    const glm::vec2& textureSize = font.textureSize;
+    const auto& textureWidth = font.textureSize.x;
+    const auto& textureHeight = font.textureSize.y;
+    const auto& textSize = text.size();
+    const auto verticesInQuad = 4;
+
+    const auto& e = engineState.guiRegistry.create();
+    auto& fontMesh = makeEntityMesh(engineState, e, transform);
+    auto& vertices = fontMesh.vertices;
+    vertices.resize(textSize * verticesInQuad * 2);
+
+    fontMesh.renderMode = RenderMode::TrianglesStrip;
+    fontMesh.fragmentShaderHandle =
+        engineState.defaultShader.shaders[EngineInvariants::STANDARD_FONT_FRAGMENT_SHADER_INDEX].programHandle;
+    addTexture(engineState, e, font.textureHandle);
 
     float x = 0;
-    for(const Font::char_type c: text)
+    auto renderedVertices = 0;
+    for(size_t i = 0; i < textSize; i++)
     {
+        const auto c = text[i];
         const auto& glyph = font.glyphs[c];
-        const auto& e = engineState.guiRegistry.create();
-        auto quadPosition = transform.position;
-        quadPosition.x += x;
+        const auto& size = glyph.size;
+        const auto& offset = glyph.offset;
+        auto glyphAdvancePx = FontUtils::advanceToPixels(glyph.advance);
+        auto leftX = x;
+        auto rightX = x + size.x;
+        auto bottomY = 0;
+        auto topY = size.y;
 
-        const auto& width = glyph.size.x;
-        const auto& height = glyph.size.y;
-        const auto& quad = GuiQuad::bottomLeftTopLeftTopRightBottomRight({
-            GuiVertex {color, {0, 0}, {0, 1}},
-            GuiVertex {color, {0, height}, {0, 0}},
-            GuiVertex {color, {width, height}, {1, 0}},
-            GuiVertex {color, {width, 0}, {1, 1}},
-        });
+        vertices[renderedVertices++] =
+            GuiVertex{color, {leftX, topY}, glm::vec2 {offset.x, offset.y} / textureSize};
+        vertices[renderedVertices++] =
+            GuiVertex{color, {leftX, bottomY}, glm::vec2 {offset.x, offset.y + size.y} / textureSize};
+        vertices[renderedVertices++] =
+            GuiVertex{color, {rightX, topY}, glm::vec2 {offset.x + size.x, offset.y} / textureSize};
+        vertices[renderedVertices++] =
+            GuiVertex{color, {rightX, bottomY}, glm::vec2{offset.x + size.x, offset.y + size.y} / textureSize};
 
-        auto& mesh = makeEntityQuad(engineState, e, transform.withPosition(quadPosition), quad);
-        mesh.fragmentShaderHandle =
-            engineState.defaultShader.shaders[EngineInvariants::STANDARD_FONT_FRAGMENT_SHADER_INDEX].programHandle;
+        auto emptySpaceX = glyphAdvancePx - size.x;
+        if (emptySpaceX > 0)
+        {
+            auto transparency = Color::transparency;
+            vertices[renderedVertices++] = GuiVertex{transparency, {rightX, topY}, glm::vec2{0}};
+            vertices[renderedVertices++] = GuiVertex{transparency, {rightX, bottomY}, glm::vec2{0}};
+            vertices[renderedVertices++] = GuiVertex{transparency,{rightX + emptySpaceX, topY}, glm::vec2{0}};
+            vertices[renderedVertices++] = GuiVertex{transparency,{rightX + emptySpaceX, bottomY}, glm::vec2{0}};
+        }
 
-        addTexture(engineState, e, font.textureHandle);
-        x += FontUtils::advanceToPixels(glyph.advance);
+        x += glyphAdvancePx;
     }
+
+    vertices.resize(renderedVertices);
 }
 
