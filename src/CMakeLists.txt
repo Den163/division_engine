@@ -50,10 +50,10 @@ foreach(SHADER IN LISTS SHADER_SOURCES)
     file(MAKE_DIRECTORY ${SHADER_OUTPUT_DIR})
 
     add_custom_command(
-            OUTPUT ${SHADER_OUTPUT}
-            COMMAND $ENV{GLSL_LANG_VALIDATOR_COMP}/glslangValidator.exe -G100 -e main ${SHADER_INPUT} -o ${SHADER_OUTPUT}
-            DEPENDS ${SHADER_INPUT}
-            VERBATIM
+        OUTPUT ${SHADER_OUTPUT}
+        COMMAND $ENV{GLSL_LANG_VALIDATOR_COMP}/glslangValidator.exe -G100 -e main ${SHADER_INPUT} -o ${SHADER_OUTPUT}
+        DEPENDS ${SHADER_INPUT}
+        VERBATIM
     )
 
     list(APPEND SHADERS_OUTPUTS ${SHADER_OUTPUT})
@@ -119,7 +119,9 @@ set(DIVISION_ENGINE_SOURCES
     core/utils/texture_utils.cpp core/utils/texture_utils.h
     core/primitives/gui/font.h core/primitives/gui/glyph.h core/utils/font_utils.cpp core/utils/font_utils.h
     core/configs/texture_2d_config.h core/data_structures/sparse_set.h core/data_structures/versioned_sparse_set.h
-)
+    core/components/hierarchy.h core/components/gui_bounding_box.h core/components/gui_rect.h
+    core/primitives/gui/gui_composer.h core/primitives/gui/gui_composer.cpp
+    core/components/gui_anchor.h core/components/gui_rect_color.h core/utils/disable_glm_warnings.h)
 
 set(DIVISION_ENGINE_LIBS glad glfw3 freetype glm::glm EnTT::EnTT stb_image stb_image_write)
 
@@ -139,3 +141,11 @@ target_link_libraries(division_engine_core ${DIVISION_ENGINE_LIBS})
 add_custom_command(TARGET division_engine_core PRE_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
                    ${PROJECT_SOURCE_DIR}/assets ${PROJECT_BINARY_DIR}/assets)
+
+target_compile_definitions(division_engine_core PUBLIC GLM_FORCE_SWIZZLE GLM_FORCE_CXX17)
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL Clang)
+    if (MSVC)
+        target_compile_options(division_engine_core PUBLIC /EHs)
+    endif()
+endif()

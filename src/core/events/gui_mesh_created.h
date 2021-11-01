@@ -1,3 +1,3 @@
 #pragma once
 
-struct GuiMeshCreated { };
+struct GuiMeshCreated {};

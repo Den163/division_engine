@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../utils/disable_glm_warnings.h"
+
 #include "../states/engine_state.h"
 #include "lifecycle_config.h"
 #include "renderer_config.h"

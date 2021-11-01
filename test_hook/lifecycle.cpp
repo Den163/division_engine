@@ -1,5 +1,3 @@
-#pragma once
-
 #include "lifecycle.h"
 
 #include <iostream>

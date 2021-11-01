@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../utils/disable_glm_warnings.h"
+
 #include "../configs/renderer_config.h"
 #include "../configs/window_config.h"
 #include "glfw_window_state.h"
@@ -34,4 +36,5 @@ struct EngineState
     VersionedSparseSet<Font> fonts { 10 };
 
     entt::registry guiRegistry;
+    entt::entity guiRootElement;
 };

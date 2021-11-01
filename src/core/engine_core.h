@@ -1,16 +1,14 @@
 #pragma once
 
+#include "utils/disable_glm_warnings.h"
+
 #if defined(WIN32) || defined(_WIN32)
 #include <windows.h>
 #endif
 
-#include "configs/renderer_config.h"
-#include "configs/window_config.h"
 #include "configs/engine_config.h"
 #include "event_systems/on_gui_mesh_entity_created_event_system.h"
 #include "event_systems/on_gui_mesh_entity_destroyed_event_system.h"
-#include "events/gui_mesh_created.h"
-#include "events/gui_mesh_destroyed.h"
 #include "systems/rendering/gl_shader_program_system.h"
 #include "systems/rendering/gl_prepare_framebuffer_system.h"
 #include "systems/window/glfw_window_system.h"
@@ -22,14 +20,16 @@
 #include "systems/input/register_input_system.h"
 #include "systems/window/win32_window_system.h"
 #include "systems/rendering/gl_gui_mesh_render_system.h"
+#include "events/gui_mesh_created.h"
+#include "events/gui_mesh_destroyed.h"
 
 #include <type_traits>
 
 template<typename T>
-concept EngineStateAggregate = requires(T& aggr)
+concept EngineStateAggregate = requires(T aggr)
 {
-    { aggr.engineState } -> std::same_as<EngineState&>;
-    { aggr.engineConfig } -> std::same_as<EngineConfig&>;
+    { std::is_same_v< std::remove_reference_t<decltype(aggr.engineState)>, EngineState > };
+    { std::is_same_v< std::remove_reference_t<decltype(aggr.engineConfig)>, EngineConfig > };
 };
 
 class EngineCore

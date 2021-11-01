@@ -68,7 +68,7 @@ GLuint readFromSpirv(const ShaderConfig& config)
 
     throw std::runtime_error
     {
-        std::string {"Failed to specialize shader SPIR-V binary. Info log: \n"} + infoLog + "\n"
+        "Failed to specialize shader SPIR-V binary. Info log: \n" + std::string { infoLog } + "\n"
     };
 }
 

@@ -48,7 +48,7 @@ public:
         TSparseAlloc sparseAlloc = TSparseAlloc{},
         TDenseAlloc denseAlloc = TDenseAlloc {}
     ) :
-        sparse_size_(0), dense_size_(0), capacity_(capacity), sparseAlloc_(sparseAlloc), denseAlloc_(denseAlloc)
+        sparseAlloc_(sparseAlloc), denseAlloc_(denseAlloc), sparse_size_(0), dense_size_(0), capacity_(capacity)
     {
         sparse_ = sparseAlloc_.allocate(capacity);
         dense_ = denseAlloc_.allocate(capacity);
