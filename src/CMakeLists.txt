@@ -120,7 +120,6 @@ set(DIVISION_ENGINE_SOURCES
     core/primitives/gui/font.h core/primitives/gui/glyph.h core/utils/font_utils.cpp core/utils/font_utils.h
     core/configs/texture_2d_config.h core/data_structures/sparse_set.h core/data_structures/versioned_sparse_set.h
     core/components/hierarchy.h core/components/gui_bounding_box.h core/components/gui_rect.h
-    core/primitives/gui/gui_composer.h core/primitives/gui/gui_composer.cpp
     core/components/gui_anchor.h core/components/gui_rect_color.h core/utils/disable_glm_warnings.h)
 
 set(DIVISION_ENGINE_LIBS glad glfw3 freetype glm::glm EnTT::EnTT stb_image stb_image_write)
