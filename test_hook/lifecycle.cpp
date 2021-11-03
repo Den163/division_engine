@@ -53,7 +53,11 @@ void Lifecycle::init(GlobalState& state)
     auto fontIndex = engineState.resources.fonts.insert(
         FontUtils::makeFont("assets/fonts/Roboto-Black.ttf", { 0, 88 }));
     auto start = std::chrono::steady_clock::now();
-    GuiPrimitiveFactory::makeTextQuads(engineState, "Hello world", fontIndex);
+    GuiPrimitiveFactory::makeTextQuads(
+        engineState,
+        "Hello ggg world",
+        fontIndex,
+        Transform::makeDefault().withPosition({ 0, 10, 0 }));
     auto diff = std::chrono::steady_clock::now() - start;
 
     std::cout

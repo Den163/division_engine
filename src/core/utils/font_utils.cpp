@@ -63,7 +63,7 @@ void loadFontAtlas(FT_Face ftFace, Font& font, const glm::ivec2& glyphSize)
         font.glyphs[character] = Glyph
         {
             .size = { ftBitmap.width, ftBitmap.rows },
-            .offset = { bmpCol * glyphSize.x, bmpRow * glyphSize.y },
+            .textureOffset = {bmpCol * glyphSize.x, bmpRow * glyphSize.y },
             .bearing = { ftGlyph->bitmap_left, ftGlyph->bitmap_top },
             .advance = static_cast<uint32_t>(ftGlyph->advance.x),
         };

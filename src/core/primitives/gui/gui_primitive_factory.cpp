@@ -75,12 +75,12 @@ void GuiPrimitiveFactory::makeTextQuads(
     const auto& textureWidth = font.textureSize.x;
     const auto& textureHeight = font.textureSize.y;
     const auto& textSize = text.size();
-    const auto verticesInQuad = 4;
+    const auto verticesForCharacter = 4;
 
     const auto& e = engineState.guiRegistry.create();
     auto& fontMesh = makeEntityMesh(engineState, e, transform);
     auto& vertices = fontMesh.vertices;
-    vertices.resize(textSize * verticesInQuad * 2);
+    vertices.resize(textSize * verticesForCharacter * 2);
 
     fontMesh.renderMode = RenderMode::TrianglesStrip;
     fontMesh.fragmentShaderProgramHandle =
@@ -91,24 +91,25 @@ void GuiPrimitiveFactory::makeTextQuads(
     auto renderedVertices = 0;
     for(size_t i = 0; i < textSize; i++)
     {
-        const auto c = text[i];
-        const auto& glyph = font.glyphs[c];
+        const auto ch = text[i];
+        const auto& glyph = font.glyphs[ch];
         const auto& size = glyph.size;
-        const auto& offset = glyph.offset;
+        const auto& texOffset = glyph.textureOffset;
         auto glyphAdvancePx = FontUtils::advanceToPixels(glyph.advance);
         auto leftX = x;
         auto rightX = x + size.x;
-        auto bottomY = 0;
-        auto topY = size.y;
+        auto originY = size.y - glyph.bearing.y;
+        auto bottomY = -originY;
+        auto topY = size.y - originY;
 
         vertices[renderedVertices++] =
-            GuiVertex{color, {leftX, topY}, glm::vec2 {offset.x, offset.y} / textureSize};
+            GuiVertex{color, {leftX, topY}, glm::vec2 {texOffset.x, texOffset.y} / textureSize};
         vertices[renderedVertices++] =
-            GuiVertex{color, {leftX, bottomY}, glm::vec2 {offset.x, offset.y + size.y} / textureSize};
+            GuiVertex{color, {leftX, bottomY}, glm::vec2 {texOffset.x, texOffset.y + size.y} / textureSize};
         vertices[renderedVertices++] =
-            GuiVertex{color, {rightX, topY}, glm::vec2 {offset.x + size.x, offset.y} / textureSize};
+            GuiVertex{color, {rightX, topY}, glm::vec2 {texOffset.x + size.x, texOffset.y} / textureSize};
         vertices[renderedVertices++] =
-            GuiVertex{color, {rightX, bottomY}, glm::vec2{offset.x + size.x, offset.y + size.y} / textureSize};
+            GuiVertex{color, {rightX, bottomY}, glm::vec2{texOffset.x + size.x, texOffset.y + size.y} / textureSize};
 
         auto emptySpaceX = glyphAdvancePx - size.x;
         if (emptySpaceX > 0)
