@@ -45,7 +45,7 @@ void Lifecycle::init(GlobalState& state)
         GuiVertex { .position = { 200,0 }, .uv = { 0.8, 0.6 } },
     };
     qm.renderMode = RenderMode::TrianglesStrip;
-    qm.fragmentShaderHandle = EngineStateHelper::standardTextureFragmentShaderProgram(engineState).programHandle;
+    qm.fragmentShaderProgramHandle = EngineStateHelper::standardTextureFragmentShaderProgram(engineState).programHandle;
 
     auto textureHandle = TextureUtils::loadFromFile("assets/images/img.jpg").handle;
     GuiPrimitiveFactory::addTexture(engineState, qe, textureHandle);

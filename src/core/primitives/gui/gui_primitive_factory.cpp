@@ -15,8 +15,8 @@ GuiMesh& GuiPrimitiveFactory::makeEntityMesh(
     auto& registry = engineState.guiRegistry;
     auto& mesh = registry.emplace<GuiMesh>(entity);
     mesh.shaderPipelineHandle = EngineStateHelper::standardShaderPipeline(engineState).handle;
-    mesh.vertexShaderHandle = EngineStateHelper::standardVertexShaderProgram(engineState).programHandle;
-    mesh.fragmentShaderHandle = EngineStateHelper::standardColorFragmentShaderProgram(engineState).programHandle;
+    mesh.vertexShaderProgramHandle = EngineStateHelper::standardVertexShaderProgram(engineState).programHandle;
+    mesh.fragmentShaderProgramHandle = EngineStateHelper::standardColorFragmentShaderProgram(engineState).programHandle;
 
     auto& newPos = registry.emplace<Position>(entity);
     auto& newRot = registry.emplace<Rotation>(entity);
@@ -83,8 +83,8 @@ void GuiPrimitiveFactory::makeTextQuads(
     vertices.resize(textSize * verticesInQuad * 2);
 
     fontMesh.renderMode = RenderMode::TrianglesStrip;
-    fontMesh.fragmentShaderHandle =
-        engineState.defaultShader.shaders[EngineInvariants::STANDARD_FONT_FRAGMENT_SHADER_INDEX].programHandle;
+    fontMesh.fragmentShaderProgramHandle =
+        engineState.defaultShader.fontFragment().programHandle;
     addTexture(engineState, e, font.textureHandle);
 
     float x = 0;

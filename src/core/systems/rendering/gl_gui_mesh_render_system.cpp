@@ -17,11 +17,11 @@ void GlRenderGuiMeshSystem::update(EngineState& engineState)
         glUseProgramStages(
             shaderPipelineHandle,
             GL_VERTEX_SHADER_BIT,
-            mesh.vertexShaderHandle);
+            mesh.vertexShaderProgramHandle);
         glUseProgramStages(
             shaderPipelineHandle,
             GL_FRAGMENT_SHADER_BIT,
-            mesh.fragmentShaderHandle);
+            mesh.fragmentShaderProgramHandle);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

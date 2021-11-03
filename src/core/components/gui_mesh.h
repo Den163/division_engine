@@ -12,8 +12,8 @@ struct GuiMesh
 {
     RenderMode renderMode;
     uint32_t shaderPipelineHandle;
-    uint32_t vertexShaderHandle;
-    uint32_t fragmentShaderHandle;
+    uint32_t vertexShaderProgramHandle;
+    uint32_t fragmentShaderProgramHandle;
 
     std::vector<GuiVertex> vertices;
 };
