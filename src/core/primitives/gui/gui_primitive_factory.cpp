@@ -70,7 +70,7 @@ void GuiPrimitiveFactory::makeTextQuads(
     const Transform& transform,
     const glm::vec4& color)
 {
-    const auto& font = engineState.fonts.get(fontIndex);
+    const auto& font = engineState.resources.fonts.get(fontIndex);
     const glm::vec2& textureSize = font.textureSize;
     const auto& textureWidth = font.textureSize.x;
     const auto& textureHeight = font.textureSize.y;

@@ -119,8 +119,7 @@ set(DIVISION_ENGINE_SOURCES
     core/utils/texture_utils.cpp core/utils/texture_utils.h
     core/primitives/gui/font.h core/primitives/gui/glyph.h core/utils/font_utils.cpp core/utils/font_utils.h
     core/configs/texture_2d_config.h core/data_structures/sparse_set.h core/data_structures/versioned_sparse_set.h
-    core/components/hierarchy.h core/components/gui_bounding_box.h core/components/gui_rect.h
-    core/components/gui_anchor.h core/components/gui_rect_color.h core/utils/disable_glm_warnings.h)
+    core/utils/disable_glm_warnings.h core/states/resources_state.h)
 
 set(DIVISION_ENGINE_LIBS glad glfw3 freetype glm::glm EnTT::EnTT stb_image stb_image_write)
 

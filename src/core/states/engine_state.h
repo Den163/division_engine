@@ -17,6 +17,7 @@
 #include "win32_state.h"
 #include "../data_structures/versioned_sparse_set.h"
 #include "../primitives/gui/font.h"
+#include "resources_state.h"
 
 #include <entt/entt.hpp>
 
@@ -32,9 +33,7 @@ struct EngineState
     InputState input;
     RawInputState rawInput;
     DefaultShaderState defaultShader;
-
-    VersionedSparseSet<Font> fonts { 10 };
+    ResourcesState resources;
 
     entt::registry guiRegistry;
-    entt::entity guiRootElement;
 };

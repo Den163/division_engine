@@ -50,7 +50,8 @@ void Lifecycle::init(GlobalState& state)
     auto textureHandle = TextureUtils::loadFromFile("assets/images/img.jpg").handle;
     GuiPrimitiveFactory::addTexture(engineState, qe, textureHandle);
 
-    auto fontIndex = engineState.fonts.insert(FontUtils::makeFont("assets/fonts/Roboto-Black.ttf", { 0, 88 }));
+    auto fontIndex = engineState.resources.fonts.insert(
+        FontUtils::makeFont("assets/fonts/Roboto-Black.ttf", { 0, 88 }));
     auto start = std::chrono::steady_clock::now();
     GuiPrimitiveFactory::makeTextQuads(engineState, "Hello world", fontIndex);
     auto diff = std::chrono::steady_clock::now() - start;
