@@ -23,6 +23,8 @@
 #include "systems/rendering/gl_gui_mesh_render_system.h"
 #include "events/gui_mesh_created.h"
 #include "events/gui_mesh_destroyed.h"
+#include "systems/rendering/gl_mvp_matrix_system.h"
+#include "systems/rendering/gl_draw_gui_mesh_system.h"
 
 #include <type_traits>
 
@@ -109,6 +111,8 @@ private:
 //        GlGuiMeshVerticesSystem::update(state);
 //        GlRenderGuiMeshSystem::update(state);
         GlGuiTextSystem::update(state);
+        GlMvpMatrixSystem::update(state);
+        GlDrawGuiMeshSystem::update(state);
 
         GlfwVsyncSystem::update(state);
 

@@ -28,12 +28,18 @@ entt::entity GuiComposer::makeGuiElement(const GuiMaterial& material, const Tran
     return e;
 }
 
-entt::entity GuiComposer::makeGuiText(const GuiText& guiText, const GuiMaterial& material, const Transform& transform)
+entt::entity GuiComposer::makeGuiText(
+    const GuiText& guiText,
+    const GuiMaterial& material,
+    const Transform& transform)
 {
     auto e = makeGuiElement(material, transform);
     {
         auto& text = guiRegistry().emplace<GuiText>(e);
         text = guiText;
+    }
+    {
+        guiRegistry().emplace<GlTexture>(e);
     }
 
     return e;

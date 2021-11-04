@@ -9,6 +9,7 @@
 #include "../components/position.h"
 #include "../components/rotation.h"
 #include "../components/scale.h"
+#include "../components/gl_texture.h"
 
 struct GlMesh;
 
@@ -17,7 +18,7 @@ struct GuiComposer
     EngineState& engineState;
 
     inline static constexpr auto gui_element_types = entt::get<GlMesh, GuiMaterial, Position, Rotation, Scale>;
-    inline static constexpr auto gui_text_types = gui_element_types + entt::get<GuiText>;
+    inline static constexpr auto gui_text_types = gui_element_types + entt::get<GuiText, GlTexture>;
 
     GuiComposer(EngineState& engineState) : engineState(engineState) {}
 

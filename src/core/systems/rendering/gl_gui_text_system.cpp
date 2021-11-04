@@ -1,37 +1,26 @@
 #include "gl_gui_text_system.h"
 
+#include "../../components/gl_draw_indirect_command.h"
 #include "../../components/gl_mesh.h"
 #include "../../components/gui_material.h"
 #include "../../components/gui_text.h"
 #include "../../utils/font_utils.h"
 #include "../../utils/color.h"
-#include "../../utils/math.h"
-
-struct DrawArraysIndirectCommand
-{
-    GLuint count;
-    GLuint primitivesCount;
-    GLuint first;
-    GLuint baseInstanceOffset;
-};
+#include "../../components/gl_texture.h"
+#include "../../utils/gl_utils.h"
 
 constexpr size_t VERTICES_FOR_CHARACTER_ = 4;
 
-// TODO Decouple it to different systems
-
 static inline void applyIndirectBuffer(const GlMesh& glMesh, size_t charactersCount);
-static inline void applyVertexBuffer(const std::string& text, const GlMesh& glMesh, const Font& font);
 static inline void fillTextBuffer(const std::string& text, const Font& font, GuiVertex* vertexData);
-static inline void applyModelViewProjectionMatrix(const GlMesh& glMesh, int divisor, const glm::mat4& mvpMatrix);
 
 void GlGuiTextSystem::update(EngineState& engineState)
 {
     auto& registry = engineState.guiRegistry;
     const auto& windowState = engineState.window;
-    const auto& projectionMatrix = glm::ortho(0.f, (float) windowState.width, 0.f, (float) windowState.height);
 
-    for (auto&&[e, glMesh, renderable, guiText] :
-         registry.view<const GlMesh, const GuiMaterial, const GuiText>().each())
+    for (auto&&[e, glMesh, glTexture, material, guiText] :
+         registry.view<GlMesh, GlTexture, const GuiMaterial, const GuiText>().each())
     {
         const auto text = guiText.text;
         const auto charactersCount = text.size();
@@ -40,7 +29,6 @@ void GlGuiTextSystem::update(EngineState& engineState)
         const auto vboHandle = glMesh.vertexVboHandle;
         const auto fontIndex = guiText.font;
         const auto textSize = glm::vec2 { 0, guiText.fontHeight };
-        const auto& modelMatrix = Math::transformMatrix(glm::vec3{0}, glm::identity<glm::quat>(), glm::vec3{1});
 
         glBindVertexArray(glMesh.vaoHandle);
 
@@ -52,39 +40,27 @@ void GlGuiTextSystem::update(EngineState& engineState)
             glNamedBufferStorage(
                 vboHandle, newBufferSize, nullptr, GL_MAP_WRITE_BIT);
             glNamedBufferStorage(
-                glMesh.indirectBufferHandle, sizeof(DrawArraysIndirectCommand) * charactersCount, nullptr,
+                glMesh.indirectBufferHandle, sizeof(GlDrawArraysIndirectCommand) * charactersCount, nullptr,
                 GL_MAP_WRITE_BIT);
         }
 
         const auto& font = engineState.resources.fonts.get(fontIndex);
+        glTexture.handle = font.textureHandle;
+
+        GuiVertex* vertexData = (GuiVertex*) glMapNamedBuffer(vboHandle, GL_WRITE_ONLY);
+        fillTextBuffer(text, font, vertexData);
+        glUnmapNamedBuffer(vboHandle);
+
         applyIndirectBuffer(glMesh, charactersCount);
-        applyVertexBuffer(text, glMesh, font);
-        applyModelViewProjectionMatrix(glMesh, verticesCount, projectionMatrix * modelMatrix);
-
-        const auto shaderPipelineHandle = renderable.shaderPipelineHandle;
-        glBindVertexArray(glMesh.vaoHandle);
-        glBindProgramPipeline(shaderPipelineHandle);
-        glUseProgramStages(
-            shaderPipelineHandle,
-            GL_VERTEX_SHADER_BIT,
-            renderable.vertexShaderProgramHandle);
-        glUseProgramStages(
-            shaderPipelineHandle,
-            GL_FRAGMENT_SHADER_BIT,
-            renderable.fragmentShaderProgramHandle);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        glBindTexture(GL_TEXTURE_2D, font.textureHandle);
-        glMultiDrawArraysIndirect(GL_TRIANGLE_STRIP, nullptr, charactersCount, sizeof(DrawArraysIndirectCommand));
+        glMesh.verticesCount = verticesCount;
+        glMesh.primitivesCount = charactersCount;
     }
 }
 
 void applyIndirectBuffer(const GlMesh& glMesh, size_t charactersCount)
 {
     glBindBuffer(GL_DRAW_INDIRECT_BUFFER, glMesh.indirectBufferHandle);
-    auto* indirectsData = (DrawArraysIndirectCommand*) glMapNamedBuffer(glMesh.indirectBufferHandle, GL_WRITE_ONLY);
+    auto* indirectsData = (GlDrawArraysIndirectCommand*) glMapNamedBuffer(glMesh.indirectBufferHandle, GL_WRITE_ONLY);
     for (size_t i = 0; i < charactersCount; i++)
     {
         auto& indirect = indirectsData[i];
@@ -94,42 +70,6 @@ void applyIndirectBuffer(const GlMesh& glMesh, size_t charactersCount)
         indirect.primitivesCount = charactersCount;
     }
     glUnmapNamedBuffer(glMesh.indirectBufferHandle);
-}
-
-void applyVertexBuffer(const std::string& text, const GlMesh& glMesh, const Font& font)
-{
-    const auto vboHandle = glMesh.vertexVboHandle;
-    GuiVertex* vertexData = (GuiVertex*) glMapNamedBuffer(vboHandle, GL_WRITE_ONLY);
-    fillTextBuffer(text, font, vertexData);
-    glUnmapNamedBuffer(vboHandle);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
-    glEnableVertexAttribArray(EngineInvariants::VERTEX_POSITION_ATTRIBUTE_LOCATION);
-    glVertexAttribPointer(
-        EngineInvariants::VERTEX_POSITION_ATTRIBUTE_LOCATION,
-        glm::vec3::length(),
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(GuiVertex),
-        reinterpret_cast<void*>(offsetof(GuiVertex, position)));
-
-    glEnableVertexAttribArray(EngineInvariants::VERTEX_COLOR_ATTRIBUTE_LOCATION);
-    glVertexAttribPointer(
-        EngineInvariants::VERTEX_COLOR_ATTRIBUTE_LOCATION,
-        glm::vec4::length(),
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(GuiVertex),
-        reinterpret_cast<void*>(offsetof(GuiVertex, color)));
-
-    glEnableVertexAttribArray(EngineInvariants::VERTEX_UV_ATTRIBUTE_LOCATION);
-    glVertexAttribPointer(
-        EngineInvariants::VERTEX_UV_ATTRIBUTE_LOCATION,
-        glm::vec2::length(),
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(GuiVertex),
-        reinterpret_cast<void*>(offsetof(GuiVertex, uv)));
 }
 
 void fillTextBuffer(const std::string& text, const Font& font, GuiVertex* vertexData)
@@ -165,23 +105,5 @@ void fillTextBuffer(const std::string& text, const Font& font, GuiVertex* vertex
         vertexData[i * VERTICES_FOR_CHARACTER_ + 3] = GuiVertex {color, {rightX, bottomY}, {rightS, topT}};
 
         x += glyphAdvancePx;
-    }
-}
-
-void applyModelViewProjectionMatrix(const GlMesh& glMesh, int divisor, const glm::mat4& mvpMatrix)
-{
-    const auto rows = glm::mat4::row_type::length();
-    const auto columns = glm::mat4::col_type::length();
-
-    glBindBuffer(GL_ARRAY_BUFFER, glMesh.modelViewProjectionVboHandle);
-    glNamedBufferSubData(glMesh.modelViewProjectionVboHandle, 0, sizeof(glm::mat4), &mvpMatrix);
-
-    for (size_t i = 0; i < rows; i++)
-    {
-        const auto attribId = EngineInvariants::MVP_MATRIX_ATTRIBUTE_LOCATION + i;
-        glEnableVertexAttribArray(attribId);
-        glVertexAttribPointer(
-            attribId, columns, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*) (i * columns * sizeof(float)));
-        glVertexAttribDivisor(attribId, divisor);
     }
 }

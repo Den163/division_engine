@@ -12,6 +12,7 @@ void OnGuiMeshEntityDestroyedEventSystem::preRender(EngineState& engineState)
         glBindVertexArray(glMesh.vaoHandle);
         glDeleteBuffers(1, &glMesh.vertexVboHandle);
         glDeleteBuffers(1, &glMesh.modelViewProjectionVboHandle);
+        glDeleteBuffers(1, &glMesh.indirectBufferHandle);
         glDeleteVertexArrays(1, &glMesh.vaoHandle);
 
         registry.destroy(e);

@@ -59,11 +59,15 @@ void Lifecycle::init(GlobalState& state)
         FontUtils::makeFont("assets/fonts/Roboto-Black.ttf", { 0, 88 }));
 
     GuiComposer composer { engineState };
-    composer.makeGuiText(GuiText{
-        .font = fontIndex,
-        .fontHeight = 88,
-        .text = "Hello world"
-    });
+
+    for (auto i = 0; i < 10; i++)
+    {
+        composer.makeGuiText(GuiText{
+            .font = fontIndex,
+            .fontHeight = 88,
+            .text = "Hello world"
+        }, Transform::makeDefault().withPosition({i * 100, i * 100, 0}));
+    }
 }
 
 void Lifecycle::preRenderUpdate(GlobalState& state)

@@ -20,4 +20,6 @@ namespace GlUtils
     template<typename T> constexpr gl_enum_when_same_types<T, int64_t> mapToGlType() { return GL_INT; }
     template<typename T> constexpr gl_enum_when_same_types<T, uint32_t> mapToGlType() { return GL_UNSIGNED_INT; }
     template<typename T> constexpr gl_enum_when_same_types<T, uint64_t> mapToGlType() { return GL_UNSIGNED_INT; }
+
+    void enableGuiVertexAttributes(GLuint vaoHandle, GLuint vertexVboHandle);
 }
