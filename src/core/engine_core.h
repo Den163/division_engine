@@ -32,6 +32,7 @@ concept EngineStateAggregate = requires(T aggr)
 {
     { std::is_same_v< std::remove_reference_t<decltype(aggr.engineState)>, EngineState > };
     { std::is_same_v< std::remove_reference_t<decltype(aggr.engineConfig)>, EngineConfig > };
+    { std::is_same_v< std::remove_reference_t<decltype(aggr.lifecycle)>, LifecycleConfig<T> > };
 };
 
 class EngineCore
@@ -51,7 +52,6 @@ private:
     {
         EngineState& state = globalState.engineState;
         EngineConfig& config = globalState.engineConfig;
-        const LifecycleConfig<TState>& lifecycle = globalState.lifecycle;
 
         Win32RegisterInputSystem::init(state);
         RegisterInputSystem::init(state);
@@ -61,7 +61,7 @@ private:
         Win32WindowSystem::init(state);
         GlShaderProgramSystem::init(state, config);
 
-        lifecycle.init(globalState);
+        globalState.lifecycle.init(globalState);
 
 #ifdef PRINT_OPENGL_INFO
         DebugUtils::printRendererInfo();
@@ -73,7 +73,6 @@ private:
     {
         EngineState& state = globalState.engineState;
         const EngineConfig& config = globalState.engineConfig;
-        const LifecycleConfig<TState>& lifecycle = globalState.lifecycle;
 
         do
         {
@@ -96,9 +95,8 @@ private:
     static inline void renderLoop(TState& globalState)
     {
         EngineState& state = globalState.engineState;
-        const LifecycleConfig<TState>& lifecycle = globalState.lifecycle;
 
-        lifecycle.preRender(globalState);
+        globalState.lifecycle.preRender(globalState);
         OnGuiMeshEntityCreatedEventSystem::preRender(state);
         OnGuiMeshEntityDestroyedEventSystem::preRender(state);
 
@@ -112,7 +110,7 @@ private:
 
         GlfwVsyncSystem::update(state);
 
-        lifecycle.postRender(globalState);
+        globalState.lifecycle.postRender(globalState);
         RegisterInputSystem::postRender(state);
 
         state.guiRegistry.clear<GuiMeshCreateEvent, GuiMeshDestroyed>();
@@ -122,9 +120,8 @@ private:
     static inline void cleanup(TState& globalState)
     {
         EngineState& state = globalState.engineState;
-        const LifecycleConfig<TState>& lifecycle = globalState.lifecycle;
 
-        lifecycle.cleanup(globalState);
+        globalState.lifecycle.cleanup(globalState);
         GlShaderProgramSystem::cleanup(state);
         GlfWindowSystem::cleanup(state);
     }

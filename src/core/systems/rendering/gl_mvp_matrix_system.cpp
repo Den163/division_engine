@@ -10,7 +10,9 @@
 void GlMvpMatrixSystem::update(EngineState& engineState)
 {
     const auto& windowState = engineState.window;
-    const auto& projectionMatrix = glm::ortho(0.f, (float) windowState.width, 0.f, (float) windowState.height);
+    const auto& projectionMatrix = glm::ortho(
+        0.f, (float) windowState.frameBufferPixelsWidth,
+        0.f, (float) windowState.frameBufferPixelsHeight);
     const auto& guiRegistry = engineState.guiRegistry;
 
     for (auto&& [e, glMesh, guiMesh, position, rotation, scale] :

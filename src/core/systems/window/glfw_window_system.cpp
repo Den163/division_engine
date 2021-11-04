@@ -10,8 +10,8 @@ void GlfWindowSystem::init(EngineState& engineState, const EngineConfig& engineC
     auto& windowHandle = engineState.glfwWindow.windowHandle;
     const auto& windowConfig = engineConfig.window;
 
-    windowState.width = windowConfig.width;
-    windowState.height = windowConfig.height;
+    windowState.screenSpaceWidth = windowConfig.width;
+    windowState.screenSpaceHeight = windowConfig.height;
     windowState.shouldClose = false;
 
     if (!glfwInit())
@@ -27,7 +27,8 @@ void GlfWindowSystem::init(EngineState& engineState, const EngineConfig& engineC
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 
-    windowHandle = glfwCreateWindow(windowState.width, windowState.height, windowConfig.title.data(), nullptr, nullptr);
+    windowHandle = glfwCreateWindow(
+        windowState.screenSpaceWidth, windowState.screenSpaceHeight, windowConfig.title.data(), nullptr, nullptr);
     if (!windowHandle)
     {
         throw std::runtime_error {"Failed to makeDefault a window_"};
@@ -39,6 +40,8 @@ void GlfWindowSystem::init(EngineState& engineState, const EngineConfig& engineC
     {
         throw std::runtime_error {"Failed to call gladLoadGL"};
     }
+
+    glfwGetFramebufferSize(windowHandle, &windowState.frameBufferPixelsWidth, &windowState.frameBufferPixelsHeight);
 }
 
 void GlfWindowSystem::update(EngineState& engineState)
@@ -48,7 +51,10 @@ void GlfWindowSystem::update(EngineState& engineState)
 
     glfwPollEvents();
     windowState.shouldClose = glfwWindowShouldClose(windowHandle);
-    glfwGetWindowSize(windowHandle, &windowState.width, &windowState.height);
+
+    glfwGetFramebufferSize(windowHandle, &windowState.frameBufferPixelsWidth, &windowState.frameBufferPixelsHeight);
+    glfwGetWindowSize(windowHandle, &windowState.screenSpaceWidth, &windowState.screenSpaceHeight);
+    glViewport(0, 0, windowState.frameBufferPixelsWidth, windowState.frameBufferPixelsHeight);
 }
 
 void GlfWindowSystem::cleanup(EngineState& engineState)
