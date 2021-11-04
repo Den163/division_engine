@@ -94,8 +94,7 @@ public:
 
         auto& version = versions_[index];
 
-        version++;
-        return VersionedIndex { .version = version, .index = index };
+        return VersionedIndex { .version = ++version, .index = index };
     }
 
     T& get(const VersionedIndex& versionedIndex)

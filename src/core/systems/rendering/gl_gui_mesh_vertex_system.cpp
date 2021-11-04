@@ -42,19 +42,25 @@ void applyVertexBuffer(const GlMesh& glMesh, const GuiMesh& mesh)
     const auto* newBufferPtr = vertices.data();
     const auto newBufferSize = vertices.size() * sizeof(GuiVertex);
 
-    glBindBuffer(GL_ARRAY_BUFFER, vertexVboHandle);
-
     GLint currentBufferSize;
     glGetNamedBufferParameteriv(vertexVboHandle, GL_BUFFER_SIZE, &currentBufferSize);
 
-    if (currentBufferSize == newBufferSize)
+    if (currentBufferSize > 0 && currentBufferSize == newBufferSize)
     {
-        glNamedBufferSubData(vertexVboHandle, 0, (GLsizeiptr) newBufferSize, newBufferPtr);
+//        glNamedBufferSubData(vertexVboHandle, 0, (GLsizeiptr) newBufferSize, newBufferPtr);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexVboHandle);
+        void* buffer = glMapNamedBuffer(vertexVboHandle, GL_WRITE_ONLY);
+        std::memcpy(buffer, vertices.data(), newBufferSize);
+        glUnmapNamedBuffer(vertexVboHandle);
     }
     else
     {
-        glNamedBufferStorage(vertexVboHandle, (GLsizeiptr) newBufferSize, newBufferPtr, GL_DYNAMIC_STORAGE_BIT);
+        glNamedBufferStorage(
+            vertexVboHandle, (GLsizeiptr) newBufferSize, newBufferPtr,
+            GL_DYNAMIC_STORAGE_BIT | GL_MAP_READ_BIT | GL_MAP_WRITE_BIT);
     }
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertexVboHandle);
 
     glEnableVertexAttribArray(EngineInvariants::VERTEX_POSITION_ATTRIBUTE_LOCATION);
     glVertexAttribPointer(
@@ -89,8 +95,9 @@ void applyModelViewProjectionMatrix(const GlMesh& glMesh, const GuiMesh& mesh, c
     const auto rows = glm::mat4::row_type::length();
     const auto columns = glm::mat4::col_type::length();
 
-    glBindBuffer(GL_ARRAY_BUFFER, glMesh.modelViewProjectionVboHandle);
     glNamedBufferSubData(glMesh.modelViewProjectionVboHandle, 0, sizeof(glm::mat4), &mvpMatrix);
+
+    glBindBuffer(GL_ARRAY_BUFFER, glMesh.modelViewProjectionVboHandle);
 
     for (size_t i = 0; i < rows; i++)
     {

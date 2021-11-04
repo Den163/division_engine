@@ -14,6 +14,7 @@
 #include "systems/window/glfw_window_system.h"
 #include "systems/rendering/render_tick_system.h"
 #include "systems/rendering/gl_gui_mesh_vertex_system.h"
+#include "systems/rendering/gl_gui_text_system.h"
 #include "systems/window/glfw_vsync_system.h"
 #include "systems/loop_tick_system.h"
 #include "systems/input/win32_register_input_system.h"
@@ -104,8 +105,9 @@ private:
         OnGuiMeshEntityDestroyedEventSystem::preRender(state);
 
         GlPrepareFramebufferSystem::update(state);
-        GlGuiMeshVerticesSystem::update(state);
-        GlRenderGuiMeshSystem::update(state);
+//        GlGuiMeshVerticesSystem::update(state);
+//        GlRenderGuiMeshSystem::update(state);
+        GlGuiTextSystem::update(state);
 
         GlfwVsyncSystem::update(state);
 

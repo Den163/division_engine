@@ -10,6 +10,10 @@
 #include "../src/core/utils/texture_utils.h"
 #include "../src/core/utils/font_utils.h"
 #include "../src/core/utils/color.h"
+#include "../src/core/components/gui_text.h"
+#include "../src/core/components/gui_renderable.h"
+#include "../src/core/components/gl_mesh.h"
+#include "../src/core/events/gui_mesh_created.h"
 
 static inline void checkMeshCreateByKeyPress(GlobalState& state);
 static inline void checkMeshDeleteByKeyPress(GlobalState& state);
@@ -52,22 +56,31 @@ void Lifecycle::init(GlobalState& state)
 
     auto fontIndex = engineState.resources.fonts.insert(
         FontUtils::makeFont("assets/fonts/Roboto-Black.ttf", { 0, 88 }));
-    auto start = std::chrono::steady_clock::now();
-    GuiPrimitiveFactory::makeTextQuads(
-        engineState,
-        "Hello ggg world",
-        fontIndex,
-        Transform::makeDefault().withPosition({ 0, 10, 0 }));
-    auto diff = std::chrono::steady_clock::now() - start;
 
-    std::cout
-        << "Make text quads time: "
-        << std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(diff).count()
-        << std::endl;
+    auto te = guiRegistry.create();
+    auto& guiText = guiRegistry.emplace<GuiText>(te);
+    guiText.font = fontIndex;
+    guiText.fontHeight = 88;
+    guiText.text = "Hello world";
+
+    auto& shaders = engineState.defaultShader;
+    auto& renderable = guiRegistry.emplace<GuiRenderable>(te);
+    renderable.shaderPipelineHandle = shaders.pipeline.handle;
+    renderable.vertexShaderProgramHandle = shaders.vertex().programHandle;
+    renderable.fragmentShaderProgramHandle = shaders.fontFragment().programHandle;
+
+    guiRegistry.emplace<GuiMeshCreated>(te);
 }
 
 void Lifecycle::preRenderUpdate(GlobalState& state)
 {
+    auto& engineState = state.engineState;
+    auto& updateTime = engineState.renderer.updateTime.deltaTime;
+
+    for (auto&& [e, guiText] : engineState.guiRegistry.view<GuiText>().each())
+    {
+        guiText.text = "Update time: " + std::to_string(updateTime.count()) + " sec";
+    }
 }
 
 void Lifecycle::postRenderUpdate(GlobalState& state)
