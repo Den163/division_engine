@@ -23,7 +23,7 @@
 #include "events/gui_mesh_destroyed.h"
 #include "systems/rendering/gl_mvp_matrix_system.h"
 #include "systems/rendering/gl_draw_gui_mesh_system.h"
-#include "systems/rendering/gl_gui_rect_system.h"
+#include "systems/rendering/gl_gui_rect_vertex_system.h"
 
 #include <type_traits>
 
@@ -108,7 +108,7 @@ private:
         GlPrepareFramebufferSystem::update(state);
 
         GlGuiTextVertexSystem::update(state);
-        GlGuiRectSystem::update(state);
+        GlGuiRectVertexSystem::update(state);
 
         GlMvpMatrixSystem::update(state);
         GlDrawGuiMeshSystem::update(state);

@@ -2,7 +2,7 @@
 
 #include "../../states/engine_state.h"
 
-namespace GlGuiRectSystem
+namespace GlGuiRectVertexSystem
 {
     void update(EngineState& engineState);
 }

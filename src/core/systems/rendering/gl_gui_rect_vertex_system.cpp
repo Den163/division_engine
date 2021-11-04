@@ -1,4 +1,4 @@
-#include "gl_gui_rect_system.h"
+#include "gl_gui_rect_vertex_system.h"
 
 #include "../../components/gl_mesh.h"
 #include "../../components/gui_mesh.h"
@@ -7,7 +7,7 @@
 #include "../../utils/gl_utils.h"
 #include "../../components/gui_rect_color.h"
 
-void GlGuiRectSystem::update(EngineState& engineState)
+void GlGuiRectVertexSystem::update(EngineState& engineState)
 {
     for (auto&& [e, guiMesh, glMesh, guiRect, guiRectColor] :
          engineState.guiRegistry.view<GuiMesh, const GlMesh, const GuiRect, const GuiRectColor>().each())
