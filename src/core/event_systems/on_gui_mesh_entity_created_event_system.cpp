@@ -3,23 +3,39 @@
 #include "../utils/engine_state_helper.h"
 #include "../components/gl_mesh.h"
 #include "../components/gui_mesh.h"
-#include "../events/gui_mesh_created.h"
+#include "../events/gui_mesh_create_event.h"
+#include "../utils/gl_utils.h"
 
 void OnGuiMeshEntityCreatedEventSystem::preRender(EngineState& engineState)
 {
     auto& registry = engineState.guiRegistry;
 
-    for (auto&& [e, guiMesh] : registry.view<const GuiMesh, const GuiMeshCreated>().each())
+    for (auto&& [e] : registry.view<const GuiMeshCreateEvent>().each())
     {
-        auto& glMesh = registry.emplace<GlMesh>(e);
-        const auto& shaderPipelineHandle = EngineStateHelper::standardShaderPipeline(engineState);
+        {
+            auto& guiMesh = registry.emplace<GuiMesh>(e);
+            guiMesh.primitivesCount = 0;
+            guiMesh.verticesCount = 0;
+        }
+        {
+            auto& glMesh = registry.emplace<GlMesh>(e);
+            const auto& shaderPipelineHandle = EngineStateHelper::standardShaderPipeline(engineState);
 
-        glCreateVertexArrays(1, &glMesh.vaoHandle);
-        glCreateBuffers(1, &glMesh.vertexVboHandle);
-        glNamedBufferStorage(
-            glMesh.vertexVboHandle, guiMesh.vertices.size() * sizeof(GuiVertex), nullptr, GL_DYNAMIC_STORAGE_BIT);
+            glCreateVertexArrays(1, &glMesh.vaoHandle);
+            glCreateBuffers(1, &glMesh.vertexVboHandle);
+            glCreateBuffers(1, &glMesh.indirectBufferHandle);
 
-        glCreateBuffers(1, &glMesh.modelViewProjectionVboHandle);
-        glNamedBufferStorage(glMesh.modelViewProjectionVboHandle, sizeof(glm::mat4), nullptr, GL_DYNAMIC_STORAGE_BIT);
+            glCreateBuffers(1, &glMesh.modelViewProjectionVboHandle);
+            glNamedBufferStorage(
+                glMesh.modelViewProjectionVboHandle,
+                sizeof(glm::mat4),
+                nullptr,
+                GL_DYNAMIC_STORAGE_BIT);
+
+            GlUtils::enableGuiVertexAttributes(glMesh.vaoHandle, glMesh.vertexVboHandle);
+
+            glMesh.renderMode = GL_TRIANGLE_STRIP;
+        }
+
     }
 }

@@ -11,7 +11,12 @@ struct VersionedIndex
     uint32_t version;
     uint32_t index;
 
-    std::string to_string() const { return std::format("{{ version: {}, index: {} }}", version, index) ; }
+    static VersionedIndex null() { return VersionedIndex { 0, SPARSE_SET_NULL_INDEX }; }
+
+    std::string to_string() const
+    {
+        return "{ version: " + std::to_string(version) + ", index: " + std::to_string(index) + " }";
+    }
 };
 
 template< typename T,
@@ -91,8 +96,7 @@ public:
 
         auto& version = versions_[index];
 
-        version++;
-        return VersionedIndex { .version = version, .index = index };
+        return VersionedIndex { .version = ++version, .index = index };
     }
 
     T& get(const VersionedIndex& versionedIndex)
@@ -138,7 +142,7 @@ public:
     inline const DenseElement<T>* data() const { return sparseSet_.data(); }
 
     inline const uint32_t* versions_data() const { return versions_; }
-    inline const uint32_t versions_size() const { return indices_size(); }
+    inline uint32_t versions_size() const { return indices_size(); }
 
     static constexpr inline uint32_t null_index() { return sparse_set::null_index(); }
     static constexpr inline uint32_t max_index() { return sparse_set::max_index(); }

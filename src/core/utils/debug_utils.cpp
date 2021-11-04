@@ -49,9 +49,11 @@ void DebugUtils::glRendererMessageCallback(
     {
         std::cerr << "debugMessageCallback: " << message << std::endl;
     }
+#ifdef DEBUG_OPENGL_USAGE_MESSAGE
     else
     {
         std::cout << "debugMessageCallback: " << message << std::endl;
     }
+#endif
 
 }

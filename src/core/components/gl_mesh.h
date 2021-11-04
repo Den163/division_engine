@@ -7,4 +7,6 @@ struct GlMesh
     GLuint vaoHandle;
     GLuint vertexVboHandle;
     GLuint modelViewProjectionVboHandle;
+    GLuint indirectBufferHandle;
+    GLenum renderMode;
 };

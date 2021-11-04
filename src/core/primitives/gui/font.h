@@ -1,7 +1,6 @@
 #pragma once
 
 #include "glyph.h"
-#include "gui_quad.h"
 #include "memory"
 
 struct Font

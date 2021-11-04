@@ -13,14 +13,14 @@ void RenderTickSystem::init(EngineState& engineState, const EngineConfig& engine
     rendererState.targetFps = rendererConfig.targetFps;
 
     rendererState.shouldUpdate = false;
-    rendererState.updateTime.lastUpdateTime = std::chrono::steady_clock::now();
-    rendererState.updateTime.deltaTime = std::chrono::duration<float> { 0 };
+    rendererState.frameDelta.lastUpdateTime = std::chrono::steady_clock::now();
+    rendererState.frameDelta.deltaTime = std::chrono::duration<float> { 0 };
 }
 
 void RenderTickSystem::update(EngineState& engineState)
 {
     auto& rendererState = engineState.renderer;
-    auto& updateTimeStamp = rendererState.updateTime;
+    auto& updateTimeStamp = rendererState.frameDelta;
 
     const auto& loopUpdateTimestamp = engineState.loopUpdate;
     const auto& deltaTimeToUpdate = std::chrono::duration<float> { 1 / rendererState.targetFps };

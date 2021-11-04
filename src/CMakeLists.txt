@@ -50,10 +50,10 @@ foreach(SHADER IN LISTS SHADER_SOURCES)
     file(MAKE_DIRECTORY ${SHADER_OUTPUT_DIR})
 
     add_custom_command(
-            OUTPUT ${SHADER_OUTPUT}
-            COMMAND $ENV{GLSL_LANG_VALIDATOR_COMP}/glslangValidator.exe -G100 -e main ${SHADER_INPUT} -o ${SHADER_OUTPUT}
-            DEPENDS ${SHADER_INPUT}
-            VERBATIM
+        OUTPUT ${SHADER_OUTPUT}
+        COMMAND $ENV{GLSL_LANG_VALIDATOR_COMP}/glslangValidator.exe -G100 -e main ${SHADER_INPUT} -o ${SHADER_OUTPUT}
+        DEPENDS ${SHADER_INPUT}
+        VERBATIM
     )
 
     list(APPEND SHADERS_OUTPUTS ${SHADER_OUTPUT})
@@ -70,7 +70,6 @@ set(DIVISION_ENGINE_SOURCES
     core/systems/rendering/gl_shader_program_system.cpp core/systems/rendering/gl_shader_program_system.h
     core/utils/file_utils.cpp core/utils/file_utils.h
     core/systems/window/glfw_window_system.cpp core/systems/window/glfw_window_system.h
-    core/systems/rendering/gl_gui_mesh_vertex_system.cpp core/systems/rendering/gl_gui_mesh_vertex_system.h
     core/states/shader_pipeline_state.h
     core/states/glfw_window_state.h
     core/states/window_state.h
@@ -93,17 +92,14 @@ set(DIVISION_ENGINE_SOURCES
     core/components/position.h
     core/components/scale.h
     core/states/camera_state.h
-    core/primitives/gui/gui_primitive_factory.cpp core/primitives/gui/gui_primitive_factory.h
     core/components/key_code.h
     core/states/win32_state.h
     core/systems/window/win32_window_system.cpp core/systems/window/win32_window_system.h
-    core/primitives/gui/gui_triangle.h core/primitives/gui/gui_triangle.cpp
     core/components/transform.h
     core/utils/color.h
-    core/primitives/gui/gui_quad.h core/primitives/gui/gui_quad.cpp
     core/configs/engine_config.h core/configs/shader_config.h core/configs/lifecycle_config.h
     core/utils/memory.h core/utils/gl_utils.h
-    core/events/gui_mesh_created.h core/events/gui_mesh_destroyed.h
+    core/events/gui_mesh_create_event.h core/events/gui_mesh_destroy_event.h
     core/event_systems/on_gui_mesh_entity_created_event_system.cpp
     core/event_systems/on_gui_mesh_entity_created_event_system.h
     core/event_systems/on_gui_mesh_entity_destroyed_event_system.cpp
@@ -113,13 +109,12 @@ set(DIVISION_ENGINE_SOURCES
     core/configs/shader_pipeline_config.h core/states/shader_state.h core/utils/engine_state_helper.h
     core/utils/engine_invariants.h
     core/configs/color_mode.h core/states/texture2d_state.h
-    core/systems/rendering/gl_gui_mesh_render_system.cpp core/systems/rendering/gl_gui_mesh_render_system.h
     core/components/gl_texture.h core/configs/default_shaders_config.h core/states/default_shaders_state.h
     core/utils/shader_compiler.h core/utils/shader_compiler.cpp
     core/utils/texture_utils.cpp core/utils/texture_utils.h
     core/primitives/gui/font.h core/primitives/gui/glyph.h core/utils/font_utils.cpp core/utils/font_utils.h
     core/configs/texture_2d_config.h core/data_structures/sparse_set.h core/data_structures/versioned_sparse_set.h
-)
+    core/utils/disable_glm_warnings.h core/states/resources_state.h core/components/gui_text.h core/systems/rendering/gl_gui_text_vertex_system.cpp core/systems/rendering/gl_gui_text_vertex_system.h core/components/gui_material.h core/gui_composer/gui_composer.cpp core/gui_composer/gui_composer.h core/systems/rendering/gl_mvp_matrix_system.cpp core/systems/rendering/gl_mvp_matrix_system.h core/components/gl_draw_indirect_command.h core/systems/rendering/gl_draw_gui_mesh_system.cpp core/systems/rendering/gl_draw_gui_mesh_system.h core/utils/gl_utils.cpp core/components/gui_rect.h core/systems/rendering/gl_gui_rect_vertex_system.h core/systems/rendering/gl_gui_rect_vertex_system.cpp core/components/gui_rect_color.h)
 
 set(DIVISION_ENGINE_LIBS glad glfw3 freetype glm::glm EnTT::EnTT stb_image stb_image_write)
 
@@ -139,3 +134,11 @@ target_link_libraries(division_engine_core ${DIVISION_ENGINE_LIBS})
 add_custom_command(TARGET division_engine_core PRE_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
                    ${PROJECT_SOURCE_DIR}/assets ${PROJECT_BINARY_DIR}/assets)
+
+target_compile_definitions(division_engine_core PUBLIC GLM_FORCE_SWIZZLE GLM_FORCE_CXX17)
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL Clang)
+    if (MSVC)
+        target_compile_options(division_engine_core PUBLIC /EHs)
+    endif()
+endif()

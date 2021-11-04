@@ -1,6 +1,5 @@
 #include "font_utils.h"
 
-#include <format>
 #include <glad/gl.h>
 #include <stdexcept>
 #include <vector>
@@ -21,11 +20,11 @@ Font FontUtils::makeFont(const std::string& fontFilePath, const glm::ivec2& size
 
     FT_Library ft;
     auto initError = FT_Init_FreeType(&ft);
-    if (initError) throwFreetypeException("Failed to init FreeType library: {}", initError);
+    if (initError) throwFreetypeException("Failed to init FreeType library: ", initError);
 
     FT_Face face;
     auto faceError = FT_New_Face(ft, fontFilePath.data(), 0, &face);
-    if (faceError) throwFreetypeException("Failed to load Freetype font face: {}", faceError);
+    if (faceError) throwFreetypeException("Failed to load Freetype font face: ", faceError);
 
     FT_Set_Pixel_Sizes(face, size.x, size.y);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -54,7 +53,7 @@ void loadFontAtlas(FT_Face ftFace, Font& font, const glm::ivec2& glyphSize)
     for (size_t character = 0; character < reservedCharacters; character++)
     {
         auto charErr = FT_Load_Char(ftFace, character, FT_LOAD_RENDER);
-        if (charErr) throwFreetypeException("Can't load character: {}", charErr);
+        if (charErr) throwFreetypeException("Can't load character: ", charErr);
 
         const auto bmpCol = character % bitmapColumns;
         const auto bmpRow = character / bitmapRows;
@@ -64,7 +63,7 @@ void loadFontAtlas(FT_Face ftFace, Font& font, const glm::ivec2& glyphSize)
         font.glyphs[character] = Glyph
         {
             .size = { ftBitmap.width, ftBitmap.rows },
-            .offset = { bmpCol * glyphSize.x, bmpRow * glyphSize.y },
+            .textureOffset = {bmpCol * glyphSize.x, bmpRow * glyphSize.y },
             .bearing = { ftGlyph->bitmap_left, ftGlyph->bitmap_top },
             .advance = static_cast<uint32_t>(ftGlyph->advance.x),
         };
@@ -108,5 +107,5 @@ void throwFreetypeException(const char* formattedExceptionText, int freetypeErro
 {
     auto err = FT_Error_String(freetypeErrorCode);
     if (err == nullptr) err = "";
-    throw std::runtime_error{ std::format(std::string {formattedExceptionText}, err) };
+    throw std::runtime_error{ formattedExceptionText + std::string{err} };
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../utils/disable_glm_warnings.h"
+
 #include "../configs/renderer_config.h"
 #include "../configs/window_config.h"
 #include "glfw_window_state.h"
@@ -15,6 +17,7 @@
 #include "win32_state.h"
 #include "../data_structures/versioned_sparse_set.h"
 #include "../primitives/gui/font.h"
+#include "resources_state.h"
 
 #include <entt/entt.hpp>
 
@@ -26,12 +29,11 @@ struct EngineState
 
     RendererState renderer;
     CameraState camera;
-    UpdateTimeState loopUpdate;
+    UpdateDeltaTimeState loopUpdate;
     InputState input;
     RawInputState rawInput;
     DefaultShaderState defaultShader;
-
-    VersionedSparseSet<Font> fonts { 10 };
+    ResourcesState resources;
 
     entt::registry guiRegistry;
 };
