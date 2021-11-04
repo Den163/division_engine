@@ -75,9 +75,6 @@ private:
         const EngineConfig& config = globalState.engineConfig;
         const LifecycleConfig<TState>& lifecycle = globalState.lifecycle;
 
-        const auto& rendererState = state.renderer;
-        const auto& windowState = state.window;
-
         do
         {
             LoopTickSystem::update(state);
@@ -85,14 +82,14 @@ private:
             Win32RegisterInputSystem::update(state);
             RegisterInputSystem::eventLoop(state);
 
-            if (rendererState.shouldUpdate)
+            if (state.renderer.shouldUpdate)
             {
                 renderLoop(globalState);
             }
 
             GlfWindowSystem::update(state);
         }
-        while (!windowState.shouldClose);
+        while (!state.window.shouldClose);
     }
 
     template<EngineStateAggregate TState>
