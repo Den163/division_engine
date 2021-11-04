@@ -105,6 +105,7 @@ private:
         OnGuiMeshEntityDestroyedEventSystem::preRender(state);
 
         GlPrepareFramebufferSystem::update(state);
+        // TODO replace with retained mode gui systems
 //        GlGuiMeshVerticesSystem::update(state);
 //        GlRenderGuiMeshSystem::update(state);
         GlGuiTextSystem::update(state);

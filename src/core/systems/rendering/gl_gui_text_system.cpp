@@ -96,7 +96,7 @@ void applyIndirectBuffer(const GlMesh& glMesh, size_t charactersCount)
     glUnmapNamedBuffer(glMesh.indirectBufferHandle);
 }
 
-inline void applyVertexBuffer(const std::string& text, const GlMesh& glMesh, const Font& font)
+void applyVertexBuffer(const std::string& text, const GlMesh& glMesh, const Font& font)
 {
     const auto vboHandle = glMesh.vertexVboHandle;
     GuiVertex* vertexData = (GuiVertex*) glMapNamedBuffer(vboHandle, GL_WRITE_ONLY);
@@ -132,7 +132,7 @@ inline void applyVertexBuffer(const std::string& text, const GlMesh& glMesh, con
         reinterpret_cast<void*>(offsetof(GuiVertex, uv)));
 }
 
-inline void fillTextBuffer(const std::string& text, const Font& font, GuiVertex* vertexData)
+void fillTextBuffer(const std::string& text, const Font& font, GuiVertex* vertexData)
 {
     const glm::vec2& textureSize = font.textureSize;
     const auto& textureWidth = font.textureSize.x;
@@ -145,30 +145,30 @@ inline void fillTextBuffer(const std::string& text, const Font& font, GuiVertex*
     {
         const auto ch = text[i];
         const auto& glyph = font.glyphs[ch];
-        const auto& size = glyph.size;
-        const auto& texOffset = glyph.textureOffset;
-        auto glyphAdvancePx = FontUtils::advanceToPixels(glyph.advance);
-        auto leftX = x + glyph.bearing.x;
-        auto rightX = x + size.x;
-        auto originY = size.y - glyph.bearing.y;
-        auto bottomY = -originY;
-        auto topY = size.y - originY;
+        const auto glyphAdvancePx = FontUtils::advanceToPixels(glyph.advance);
 
-        vertexData[i * VERTICES_FOR_CHARACTER_] =
-            GuiVertex{color, {leftX, topY}, glm::vec2 {texOffset.x, texOffset.y} / textureSize};
-        vertexData[i * VERTICES_FOR_CHARACTER_ + 1] =
-            GuiVertex{color, {leftX, bottomY}, glm::vec2 {texOffset.x, texOffset.y + size.y} / textureSize};
-        vertexData[i * VERTICES_FOR_CHARACTER_ + 2] =
-            GuiVertex{color, {rightX, topY}, glm::vec2 {texOffset.x + size.x, texOffset.y} / textureSize};
-        vertexData[i * VERTICES_FOR_CHARACTER_ + 3] =
-            GuiVertex{color, {rightX, bottomY}, glm::vec2{texOffset.x + size.x, texOffset.y + size.y} / textureSize};
+        glm::vec2 size = glyph.size;
+        glm::vec2 texOffset = glyph.textureOffset;
+        const auto leftX = x + glyph.bearing.x;
+        const auto rightX = x + size.x;
+        const auto originY = size.y - glyph.bearing.y;
+        const auto bottomY = -originY;
+        const auto topY = size.y - originY;
+        const auto leftS = texOffset.s / textureSize.x;
+        const auto rightS = (texOffset.s + size.x) / textureSize.x;
+        const auto topT = (texOffset.t + size.y) / textureSize.y;
+        const auto bottomT = texOffset.t / textureSize.y;
 
-        auto emptySpaceX = glyphAdvancePx - size.x;
+        vertexData[i * VERTICES_FOR_CHARACTER_] = GuiVertex {color, glm::vec2 {leftX, topY}, {leftS, bottomT}};
+        vertexData[i * VERTICES_FOR_CHARACTER_ + 1] = GuiVertex {color, {leftX, bottomY}, {leftS, topT}};
+        vertexData[i * VERTICES_FOR_CHARACTER_ + 2] = GuiVertex {color, {rightX, topY}, {rightS, bottomT}};
+        vertexData[i * VERTICES_FOR_CHARACTER_ + 3] = GuiVertex {color, {rightX, bottomY}, {rightS, topT}};
+
         x += glyphAdvancePx;
     }
 }
 
-inline void applyModelViewProjectionMatrix(const GlMesh& glMesh, int divisor, const glm::mat4& mvpMatrix)
+void applyModelViewProjectionMatrix(const GlMesh& glMesh, int divisor, const glm::mat4& mvpMatrix)
 {
     const auto rows = glm::mat4::row_type::length();
     const auto columns = glm::mat4::col_type::length();

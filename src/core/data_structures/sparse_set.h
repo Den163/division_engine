@@ -5,6 +5,8 @@
 #include <memory>
 #include <vector>
 
+inline constexpr size_t SPARSE_SET_NULL_INDEX = std::numeric_limits<uint32_t>::max();
+
 template<typename T> requires std::is_pod<T>::value
 struct DenseElement
 {
@@ -40,8 +42,6 @@ public:
 
     using sparse_allocator = typename std::allocator_traits<TSparseAlloc>::allocator_type;
     using dense_allocator = typename std::allocator_traits<TDenseAlloc>::allocator_type;
-
-    static constexpr size_t NULL_INDEX = std::numeric_limits<uint32_t>::max();
 
     explicit SparseSet(
         size_t capacity = 0,
@@ -231,8 +231,8 @@ public:
     inline bool empty() const { return dense_size_ == 0; }
     inline const uint32_t* indices_data() const { return sparse_; }
     inline const DenseElement<T>* data() const { return dense_; }
-    static constexpr inline uint32_t null_index() { return NULL_INDEX; }
-    static constexpr inline uint32_t max_index() { return NULL_INDEX - 1; }
+    static constexpr inline uint32_t null_index() { return SPARSE_SET_NULL_INDEX; }
+    static constexpr inline uint32_t max_index() { return SPARSE_SET_NULL_INDEX - 1; }
 
 private:
     static inline void copy(const SparseSet& from, SparseSet& to)
@@ -266,7 +266,7 @@ private:
 
     static inline void throw_if_exceed_max_dense_index(uint32_t index)
     {
-        if (index == NULL_INDEX)
+        if (index == SPARSE_SET_NULL_INDEX)
         {
             throw std::runtime_error { "Exceed limit of the maximum element index: " + std::to_string(max_index()) };
         }

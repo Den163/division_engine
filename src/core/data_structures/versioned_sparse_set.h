@@ -11,6 +11,8 @@ struct VersionedIndex
     uint32_t version;
     uint32_t index;
 
+    static VersionedIndex null() { return VersionedIndex { 0, SPARSE_SET_NULL_INDEX }; }
+
     std::string to_string() const
     {
         return "{ version: " + std::to_string(version) + ", index: " + std::to_string(index) + " }";
