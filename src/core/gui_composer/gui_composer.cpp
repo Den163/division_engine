@@ -4,7 +4,7 @@
 
 entt::entity GuiComposer::makeGuiElement(const GuiMaterial& material, const Transform& transform)
 {
-    auto e = guiRegistry().create();
+    const auto e = guiRegistry().create();
     {
         auto& pos = guiRegistry().emplace<Position>(e);
         pos.value = transform.position;
@@ -28,18 +28,39 @@ entt::entity GuiComposer::makeGuiElement(const GuiMaterial& material, const Tran
     return e;
 }
 
+entt::entity GuiComposer::makeGuiText(const GuiText& guiText, const Transform& transform)
+{
+    return makeGuiText(guiText, defaultFontMaterial(), transform);
+}
+
 entt::entity GuiComposer::makeGuiText(
     const GuiText& guiText,
     const GuiMaterial& material,
     const Transform& transform)
 {
-    auto e = makeGuiElement(material, transform);
+    const auto e = makeGuiElement(material, transform);
     {
         auto& text = guiRegistry().emplace<GuiText>(e);
         text = guiText;
     }
     {
         guiRegistry().emplace<GlTexture>(e);
+    }
+
+    return e;
+}
+
+entt::entity GuiComposer::makeGuiRect(const GuiRect& guiRect, const Transform& transform)
+{
+    return makeGuiRect(guiRect, defaultColoredMaterial(), transform);
+}
+
+entt::entity GuiComposer::makeGuiRect(const GuiRect& guiRect, const GuiMaterial& material, const Transform& transform)
+{
+    const auto e = makeGuiElement(material, transform);
+    {
+        auto& r = guiRegistry().emplace<GuiRect>(e);
+        r = guiRect;
     }
 
     return e;

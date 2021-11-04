@@ -10,6 +10,8 @@
 #include "../components/rotation.h"
 #include "../components/scale.h"
 #include "../components/gl_texture.h"
+#include "../components/gui_mesh.h"
+#include "../components/gui_rect.h"
 
 struct GlMesh;
 
@@ -17,21 +19,20 @@ struct GuiComposer
 {
     EngineState& engineState;
 
-    inline static constexpr auto gui_element_types = entt::get<GlMesh, GuiMaterial, Position, Rotation, Scale>;
+    inline static constexpr auto gui_element_types = entt::get<GlMesh, GuiMesh, GuiMaterial, Position, Rotation, Scale>;
     inline static constexpr auto gui_text_types = gui_element_types + entt::get<GuiText, GlTexture>;
 
     GuiComposer(EngineState& engineState) : engineState(engineState) {}
 
     entt::entity makeGuiElement(const GuiMaterial& material, const Transform& transform = Transform::makeDefault());
 
-    inline entt::entity makeGuiText(const GuiText& guiText, const Transform& transform = Transform::makeDefault())
-    {
-        return makeGuiText(guiText, defaultFontMaterial(), transform);
-    }
+    entt::entity makeGuiText(const GuiText& guiText, const Transform& transform = Transform::makeDefault());
     entt::entity makeGuiText(
-        const GuiText& guiText,
-        const GuiMaterial& material,
-        const Transform& transform = Transform::makeDefault());
+        const GuiText& guiText, const GuiMaterial& material, const Transform& transform = Transform::makeDefault());
+
+    entt::entity makeGuiRect(const GuiRect& guiRect, const Transform& transform = Transform::makeDefault());
+    entt::entity makeGuiRect(
+        const GuiRect& guiRect, const GuiMaterial& material, const Transform& transform = Transform::makeDefault());
 
     GuiMaterial defaultColoredMaterial() const;
     GuiMaterial defaultTextureMaterial() const;

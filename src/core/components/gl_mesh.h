@@ -8,7 +8,5 @@ struct GlMesh
     GLuint vertexVboHandle;
     GLuint modelViewProjectionVboHandle;
     GLuint indirectBufferHandle;
-
-    GLuint verticesCount;
-    GLuint primitivesCount;
+    GLenum renderMode;
 };

@@ -4,6 +4,8 @@
 #include <glad/gl.h>
 #include <type_traits>
 #include <stdexcept>
+#include "../components/gui_mesh.h"
+#include "../components/gl_mesh.h"
 
 namespace GlUtils
 {
@@ -22,4 +24,5 @@ namespace GlUtils
     template<typename T> constexpr gl_enum_when_same_types<T, uint64_t> mapToGlType() { return GL_UNSIGNED_INT; }
 
     void enableGuiVertexAttributes(GLuint vaoHandle, GLuint vertexVboHandle);
+    void makeGuiVertexBufferStorage(const GlMesh& glMesh, const GuiMesh& guiMesh);
 }

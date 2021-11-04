@@ -13,18 +13,17 @@
 #include "systems/rendering/gl_prepare_framebuffer_system.h"
 #include "systems/window/glfw_window_system.h"
 #include "systems/rendering/render_tick_system.h"
-#include "systems/rendering/gl_gui_mesh_vertex_system.h"
 #include "systems/rendering/gl_gui_text_system.h"
 #include "systems/window/glfw_vsync_system.h"
 #include "systems/loop_tick_system.h"
 #include "systems/input/win32_register_input_system.h"
 #include "systems/input/register_input_system.h"
 #include "systems/window/win32_window_system.h"
-#include "systems/rendering/gl_gui_mesh_render_system.h"
 #include "events/gui_mesh_created.h"
 #include "events/gui_mesh_destroyed.h"
 #include "systems/rendering/gl_mvp_matrix_system.h"
 #include "systems/rendering/gl_draw_gui_mesh_system.h"
+#include "systems/rendering/gl_gui_rect_system.h"
 
 #include <type_traits>
 
@@ -107,10 +106,10 @@ private:
         OnGuiMeshEntityDestroyedEventSystem::preRender(state);
 
         GlPrepareFramebufferSystem::update(state);
-        // TODO replace with retained mode gui systems
-//        GlGuiMeshVerticesSystem::update(state);
-//        GlRenderGuiMeshSystem::update(state);
+
         GlGuiTextSystem::update(state);
+        GlGuiRectSystem::update(state);
+
         GlMvpMatrixSystem::update(state);
         GlDrawGuiMeshSystem::update(state);
 

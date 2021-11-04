@@ -29,7 +29,7 @@ struct EngineState
 
     RendererState renderer;
     CameraState camera;
-    UpdateTimeState loopUpdate;
+    UpdateDeltaTimeState loopUpdate;
     InputState input;
     RawInputState rawInput;
     DefaultShaderState defaultShader;

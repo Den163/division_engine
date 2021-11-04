@@ -9,9 +9,9 @@ struct RendererState
 {
     float targetFps;
     bool shouldUpdate;
-    UpdateTimeState updateTime;
+    UpdateDeltaTimeState frameDelta;
 
     glm::vec4 backgroundColor;
 
-    inline float fps() const { return 1 / updateTime.deltaTime.count(); }
+    inline float fps() const { return 1 / frameDelta.deltaTime.count(); }
 };

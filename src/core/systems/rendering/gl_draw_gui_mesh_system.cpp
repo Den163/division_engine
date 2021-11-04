@@ -3,14 +3,16 @@
 #include "../../components/gui_material.h"
 #include "../../components/gl_draw_indirect_command.h"
 #include "../../components/gl_texture.h"
+#include "../../components/gui_mesh.h"
 
 void GlDrawGuiMeshSystem::update(EngineState& engineState)
 {
-    for (auto&& [e, glMesh, material] :
-        engineState.guiRegistry.view<GlMesh, GuiMaterial>().each())
+    for (auto&& [e, glMesh, guiMesh, material] :
+        engineState.guiRegistry.view<const GlMesh, const GuiMesh, const GuiMaterial>().each())
     {
         const auto shaderPipelineHandle = material.shaderPipelineHandle;
         glBindVertexArray(glMesh.vaoHandle);
+        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, glMesh.indirectBufferHandle);
         glBindProgramPipeline(shaderPipelineHandle);
         glUseProgramStages(
             shaderPipelineHandle,
@@ -29,6 +31,7 @@ void GlDrawGuiMeshSystem::update(EngineState& engineState)
         {
             glBindTexture(GL_TEXTURE_2D, texturePtr->handle);
         }
-        glMultiDrawArraysIndirect(GL_TRIANGLE_STRIP, nullptr, glMesh.primitivesCount, sizeof(GlDrawArraysIndirectCommand));
+        glMultiDrawArraysIndirect(
+            glMesh.renderMode, nullptr, guiMesh.primitivesCount, sizeof(GlDrawArraysIndirectCommand));
     }
 }

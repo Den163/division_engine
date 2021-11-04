@@ -1,6 +1,7 @@
 #include "gl_mvp_matrix_system.h"
 
 #include "../../components/gl_mesh.h"
+#include "../../components/gui_mesh.h"
 #include "../../components/position.h"
 #include "../../components/rotation.h"
 #include "../../components/scale.h"
@@ -10,9 +11,10 @@ void GlMvpMatrixSystem::update(EngineState& engineState)
 {
     const auto& windowState = engineState.window;
     const auto& projectionMatrix = glm::ortho(0.f, (float) windowState.width, 0.f, (float) windowState.height);
+    const auto& guiRegistry = engineState.guiRegistry;
 
-    for (auto&& [e, glMesh, position, rotation, scale] :
-         engineState.guiRegistry.view<const GlMesh, const Position, const Rotation, const Scale>().each())
+    for (auto&& [e, glMesh, guiMesh, position, rotation, scale] :
+         guiRegistry.view<const GlMesh, const GuiMesh, const Position, const Rotation, const Scale>().each())
     {
         const auto& modelMatrix = Math::transformMatrix(position.value, rotation.value, scale.value);
         const auto& mvpMatrix = projectionMatrix * modelMatrix;
@@ -29,7 +31,7 @@ void GlMvpMatrixSystem::update(EngineState& engineState)
             glEnableVertexAttribArray(attribId);
             glVertexAttribPointer(
                 attribId, columns, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*) (i * columns * sizeof(float)));
-            glVertexAttribDivisor(attribId, glMesh.verticesCount);
+            glVertexAttribDivisor(attribId, guiMesh.verticesCount);
         }
     }
 }

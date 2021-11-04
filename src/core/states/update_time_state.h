@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-struct UpdateTimeState
+struct UpdateDeltaTimeState
 {
     using float_seconds = std::chrono::duration<float>;
     using steady_clock = std::chrono::steady_clock;
