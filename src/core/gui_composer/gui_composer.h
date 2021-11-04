@@ -40,6 +40,19 @@ struct GuiComposer
         const GuiMaterial& material,
         const Transform& transform = Transform::makeDefault());
 
+    entt::entity makeImageRect(
+        const GuiRect& guiRect, const Texture2dState& textureState,
+        const Transform& transform = Transform::makeDefault());
+
+    entt::entity makeImageRect(
+        const GuiRect& guiRect,
+        const Texture2dState& textureState,
+        const GuiRectColor& color,
+        const GuiMaterial& material,
+        const Transform& transform = Transform::makeDefault());
+
+    void destroyGuiElement(entt::entity entity);
+
     GuiMaterial defaultColoredMaterial() const;
     GuiMaterial defaultTextureMaterial() const;
     GuiMaterial defaultFontMaterial() const;

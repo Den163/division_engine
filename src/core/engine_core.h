@@ -19,8 +19,8 @@
 #include "systems/input/win32_register_input_system.h"
 #include "systems/input/register_input_system.h"
 #include "systems/window/win32_window_system.h"
-#include "events/gui_mesh_created.h"
-#include "events/gui_mesh_destroyed.h"
+#include "events/gui_mesh_create_event.h"
+#include "events/gui_mesh_destroy_event.h"
 #include "systems/rendering/gl_mvp_matrix_system.h"
 #include "systems/rendering/gl_draw_gui_mesh_system.h"
 #include "systems/rendering/gl_gui_rect_vertex_system.h"
@@ -118,7 +118,7 @@ private:
         lifecycle.postRender(globalState);
         RegisterInputSystem::postRender(state);
 
-        state.guiRegistry.clear<GuiMeshCreated, GuiMeshDestroyed>();
+        state.guiRegistry.clear<GuiMeshCreateEvent, GuiMeshDestroyed>();
     }
 
     template<EngineStateAggregate TState>

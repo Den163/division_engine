@@ -99,7 +99,7 @@ set(DIVISION_ENGINE_SOURCES
     core/utils/color.h
     core/configs/engine_config.h core/configs/shader_config.h core/configs/lifecycle_config.h
     core/utils/memory.h core/utils/gl_utils.h
-    core/events/gui_mesh_created.h core/events/gui_mesh_destroyed.h
+    core/events/gui_mesh_create_event.h core/events/gui_mesh_destroy_event.h
     core/event_systems/on_gui_mesh_entity_created_event_system.cpp
     core/event_systems/on_gui_mesh_entity_created_event_system.h
     core/event_systems/on_gui_mesh_entity_destroyed_event_system.cpp

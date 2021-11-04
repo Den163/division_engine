@@ -1,6 +1,8 @@
 #include "gui_composer.h"
 
-#include "../events/gui_mesh_created.h"
+#include "../events/gui_mesh_create_event.h"
+#include "../utils/color.h"
+#include "../events/gui_mesh_destroy_event.h"
 
 entt::entity GuiComposer::makeGuiElement(const GuiMaterial& material, const Transform& transform)
 {
@@ -22,7 +24,7 @@ entt::entity GuiComposer::makeGuiElement(const GuiMaterial& material, const Tran
         mat = material;
     }
     {
-        guiRegistry().emplace<GuiMeshCreated>(e);
+        guiRegistry().emplace<GuiMeshCreateEvent>(e);
     }
 
     return e;
@@ -69,6 +71,35 @@ entt::entity GuiComposer::makeGuiRect(
     }
 
     return e;
+}
+
+
+entt::entity GuiComposer::makeImageRect(
+    const GuiRect& guiRect, const Texture2dState& textureState, const Transform& transform)
+{
+    return makeImageRect(guiRect, textureState, GuiRectColor::all(Color::white), defaultTextureMaterial(), transform);
+}
+
+entt::entity GuiComposer::makeImageRect(
+    const GuiRect& guiRect,
+    const Texture2dState& textureState,
+    const GuiRectColor& color,
+    const GuiMaterial& material,
+    const Transform& transform)
+{
+    const auto e = makeGuiRect(guiRect, color, material, transform);
+    {
+        auto& t = guiRegistry().emplace<GlTexture>(e);
+        t.handle = textureState.handle;
+    }
+    return e;
+}
+
+void GuiComposer::destroyGuiElement(entt::entity entity)
+{
+    {
+        guiRegistry().emplace<GuiMeshDestroyed>(entity);
+    }
 }
 
 GuiMaterial GuiComposer::defaultColoredMaterial() const

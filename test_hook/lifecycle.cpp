@@ -12,7 +12,7 @@
 #include "../src/core/components/gui_text.h"
 #include "../src/core/components/gui_material.h"
 #include "../src/core/components/gl_mesh.h"
-#include "../src/core/events/gui_mesh_created.h"
+#include "../src/core/events/gui_mesh_create_event.h"
 #include "../src/core/gui_composer/gui_composer.h"
 
 static inline void checkMeshCreateByKeyPress(GlobalState& state);
@@ -24,12 +24,20 @@ void Lifecycle::init(GlobalState& state)
 {
     auto& engineState = state.engineState;
     auto& guiRegistry = engineState.guiRegistry;
-    auto textureHandle = TextureUtils::loadFromFile("assets/images/img.jpg").handle;
+    const auto& texture = TextureUtils::loadFromFile("assets/images/img.jpg");
 
     auto fontIndex = engineState.resources.fonts.insert(
         FontUtils::makeFont("assets/fonts/Roboto-Black.ttf", { 0, 88 }));
 
     GuiComposer composer { engineState };
+
+    composer.makeImageRect(
+        GuiRect{
+            .center = { 400, 400 },
+            .extents = { 200, 200 }
+        },
+        texture
+    );
 
     composer.makeGuiText(GuiText{
         .color = Color::blue,
@@ -40,8 +48,8 @@ void Lifecycle::init(GlobalState& state)
     Transform::makeDefault().withPosition({0, 0, 0}));
 
     composer.makeGuiRect(GuiRect {
-        .center = {400, 400},
-        .extents = {200, 200}
+        .center = {100, 100},
+        .extents = {50, 50}
     }, GuiRectColor::all(Color::red));
 }
 
@@ -53,11 +61,6 @@ void Lifecycle::preRenderUpdate(GlobalState& state)
     for (auto&& [e, guiText] : engineState.guiRegistry.view<GuiText>().each())
     {
         guiText.text = "Update time: " + std::to_string(updateTime.count()) + " sec";
-    }
-
-    for (auto&& [e, rot] : engineState.guiRegistry.view<Rotation>().each())
-    {
-        rot.value *= glm::quat { {0,0,glm::radians(1.f)} };
     }
 }
 

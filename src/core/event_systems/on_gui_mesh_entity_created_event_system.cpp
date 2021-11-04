@@ -3,14 +3,14 @@
 #include "../utils/engine_state_helper.h"
 #include "../components/gl_mesh.h"
 #include "../components/gui_mesh.h"
-#include "../events/gui_mesh_created.h"
+#include "../events/gui_mesh_create_event.h"
 #include "../utils/gl_utils.h"
 
 void OnGuiMeshEntityCreatedEventSystem::preRender(EngineState& engineState)
 {
     auto& registry = engineState.guiRegistry;
 
-    for (auto&& [e] : registry.view<const GuiMeshCreated>().each())
+    for (auto&& [e] : registry.view<const GuiMeshCreateEvent>().each())
     {
         {
             auto& guiMesh = registry.emplace<GuiMesh>(e);
