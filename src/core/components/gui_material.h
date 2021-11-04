@@ -2,7 +2,7 @@
 
 #include <glad/gl.h>
 
-struct GuiRenderable
+struct GuiMaterial
 {
     GLuint shaderPipelineHandle;
     GLuint vertexShaderProgramHandle;

@@ -11,9 +11,10 @@
 #include "../src/core/utils/font_utils.h"
 #include "../src/core/utils/color.h"
 #include "../src/core/components/gui_text.h"
-#include "../src/core/components/gui_renderable.h"
+#include "../src/core/components/gui_material.h"
 #include "../src/core/components/gl_mesh.h"
 #include "../src/core/events/gui_mesh_created.h"
+#include "../src/core/gui_composer/gui_composer.h"
 
 static inline void checkMeshCreateByKeyPress(GlobalState& state);
 static inline void checkMeshDeleteByKeyPress(GlobalState& state);
@@ -57,19 +58,12 @@ void Lifecycle::init(GlobalState& state)
     auto fontIndex = engineState.resources.fonts.insert(
         FontUtils::makeFont("assets/fonts/Roboto-Black.ttf", { 0, 88 }));
 
-    auto te = guiRegistry.create();
-    auto& guiText = guiRegistry.emplace<GuiText>(te);
-    guiText.font = fontIndex;
-    guiText.fontHeight = 88;
-    guiText.text = "Hello world";
-
-    auto& shaders = engineState.defaultShader;
-    auto& renderable = guiRegistry.emplace<GuiRenderable>(te);
-    renderable.shaderPipelineHandle = shaders.pipeline.handle;
-    renderable.vertexShaderProgramHandle = shaders.vertex().programHandle;
-    renderable.fragmentShaderProgramHandle = shaders.fontFragment().programHandle;
-
-    guiRegistry.emplace<GuiMeshCreated>(te);
+    GuiComposer composer { engineState };
+    composer.makeGuiText(GuiText{
+        .font = fontIndex,
+        .fontHeight = 88,
+        .text = "Hello world"
+    });
 }
 
 void Lifecycle::preRenderUpdate(GlobalState& state)

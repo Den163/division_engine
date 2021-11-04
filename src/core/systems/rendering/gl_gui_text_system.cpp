@@ -1,7 +1,7 @@
 #include "gl_gui_text_system.h"
 
 #include "../../components/gl_mesh.h"
-#include "../../components/gui_renderable.h"
+#include "../../components/gui_material.h"
 #include "../../components/gui_text.h"
 #include "../../utils/font_utils.h"
 #include "../../utils/color.h"
@@ -31,7 +31,7 @@ void GlGuiTextSystem::update(EngineState& engineState)
     const auto& projectionMatrix = glm::ortho(0.f, (float) windowState.width, 0.f, (float) windowState.height);
 
     for (auto&&[e, glMesh, renderable, guiText] :
-         registry.view<const GlMesh, const GuiRenderable, const GuiText>().each())
+         registry.view<const GlMesh, const GuiMaterial, const GuiText>().each())
     {
         const auto text = guiText.text;
         const auto charactersCount = text.size();
