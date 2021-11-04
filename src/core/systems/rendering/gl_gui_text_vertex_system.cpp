@@ -1,20 +1,17 @@
-#include "gl_gui_text_system.h"
+#include "gl_gui_text_vertex_system.h"
 
-#include "../../components/gl_draw_indirect_command.h"
 #include "../../components/gl_mesh.h"
-#include "../../components/gui_material.h"
 #include "../../components/gui_text.h"
 #include "../../utils/font_utils.h"
 #include "../../utils/color.h"
 #include "../../components/gl_texture.h"
 #include "../../utils/gl_utils.h"
-#include "../../components/gui_mesh.h"
 
 constexpr size_t VERTICES_FOR_CHARACTER_ = 4;
 
-static inline void fillTextBuffer(const std::string& text, const Font& font, GuiVertex* vertexData);
+static inline void fillTextBuffer(const GuiText& text, const Font& font, GuiVertex* vertexData);
 
-void GlGuiTextSystem::update(EngineState& engineState)
+void GlGuiTextVertexSystem::update(EngineState& engineState)
 {
     auto& registry = engineState.guiRegistry;
     const auto& windowState = engineState.window;
@@ -39,17 +36,18 @@ void GlGuiTextSystem::update(EngineState& engineState)
 
         glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
         GuiVertex* vertexData = (GuiVertex*) glMapNamedBuffer(vboHandle, GL_WRITE_ONLY);
-        fillTextBuffer(text, font, vertexData);
+        fillTextBuffer(guiText, font, vertexData);
         glUnmapNamedBuffer(vboHandle);
     }
 }
 
-void fillTextBuffer(const std::string& text, const Font& font, GuiVertex* vertexData)
+void fillTextBuffer(const GuiText& guiText, const Font& font, GuiVertex* vertexData)
 {
     const glm::vec2& textureSize = font.textureSize;
     const auto& textureWidth = font.textureSize.x;
     const auto& textureHeight = font.textureSize.y;
-    const auto& color = Color::white;
+    const auto& color = guiText.color;
+    const auto& text = guiText.text;
     const auto charactersCount = text.size();
 
     float x = 0;

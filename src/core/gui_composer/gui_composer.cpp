@@ -50,17 +50,22 @@ entt::entity GuiComposer::makeGuiText(
     return e;
 }
 
-entt::entity GuiComposer::makeGuiRect(const GuiRect& guiRect, const Transform& transform)
+entt::entity GuiComposer::makeGuiRect(const GuiRect& guiRect, const GuiRectColor& color, const Transform& transform)
 {
-    return makeGuiRect(guiRect, defaultColoredMaterial(), transform);
+    return makeGuiRect(guiRect, color, defaultColoredMaterial(), transform);
 }
 
-entt::entity GuiComposer::makeGuiRect(const GuiRect& guiRect, const GuiMaterial& material, const Transform& transform)
+entt::entity GuiComposer::makeGuiRect(
+    const GuiRect& guiRect, const GuiRectColor& color, const GuiMaterial& material, const Transform& transform)
 {
     const auto e = makeGuiElement(material, transform);
     {
         auto& r = guiRegistry().emplace<GuiRect>(e);
         r = guiRect;
+    }
+    {
+        auto& c = guiRegistry().emplace<GuiRectColor>(e);
+        c = color;
     }
 
     return e;

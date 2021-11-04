@@ -32,16 +32,17 @@ void Lifecycle::init(GlobalState& state)
     GuiComposer composer { engineState };
 
     composer.makeGuiText(GuiText{
+        .color = Color::blue,
         .font = fontIndex,
         .fontHeight = 88,
-        .text = "Hello world"
+        .text = "Hello world",
     },
     Transform::makeDefault().withPosition({0, 0, 0}));
 
-    composer.makeGuiRect(GuiRect{
-        .center = { 400, 400 },
-        .extents = { 200, 200 }
-    });
+    composer.makeGuiRect(GuiRect {
+        .center = {400, 400},
+        .extents = {200, 200}
+    }, GuiRectColor::all(Color::red));
 }
 
 void Lifecycle::preRenderUpdate(GlobalState& state)

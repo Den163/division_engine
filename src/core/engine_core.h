@@ -13,7 +13,7 @@
 #include "systems/rendering/gl_prepare_framebuffer_system.h"
 #include "systems/window/glfw_window_system.h"
 #include "systems/rendering/render_tick_system.h"
-#include "systems/rendering/gl_gui_text_system.h"
+#include "systems/rendering/gl_gui_text_vertex_system.h"
 #include "systems/window/glfw_vsync_system.h"
 #include "systems/loop_tick_system.h"
 #include "systems/input/win32_register_input_system.h"
@@ -107,7 +107,7 @@ private:
 
         GlPrepareFramebufferSystem::update(state);
 
-        GlGuiTextSystem::update(state);
+        GlGuiTextVertexSystem::update(state);
         GlGuiRectSystem::update(state);
 
         GlMvpMatrixSystem::update(state);
