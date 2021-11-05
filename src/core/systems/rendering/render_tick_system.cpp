@@ -20,19 +20,19 @@ void RenderTickSystem::init(EngineState& engineState, const EngineConfig& engine
 void RenderTickSystem::update(EngineState& engineState)
 {
     auto& rendererState = engineState.renderer;
-    auto& updateTimeStamp = rendererState.frameDelta;
+    auto& frameDeltaTimeStep = rendererState.frameDelta;
 
     const auto& loopUpdateTimestamp = engineState.loopUpdate;
     const auto& deltaTimeToUpdate = std::chrono::duration<float> { 1 / rendererState.targetFps };
     const auto& now = loopUpdateTimestamp.lastUpdateTime;
-    const auto& deltaTime = now - updateTimeStamp.lastUpdateTime;
+    const auto& deltaTime = now - frameDeltaTimeStep.lastUpdateTime;
 
     auto shouldUpdate = deltaTime >= deltaTimeToUpdate;
     rendererState.shouldUpdate = shouldUpdate;
 
     if (shouldUpdate)
     {
-        updateTimeStamp.lastUpdateTime = now;
-        updateTimeStamp.deltaTime = deltaTime;
+        frameDeltaTimeStep.lastUpdateTime = now;
+        frameDeltaTimeStep.deltaTime = deltaTime;
     }
 }

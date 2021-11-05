@@ -24,6 +24,7 @@
 #include "systems/rendering/gl_mvp_matrix_system.h"
 #include "systems/rendering/gl_draw_gui_mesh_system.h"
 #include "systems/rendering/gl_gui_rect_vertex_system.h"
+#include "systems/rendering/debug_render_pass_system.h"
 
 #include <type_traits>
 
@@ -99,6 +100,7 @@ private:
         globalState.lifecycle.preRender(globalState);
         OnGuiMeshEntityCreatedEventSystem::preRender(state);
         OnGuiMeshEntityDestroyedEventSystem::preRender(state);
+        DebugRenderPassSystem::preRender(state);
 
         GlPrepareFramebufferSystem::update(state);
 
@@ -110,6 +112,7 @@ private:
 
         GlfwVsyncSystem::update(state);
 
+        DebugRenderPassSystem::postRender(state);
         globalState.lifecycle.postRender(globalState);
         RegisterInputSystem::postRender(state);
 

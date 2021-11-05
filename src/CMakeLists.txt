@@ -122,7 +122,7 @@ set(DIVISION_ENGINE_SOURCES
     core/systems/rendering/gl_draw_gui_mesh_system.cpp core/systems/rendering/gl_draw_gui_mesh_system.h
     core/utils/gl_utils.cpp core/components/gui_rect.h
     core/systems/rendering/gl_gui_rect_vertex_system.h core/systems/rendering/gl_gui_rect_vertex_system.cpp
-    core/components/gui_rect_color.h)
+    core/components/gui_rect_color.h core/systems/rendering/debug_render_pass_system.cpp core/systems/rendering/debug_render_pass_system.h)
 
 set(DIVISION_ENGINE_LIBS glad glfw3 freetype glm::glm EnTT::EnTT stb_image stb_image_write)
 

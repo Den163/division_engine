@@ -10,6 +10,7 @@ struct RendererState
     float targetFps;
     bool shouldUpdate;
     UpdateDeltaTimeState frameDelta;
+    UpdateDeltaTimeState renderPass;
 
     glm::vec4 backgroundColor;
 

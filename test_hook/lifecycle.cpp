@@ -47,20 +47,28 @@ void Lifecycle::init(GlobalState& state)
     },
     Transform::makeDefault().withPosition({0, 0, 0}));
 
-    composer.makeGuiRect(GuiRect {
-        .center = {100, 100},
-        .extents = {50, 50}
-    }, GuiRectColor::all(Color::red));
+    for (size_t i = 1; i < 10; i++)
+    {
+        for (size_t j = 1; j < 10; j++)
+        composer.makeGuiRect(GuiRect {
+            .center = {i * 100, j * 100},
+            .extents = {10, 10}
+        }, GuiRectColor::all(Color::red));
+    }
 }
 
 void Lifecycle::preRenderUpdate(GlobalState& state)
 {
     auto& engineState = state.engineState;
-    auto& updateTime = engineState.renderer.frameDelta.deltaTime;
+    const auto& updateTime = std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(
+        engineState.renderer.renderPass.deltaTime);
+
+    auto timeStr = std::to_string(updateTime.count());
+    timeStr.resize(10);
 
     for (auto&& [e, guiText] : engineState.guiRegistry.view<GuiText>().each())
     {
-        guiText.text = "Update time: " + std::to_string(updateTime.count()) + " sec";
+        guiText.text = "Render pass time: " + timeStr + " milliseconds";
     }
 }
 
