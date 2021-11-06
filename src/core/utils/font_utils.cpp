@@ -30,7 +30,6 @@ Font FontUtils::makeFont(const std::string& fontFilePath, uint32_t fontHeight)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     Font font;
-    font.fontHeight = fontHeight;
     loadFontAtlas(face, font, fontHeight);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
@@ -102,6 +101,7 @@ void loadFontAtlas(FT_Face ftFace, Font& font, uint32_t fontHeight)
 
     font.textureSize = textureSize;
     font.textureHandle = texState.handle;
+    font.fontHeight = fontHeight;
 }
 
 void throwFreetypeException(const char* formattedExceptionText, int freetypeErrorCode)
