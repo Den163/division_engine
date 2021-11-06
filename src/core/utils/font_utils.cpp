@@ -1,5 +1,6 @@
 #include "font_utils.h"
 
+#include <cmath>
 #include <glad/gl.h>
 #include <stdexcept>
 #include <vector>
@@ -45,7 +46,7 @@ void loadFontAtlas(FT_Face ftFace, Font& font, uint32_t fontHeight)
     const auto reservedCharacters = 256;
     const auto maxAdvance = ftFace->max_advance_width;
     const auto glyphPixels = fontHeight * fontHeight;
-    const int bitmapRows = sqrt(reservedCharacters);
+    const int bitmapRows = std::sqrt(reservedCharacters);
     const int bitmapColumns = bitmapRows;
     const auto bitmapPixelWidth = fontHeight * bitmapRows;
     const auto bitmapPixelHeight = fontHeight * bitmapColumns;

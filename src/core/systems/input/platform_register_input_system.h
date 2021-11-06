@@ -1,13 +1,9 @@
 #pragma once
 
-#if defined(WIN32) || defined(_WIN32)
-
 #include "../../states/engine_state.h"
 
-namespace Win32RegisterInputSystem
+namespace PlatformRegisterInputSystem
 {
     void init(EngineState& engineState);
     void update(EngineState& engineState);
 }
-
-#endif

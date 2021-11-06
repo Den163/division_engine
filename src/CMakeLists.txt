@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.16)
 project(division_engine_core)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 include(FetchContent)
 
 #LIBS
@@ -20,6 +20,20 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(EnTT)
 
+FetchContent_Declare(
+        glfw
+        GIT_REPOSITORY https://github.com/glfw/glfw.git
+        GIT_TAG 3.3.5
+)
+FetchContent_MakeAvailable(glfw)
+
+FetchContent_Declare(
+        freetype
+        GIT_REPOSITORY https://gitlab.freedesktop.org/freetype/freetype.git
+        GIT_TAG VER-2-11-0
+)
+FetchContent_MakeAvailable(freetype)
+
 add_library(glad ${PROJECT_SOURCE_DIR}/libs/glad/src/gl.c)
 target_include_directories(glad PUBLIC ${PROJECT_SOURCE_DIR}/libs/glad/include)
 add_library(stb_image libs/stb_image/stb_image.h libs/stb_image/stb_image.h.cpp)
@@ -28,12 +42,6 @@ add_library(stb_image_write libs/stb_image_write/stb_image_write.h libs/stb_imag
 target_include_directories(stb_image_write PUBLIC libs/stb_image_write)
 
 #SHADERS
-
-if(NOT DEFINED ENV{GLSL_LANG_VALIDATOR_COMP})
-    message(FATAL_ERROR
-            "Add environment variable GLSL_LANG_VALIDATOR_COMP with path to glslangValidator compiler"
-            "(including executable). If it's not works try to reboot the system")
-endif()
 
 set(SHADER_SOURCES
     shaders/default_gui.vert
@@ -51,7 +59,7 @@ foreach(SHADER IN LISTS SHADER_SOURCES)
 
     add_custom_command(
         OUTPUT ${SHADER_OUTPUT}
-        COMMAND $ENV{GLSL_LANG_VALIDATOR_COMP}/glslangValidator.exe -G100 -e main ${SHADER_INPUT} -o ${SHADER_OUTPUT}
+        COMMAND glslangValidator -G100 -e main ${SHADER_INPUT} -o ${SHADER_OUTPUT}
         DEPENDS ${SHADER_INPUT}
         VERBATIM
     )
@@ -122,26 +130,20 @@ set(DIVISION_ENGINE_SOURCES
     core/systems/rendering/gl_draw_gui_mesh_system.cpp core/systems/rendering/gl_draw_gui_mesh_system.h
     core/utils/gl_utils.cpp core/components/gui_rect.h
     core/systems/rendering/gl_gui_rect_vertex_system.h core/systems/rendering/gl_gui_rect_vertex_system.cpp
-    core/components/gui_rect_color.h core/systems/rendering/debug_render_pass_system.cpp core/systems/rendering/debug_render_pass_system.h)
+    core/components/gui_rect_color.h core/systems/rendering/debug_render_pass_system.cpp
+    core/systems/rendering/debug_render_pass_system.h core/states/platform_state.h
+    core/systems/input/platform_register_input_system.cpp core/systems/input/platform_register_input_system.h core/systems/window/platform_window_system.cpp core/systems/window/platform_window_system.h)
 
-set(DIVISION_ENGINE_LIBS glad glfw3 freetype glm::glm EnTT::EnTT stb_image stb_image_write)
+set(DIVISION_ENGINE_LIBS glad glfw freetype glm::glm EnTT::EnTT stb_image stb_image_write)
 
 add_library(division_engine_core ${DIVISION_ENGINE_SOURCES})
 add_dependencies(division_engine_core shaders)
-
-target_include_directories(division_engine_core PUBLIC
-                           ${PROJECT_SOURCE_DIR}/libs/glfw/include
-                           ${PROJECT_SOURCE_DIR}/libs/freetype/include)
-
-target_link_directories(division_engine_core PUBLIC
-                        ${PROJECT_SOURCE_DIR}/libs/glfw
-                        ${PROJECT_SOURCE_DIR}/libs/freetype)
 
 target_link_libraries(division_engine_core ${DIVISION_ENGINE_LIBS})
 
 add_custom_command(TARGET division_engine_core PRE_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
-                   ${PROJECT_SOURCE_DIR}/assets ${PROJECT_BINARY_DIR}/assets)
+                   ${CMAKE_SOURCE_DIR}/assets ${CMAKE_BINARY_DIR}/assets)
 
 target_compile_definitions(division_engine_core PUBLIC GLM_FORCE_SWIZZLE GLM_FORCE_CXX17)
 

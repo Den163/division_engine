@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <format>
 #include <string>
 
 #include "sparse_set.h"
@@ -20,9 +19,9 @@ struct VersionedIndex
 };
 
 template< typename T,
-          AllocatorType<uint32_t> VersionAllocator = std::allocator<uint32_t>,
-          AllocatorType<uint32_t> SparseAllocator = std::allocator<uint32_t>,
-          AllocatorType<DenseElement<T>> DenseAllocator = std::allocator<DenseElement<T>> >
+          typename VersionAllocator = std::allocator<uint32_t>,
+          typename SparseAllocator = std::allocator<uint32_t>,
+          typename DenseAllocator = std::allocator<DenseElement<T>> >
 class VersionedSparseSet
 {
     using sparse_set = SparseSet<T, SparseAllocator, DenseAllocator>;

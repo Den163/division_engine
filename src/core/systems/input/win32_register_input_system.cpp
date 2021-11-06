@@ -1,3 +1,5 @@
+#if defined(WIN32) || defined(_WIN32)
+
 #include "win32_register_input_system.h"
 
 #include <iostream>
@@ -46,3 +48,4 @@ void Win32RegisterInputSystem::update(EngineState& engineState)
     rawInputState.eventLoopMousePosition = glm::vec2 { cursorPos.x, cursorPos.y };
 }
 
+#endif

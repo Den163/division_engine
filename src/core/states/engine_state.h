@@ -14,7 +14,7 @@
 #include "renderer_state.h"
 #include "window_state.h"
 #include "texture2d_state.h"
-#include "win32_state.h"
+#include "platform_state.h"
 #include "../data_structures/versioned_sparse_set.h"
 #include "../primitives/gui/font.h"
 #include "resources_state.h"
@@ -24,7 +24,7 @@
 struct EngineState
 {
     GlfwWindowState glfwWindow;
-    Win32State win32;
+    PlatformState platform;
     WindowState window;
 
     RendererState renderer;

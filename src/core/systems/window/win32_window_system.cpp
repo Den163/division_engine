@@ -1,3 +1,5 @@
+#if defined(WIN32) || defined(_WIN32)
+
 #include "win32_window_system.h"
 
 #define GLFW_EXPOSE_NATIVE_WIN32
@@ -5,5 +7,7 @@
 
 void Win32WindowSystem::init(EngineState& engineState)
 {
-    engineState.win32.windowHandle = glfwGetWin32Window(engineState.glfwWindow.windowHandle);
+    engineState.platform.win32.windowHandle = glfwGetWin32Window(engineState.glfwWindow.windowHandle);
 }
+
+#endif
