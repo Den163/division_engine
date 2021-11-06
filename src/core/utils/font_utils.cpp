@@ -8,12 +8,12 @@
 
 #include "texture_utils.h"
 
-static inline void loadFontAtlas(FT_Face ftFace, Font& font, const glm::ivec2& glyphSize);
+static inline void loadFontAtlas(FT_Face ftFace, Font& font, uint32_t fontHeight);
 static inline void throwFreetypeException(const char* formattedExceptionText, int freetypeErrorCode);
 
-Font FontUtils::makeFont(const std::string& fontFilePath, const glm::ivec2& size)
+Font FontUtils::makeFont(const std::string& fontFilePath, uint32_t fontHeight)
 {
-    if (size.x == 0 && size.y == 0)
+    if (fontHeight == 0)
     {
         throw std::runtime_error{"At least one dimension in the size required to be greater than zero"};
     }
@@ -26,11 +26,12 @@ Font FontUtils::makeFont(const std::string& fontFilePath, const glm::ivec2& size
     auto faceError = FT_New_Face(ft, fontFilePath.data(), 0, &face);
     if (faceError) throwFreetypeException("Failed to load Freetype font face: ", faceError);
 
-    FT_Set_Pixel_Sizes(face, size.x, size.y);
+    FT_Set_Pixel_Sizes(face, 0, fontHeight);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     Font font;
-    loadFontAtlas(face, font, size.x == 0 ? glm::ivec2{size.y} : glm::ivec2{size.x});
+    font.fontHeight = fontHeight;
+    loadFontAtlas(face, font, fontHeight);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     FT_Done_Face(face);
@@ -39,15 +40,15 @@ Font FontUtils::makeFont(const std::string& fontFilePath, const glm::ivec2& size
     return font;
 }
 
-void loadFontAtlas(FT_Face ftFace, Font& font, const glm::ivec2& glyphSize)
+void loadFontAtlas(FT_Face ftFace, Font& font, uint32_t fontHeight)
 {
     const auto reservedCharacters = 256;
     const auto maxAdvance = ftFace->max_advance_width;
-    const auto glyphPixels = glyphSize.x * glyphSize.y;
+    const auto glyphPixels = fontHeight * fontHeight;
     const int bitmapRows = sqrt(reservedCharacters);
     const int bitmapColumns = bitmapRows;
-    const auto bitmapPixelWidth = glyphSize.x * bitmapRows;
-    const auto bitmapPixelHeight = glyphSize.y * bitmapColumns;
+    const auto bitmapPixelWidth = fontHeight * bitmapRows;
+    const auto bitmapPixelHeight = fontHeight * bitmapColumns;
     auto* bitmap = (uint8_t*) std::malloc(glyphPixels * reservedCharacters);
 
     for (size_t character = 0; character < reservedCharacters; character++)
@@ -63,17 +64,17 @@ void loadFontAtlas(FT_Face ftFace, Font& font, const glm::ivec2& glyphSize)
         font.glyphs[character] = Glyph
         {
             .size = { ftBitmap.width, ftBitmap.rows },
-            .textureOffset = {bmpCol * glyphSize.x, bmpRow * glyphSize.y },
+            .textureOffset = {bmpCol * fontHeight, bmpRow * fontHeight },
             .bearing = { ftGlyph->bitmap_left, ftGlyph->bitmap_top },
             .advance = static_cast<uint32_t>(ftGlyph->advance.x),
         };
 
-        for (auto row = 0; row < glyphSize.x; row++)
+        for (auto row = 0; row < fontHeight; row++)
         {
-            for (auto column = 0; column < glyphSize.y; column++)
+            for (auto column = 0; column < fontHeight; column++)
             {
-                const auto x = bmpCol * glyphSize.x + column;
-                const auto y = bmpRow * glyphSize.y + row;
+                const auto x = bmpCol * fontHeight + column;
+                const auto y = bmpRow * fontHeight + row;
                 const auto i = x + bitmapPixelWidth * y;
 
                 if (row >= ftBitmap.rows || column >= ftBitmap.width)

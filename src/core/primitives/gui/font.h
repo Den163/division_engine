@@ -13,5 +13,6 @@ struct Font
 
     Glyph glyphs[CHARACTERS_SIZE];
     glm::ivec2 textureSize;
+    uint32_t fontHeight;
     uint32_t textureHandle;
 };

@@ -27,7 +27,7 @@ void Lifecycle::init(GlobalState& state)
     const auto& texture = TextureUtils::loadFromFile("assets/images/img.jpg");
 
     auto fontIndex = engineState.resources.fonts.insert(
-        FontUtils::makeFont("assets/fonts/Roboto-Black.ttf", { 0, 88 }));
+        FontUtils::makeFont("assets/fonts/Roboto-Black.ttf", 88));
 
     GuiComposer composer { engineState };
 
@@ -42,10 +42,10 @@ void Lifecycle::init(GlobalState& state)
     composer.makeGuiText(GuiText{
         .color = Color::blue,
         .font = fontIndex,
-        .fontHeight = 88,
+        .fontHeight = 20,
         .text = "Hello world",
     },
-    Transform::makeDefault().withPosition({0, 0, 0}));
+    Transform::makeDefault().withPosition({0, 20, 0}));
 
     for (size_t i = 1; i < 10; i++)
     {

@@ -49,21 +49,25 @@ void fillTextBuffer(const GuiText& guiText, const Font& font, GuiVertex* vertexD
     const auto& color = guiText.color;
     const auto& text = guiText.text;
     const auto charactersCount = text.size();
+    const auto sizeMod = (float) guiText.fontHeight / font.fontHeight;
 
     float x = 0;
     for(size_t i = 0; i < charactersCount; i++)
     {
         const auto ch = text[i];
         const auto& glyph = font.glyphs[ch];
-        const auto glyphAdvancePx = FontUtils::advanceToPixels(glyph.advance);
 
-        glm::vec2 size = glyph.size;
+        const auto size = glyph.size;
+        glm::vec2 modSize = glm::vec2 {glyph.size} * sizeMod;
+        glm::vec2 modBearing = glm::vec2 {glyph.bearing} * sizeMod;
         glm::vec2 texOffset = glyph.textureOffset;
-        const auto leftX = x + glyph.bearing.x;
-        const auto rightX = x + size.x;
-        const auto originY = size.y - glyph.bearing.y;
+
+        const auto glyphAdvancePx = sizeMod * FontUtils::advanceToPixels(glyph.advance);
+        const auto leftX = x + modBearing.x;
+        const auto rightX = x + modSize.x;
+        const auto originY = modSize.y - modBearing.y;
         const auto bottomY = -originY;
-        const auto topY = size.y - originY;
+        const auto topY = modSize.y - originY;
         const auto leftS = texOffset.s / textureSize.x;
         const auto rightS = (texOffset.s + size.x) / textureSize.x;
         const auto topT = (texOffset.t + size.y) / textureSize.y;
