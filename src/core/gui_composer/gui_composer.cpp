@@ -1,8 +1,8 @@
 #include "gui_composer.h"
 
-#include "../events/gui_mesh_create_event.h"
-#include "../utils/color.h"
-#include "../events/gui_mesh_destroy_event.h"
+#include <events/gui_mesh_create_event.h>
+#include <events/gui_mesh_destroy_event.h>
+#include <utils/color.h>
 
 entt::entity GuiComposer::makeGuiElement(const GuiMaterial& material, const Transform& transform)
 {

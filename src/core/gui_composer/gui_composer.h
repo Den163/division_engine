@@ -1,18 +1,18 @@
 #pragma once
 
-#include "../states/engine_state.h"
-#include "../components/transform.h"
 #include <entt/entt.hpp>
 
-#include "../components/gui_material.h"
-#include "../components/gui_text.h"
-#include "../components/position.h"
-#include "../components/rotation.h"
-#include "../components/scale.h"
-#include "../components/gl_texture.h"
-#include "../components/gui_mesh.h"
-#include "../components/gui_rect.h"
-#include "../components/gui_rect_color.h"
+#include <components/gui_material.h>
+#include <components/gui_mesh.h>
+#include <components/gui_rect.h>
+#include <components/gui_rect_color.h>
+#include <components/gui_text.h>
+#include <components/gl_texture.h>
+#include <components/position.h>
+#include <components/rotation.h>
+#include <components/scale.h>
+#include <components/transform.h>
+#include <states/engine_state.h>
 
 struct GlMesh;
 

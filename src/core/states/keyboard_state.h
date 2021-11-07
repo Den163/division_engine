@@ -1,7 +1,8 @@
 #pragma once
 
 #include <cstdint>
-#include "../components/key_code.h"
+
+#include <components/key_code.h>
 
 struct KeysState
 {

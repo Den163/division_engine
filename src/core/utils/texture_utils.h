@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../states/texture2d_state.h"
-#include "../configs/texture_2d_config.h"
 #include <string>
+
+#include <configs/texture_2d_config.h>
+#include <states/texture2d_state.h>
 
 namespace TextureUtils
 {

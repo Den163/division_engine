@@ -41,9 +41,9 @@ void Lifecycle::init(GlobalState& state)
 
     composer.makeGuiText(GuiText{
         .color = Color::blue,
+        .text = "Hello world",
         .font = fontIndex,
         .fontHeight = 20,
-        .text = "Hello world",
     },
     Transform::makeDefault().withPosition({0, 20, 0}));
 

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "keyboard_state.h"
-
 #include <glm/vec2.hpp>
 #include <unordered_set>
+
+#include <states/keyboard_state.h>
 
 struct RawInputState
 {

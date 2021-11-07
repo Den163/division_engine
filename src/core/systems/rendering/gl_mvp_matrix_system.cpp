@@ -1,11 +1,11 @@
 #include "gl_mvp_matrix_system.h"
 
-#include "../../components/gl_mesh.h"
-#include "../../components/gui_mesh.h"
-#include "../../components/position.h"
-#include "../../components/rotation.h"
-#include "../../components/scale.h"
-#include "../../utils/math.h"
+#include <components/gl_mesh.h>
+#include <components/gui_mesh.h>
+#include <components/position.h>
+#include <components/rotation.h>
+#include <components/scale.h>
+#include <utils/math.h>
 
 void GlMvpMatrixSystem::update(EngineState& engineState)
 {

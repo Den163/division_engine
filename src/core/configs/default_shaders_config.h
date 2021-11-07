@@ -1,8 +1,9 @@
 #pragma once
 
-#include "shader_config.h"
-#include "../utils/engine_invariants.h"
 #include <array>
+
+#include <configs/shader_config.h>
+#include <utils/engine_invariants.h>
 
 namespace DefaultShadersConfig
 {

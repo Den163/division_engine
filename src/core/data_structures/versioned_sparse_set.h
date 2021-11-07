@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <string>
 
-#include "sparse_set.h"
+#include <data_structures/sparse_set.h>
 
 struct VersionedIndex
 {

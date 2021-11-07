@@ -4,8 +4,9 @@
 #include <glad/gl.h>
 #include <type_traits>
 #include <stdexcept>
-#include "../components/gui_mesh.h"
-#include "../components/gl_mesh.h"
+
+#include <components/gl_mesh.h>
+#include <components/gui_mesh.h>
 
 namespace GlUtils
 {

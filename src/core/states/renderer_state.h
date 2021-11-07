@@ -1,9 +1,9 @@
 #pragma once
 
 #include <chrono>
-
-#include "update_time_state.h"
 #include <glm/vec4.hpp>
+
+#include <states/update_time_state.h>
 
 struct RendererState
 {

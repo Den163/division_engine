@@ -1,6 +1,4 @@
 #include "render_tick_system.h"
-#include "../../states/engine_state.h"
-#include "../../configs/engine_config.h"
 
 #include <chrono>
 

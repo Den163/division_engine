@@ -1,7 +1,7 @@
 #include "platform_register_input_system.h"
 
 #if defined(WIN32) || defined(_WIN32)
-#include "win32_register_input_system.h"
+#include <systems/input/platform/win32_register_input_system.h>
 #endif
 
 void PlatformRegisterInputSystem::init(EngineState& engineState)

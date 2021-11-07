@@ -1,7 +1,8 @@
 #include "gl_utils.h"
-#include "engine_invariants.h"
-#include "../primitives/gui/gui_vertex.h"
-#include "../components/gl_draw_indirect_command.h"
+
+#include <components/gl_draw_indirect_command.h>
+#include <primitives/gui/gui_vertex.h>
+#include <utils/engine_invariants.h>
 
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>

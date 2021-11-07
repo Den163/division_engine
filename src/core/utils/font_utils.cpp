@@ -7,7 +7,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include "texture_utils.h"
+#include <utils/texture_utils.h>
 
 static inline void loadFontAtlas(FT_Face ftFace, Font& font, uint32_t fontHeight);
 static inline void throwFreetypeException(const char* formattedExceptionText, int freetypeErrorCode);

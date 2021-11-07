@@ -1,7 +1,6 @@
 #include "platform_window_system.h"
-#include "../../configs/engine_config.h"
-#include "../../utils/debug_utils.h"
-#include "platform/glfw_window_system.h"
+
+#include <systems/window/platform//glfw_window_system.h>
 
 #if defined(WIN32) || defined(_WIN32)
 #include "win32_window_system.h"

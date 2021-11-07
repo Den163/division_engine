@@ -1,12 +1,11 @@
-#if defined(WIN32) || defined(_WIN32)
-
 #include "win32_register_input_system.h"
+
+#if defined(WIN32) || defined(_WIN32)
 
 #include <iostream>
 #include <stdexcept>
 
-#include "../../utils/math.h"
-#include "math.h"
+#include <utils/math.h>
 
 constexpr auto BITS_IN_BYTES = 8;
 constexpr uint8_t WIN32_KEY_PRESSED_MASK = 1 << (sizeof(BYTE) * BITS_IN_BYTES - 1);

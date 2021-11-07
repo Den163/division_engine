@@ -2,7 +2,7 @@
 
 #include <entt/entt.hpp>
 
-#include "../states/engine_state.h"
+#include <states/engine_state.h>
 
 namespace OnGuiMeshEntityDestroyedEventSystem
 {

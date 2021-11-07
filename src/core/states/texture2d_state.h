@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include "../configs/color_mode.h"
+#include <glad/gl.h>
 
 struct Texture2dState
 {

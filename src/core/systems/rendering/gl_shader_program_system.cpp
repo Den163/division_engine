@@ -1,7 +1,7 @@
 #include "gl_shader_program_system.h"
 
-#include "../../utils/shader_compiler.h"
-#include "../../utils/debug_utils.h"
+#include <utils/debug_utils.h>
+#include <utils/shader_compiler.h>
 
 void GlShaderProgramSystem::init(EngineState& engineState, const EngineConfig& engineConfig)
 {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../states/engine_state.h"
-#include "engine_invariants.h"
+#include <states/engine_state.h>
+#include <utils/engine_invariants.h>
 
 namespace EngineStateHelper
 {

@@ -1,7 +1,7 @@
 #include "on_gui_mesh_entity_destroyed_event_system.h"
 
-#include "../components/gl_mesh.h"
-#include "../events/gui_mesh_destroy_event.h"
+#include <components/gl_mesh.h>
+#include <events/gui_mesh_destroy_event.h>
 
 void OnGuiMeshEntityDestroyedEventSystem::preRender(EngineState& engineState)
 {

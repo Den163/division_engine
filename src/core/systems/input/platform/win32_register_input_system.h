@@ -2,7 +2,7 @@
 
 #if defined(WIN32) || defined(_WIN32)
 
-#include "../../states/engine_state.h"
+#include <states/engine_state.h>
 
 namespace Win32RegisterInputSystem
 {

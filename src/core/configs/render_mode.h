@@ -1,8 +1,9 @@
 #pragma once
 
+#include <glad/gl.h>
 #include <vector>
-#include "../primitives/gui/gui_vertex.h"
-#include "glad/gl.h"
+
+#include <primitives/gui/gui_vertex.h>
 
 enum class RenderMode
 {

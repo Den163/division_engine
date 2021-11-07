@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "../primitives/gui/font.h"
+#include <primitives/gui/font.h>
 
 namespace FontUtils
 {

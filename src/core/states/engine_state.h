@@ -1,23 +1,22 @@
 #pragma once
 
-#include "../utils/disable_glm_warnings.h"
+#include <utils/disable_glm_warnings.h>
 
-#include "../configs/renderer_config.h"
-#include "../configs/window_config.h"
-#include "platform/glfw_window_state.h"
-
-#include "camera_state.h"
-#include "default_shaders_state.h"
-#include "shader_pipeline_state.h"
-#include "input_state.h"
-#include "raw_input_state.h"
-#include "renderer_state.h"
-#include "window_state.h"
-#include "texture2d_state.h"
-#include "platform_state.h"
-#include "../data_structures/versioned_sparse_set.h"
-#include "../primitives/gui/font.h"
-#include "resources_state.h"
+#include <configs/renderer_config.h>
+#include <configs/window_config.h>
+#include <data_structures/versioned_sparse_set.h>
+#include <primitives/gui/font.h>
+#include <states/platform/glfw_window_state.h>
+#include <states/camera_state.h>
+#include <states/default_shaders_state.h>
+#include <states/shader_pipeline_state.h>
+#include <states/input_state.h>
+#include <states/raw_input_state.h>
+#include <states/renderer_state.h>
+#include <states/window_state.h>
+#include <states/texture2d_state.h>
+#include <states/platform_state.h>
+#include <states/resources_state.h>
 
 #include <entt/entt.hpp>
 
