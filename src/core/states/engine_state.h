@@ -23,7 +23,6 @@
 
 struct EngineState
 {
-    GlfwWindowState glfwWindow;
     PlatformState platform;
     WindowState window;
 

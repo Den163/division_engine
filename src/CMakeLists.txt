@@ -138,14 +138,23 @@ set(DIVISION_ENGINE_SOURCES
     core/components/gui_rect_color.h core/systems/rendering/debug_render_pass_system.cpp
     core/systems/rendering/debug_render_pass_system.h core/states/platform_state.h
     core/systems/input/platform_register_input_system.cpp core/systems/input/platform_register_input_system.h
-    core/systems/window/platform_window_system.cpp core/systems/window/platform_window_system.h)
+    core/systems/window/platform_window_system.cpp core/systems/window/platform_window_system.h
+    core/systems/window/platform_vsync_system.cpp core/systems/window/platform_vsync_system.h)
 
-set(DIVISION_ENGINE_LIBS glad glfw freetype glm::glm EnTT::EnTT stb_image stb_image_write)
+
+set(DIVISION_ENGINE_PLATFORM_LIBS)
+
+set(DIVISION_ENGINE_LIBS glad freetype glm::glm EnTT::EnTT stb_image stb_image_write)
 
 add_library(division_engine_core ${DIVISION_ENGINE_SOURCES})
 add_dependencies(division_engine_core shaders)
 
-target_link_libraries(division_engine_core ${DIVISION_ENGINE_LIBS})
+if (WIN32 OR UNIX)
+    target_compile_definitions(division_engine_core PUBLIC USE_GLFW)
+    list(APPEND DIVISION_ENGINE_PLATFORM_LIBS glfw)
+endif()
+
+target_link_libraries(division_engine_core ${DIVISION_ENGINE_LIBS} ${DIVISION_ENGINE_PLATFORM_LIBS})
 
 target_compile_definitions(division_engine_core PUBLIC GLM_FORCE_SWIZZLE GLM_FORCE_CXX17)
 

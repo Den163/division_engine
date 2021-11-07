@@ -11,10 +11,8 @@
 #include "event_systems/on_gui_mesh_entity_destroyed_event_system.h"
 #include "systems/rendering/gl_shader_program_system.h"
 #include "systems/rendering/gl_prepare_framebuffer_system.h"
-#include "systems/window/glfw_window_system.h"
 #include "systems/rendering/render_tick_system.h"
 #include "systems/rendering/gl_gui_text_vertex_system.h"
-#include "systems/window/glfw_vsync_system.h"
 #include "systems/loop_tick_system.h"
 #include "systems/input/register_input_system.h"
 #include "events/gui_mesh_create_event.h"
@@ -25,6 +23,7 @@
 #include "systems/rendering/debug_render_pass_system.h"
 #include "systems/input/platform_register_input_system.h"
 #include "systems/window/platform_window_system.h"
+#include "systems/window/platform_vsync_system.h"
 
 #include <type_traits>
 
@@ -50,8 +49,7 @@ private:
         RegisterInputSystem::init(state);
         LoopTickSystem::init(state);
         RenderTickSystem::init(state, config);
-        GlfWindowSystem::init(state, config);
-        PlatformWindowSystem::init(state);
+        PlatformWindowSystem::init(state, config);
         GlShaderProgramSystem::init(state, config);
 
         globalState.lifecycle.init(globalState);
@@ -79,7 +77,7 @@ private:
                 renderLoop(globalState);
             }
 
-            GlfWindowSystem::update(state);
+            PlatformWindowSystem::update(state);
         }
         while (!state.window.shouldClose);
     }
@@ -102,7 +100,7 @@ private:
         GlMvpMatrixSystem::update(state);
         GlDrawGuiMeshSystem::update(state);
 
-        GlfwVsyncSystem::update(state);
+        PlatformVSyncSystem::update(state);
 
         DebugRenderPassSystem::postRender(state);
         globalState.lifecycle.postRender(globalState);
@@ -118,6 +116,6 @@ private:
 
         globalState.lifecycle.cleanup(globalState);
         GlShaderProgramSystem::cleanup(state);
-        GlfWindowSystem::cleanup(state);
+        PlatformWindowSystem::cleanup(state);
     }
 };
