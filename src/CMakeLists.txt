@@ -82,20 +82,20 @@ set(DIVISION_ENGINE_SOURCES
     core/engine_core.h
     core/systems/rendering/gl_shader_program_system.cpp core/systems/rendering/gl_shader_program_system.h
     core/utils/file_utils.cpp core/utils/file_utils.h
-    core/systems/window/glfw_window_system.cpp core/systems/window/glfw_window_system.h
+    core/systems/window/platform/glfw_window_system.cpp core/systems/window/platform/glfw_window_system.h
     core/states/shader_pipeline_state.h
-    core/states/glfw_window_state.h
+    core/states/platform/glfw_window_state.h
     core/states/window_state.h
     core/states/renderer_state.h
     core/configs/renderer_config.h
     core/configs/window_config.h
     core/systems/rendering/render_tick_system.cpp core/systems/rendering/render_tick_system.h
-    core/systems/window/glfw_vsync_system.cpp core/systems/window/glfw_vsync_system.h
+    core/systems/window/platform/glfw_vsync_system.cpp core/systems/window/platform/glfw_vsync_system.h
     core/states/update_time_state.h
     core/systems/loop_tick_system.cpp core/systems/loop_tick_system.h
     core/components/gl_mesh.h
     core/components/gui_mesh.h
-    core/systems/input/win32_register_input_system.cpp core/systems/input/win32_register_input_system.h
+    core/systems/input/platform/win32_register_input_system.cpp core/systems/input/platform/win32_register_input_system.h
     core/states/input_state.h
     core/states/raw_input_state.h
     core/states/keyboard_state.h
@@ -106,8 +106,8 @@ set(DIVISION_ENGINE_SOURCES
     core/components/scale.h
     core/states/camera_state.h
     core/components/key_code.h
-    core/states/win32_state.h
-    core/systems/window/win32_window_system.cpp core/systems/window/win32_window_system.h
+    core/states/platform/win32_state.h
+    core/systems/window/platform/win32_window_system.cpp core/systems/window/platform/win32_window_system.h
     core/components/transform.h
     core/utils/color.h
     core/configs/engine_config.h core/configs/shader_config.h core/configs/lifecycle_config.h

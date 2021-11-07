@@ -4,7 +4,7 @@
 
 #include "../configs/renderer_config.h"
 #include "../configs/window_config.h"
-#include "glfw_window_state.h"
+#include "platform/glfw_window_state.h"
 
 #include "camera_state.h"
 #include "default_shaders_state.h"
