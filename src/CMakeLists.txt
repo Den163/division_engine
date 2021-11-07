@@ -137,7 +137,8 @@ set(DIVISION_ENGINE_SOURCES
     core/systems/rendering/gl_gui_rect_vertex_system.h core/systems/rendering/gl_gui_rect_vertex_system.cpp
     core/components/gui_rect_color.h core/systems/rendering/debug_render_pass_system.cpp
     core/systems/rendering/debug_render_pass_system.h core/states/platform_state.h
-    core/systems/input/platform_register_input_system.cpp core/systems/input/platform_register_input_system.h core/systems/window/platform_window_system.cpp core/systems/window/platform_window_system.h)
+    core/systems/input/platform_register_input_system.cpp core/systems/input/platform_register_input_system.h
+    core/systems/window/platform_window_system.cpp core/systems/window/platform_window_system.h)
 
 set(DIVISION_ENGINE_LIBS glad glfw freetype glm::glm EnTT::EnTT stb_image stb_image_write)
 
