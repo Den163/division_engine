@@ -141,10 +141,6 @@ add_dependencies(division_engine_core shaders)
 
 target_link_libraries(division_engine_core ${DIVISION_ENGINE_LIBS})
 
-add_custom_command(TARGET division_engine_core PRE_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory
-                   ${CMAKE_SOURCE_DIR}/assets ${CMAKE_BINARY_DIR}/assets)
-
 target_compile_definitions(division_engine_core PUBLIC GLM_FORCE_SWIZZLE GLM_FORCE_CXX17)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL Clang)
