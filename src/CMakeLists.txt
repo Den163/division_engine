@@ -4,6 +4,11 @@ project(division_engine_core)
 set(CMAKE_CXX_STANDARD 17)
 include(FetchContent)
 
+find_program(GLSLANG_VALIDATOR glslangValidator)
+if(NOT GLSLANG_VALIDATOR)
+    message(FATAL_ERROR "Couldn't find the glslangValidator. Please add it to your PATH")
+endif()
+
 #LIBS
 
 FetchContent_Declare(
@@ -59,7 +64,7 @@ foreach(SHADER IN LISTS SHADER_SOURCES)
 
     add_custom_command(
         OUTPUT ${SHADER_OUTPUT}
-        COMMAND glslangValidator -G100 -e main ${SHADER_INPUT} -o ${SHADER_OUTPUT}
+        COMMAND ${GLSLANG_VALIDATOR} -G100 -e main ${SHADER_INPUT} -o ${SHADER_OUTPUT}
         DEPENDS ${SHADER_INPUT}
         VERBATIM
     )

@@ -26,7 +26,7 @@ void Win32RegisterInputSystem::init(EngineState& engineState)
 void Win32RegisterInputSystem::update(EngineState& engineState)
 {
     auto& rawInputState = engineState.rawInput;
-    const auto& win32State = engineState.win32;
+    const auto& win32State = engineState.platform.win32;
 
     BYTE winKeyboardState[KeysState::KEYS_COUNT];
     if (!GetKeyboardState(winKeyboardState))
