@@ -1,8 +1,6 @@
 #pragma once
 
-#if defined(WIN32) || defined(_WIN32)
-    #include "win32_state.h"
-#endif
+#include <states/platform/win32_state.h>
 
 struct PlatformState
 {
