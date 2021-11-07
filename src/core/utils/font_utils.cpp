@@ -1,12 +1,13 @@
 #include "font_utils.h"
 
+#include <cmath>
 #include <glad/gl.h>
 #include <stdexcept>
 #include <vector>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include "texture_utils.h"
+#include <utils/texture_utils.h>
 
 static inline void loadFontAtlas(FT_Face ftFace, Font& font, uint32_t fontHeight);
 static inline void throwFreetypeException(const char* formattedExceptionText, int freetypeErrorCode);
@@ -44,7 +45,7 @@ void loadFontAtlas(FT_Face ftFace, Font& font, uint32_t fontHeight)
     const auto reservedCharacters = 256;
     const auto maxAdvance = ftFace->max_advance_width;
     const auto glyphPixels = fontHeight * fontHeight;
-    const int bitmapRows = sqrt(reservedCharacters);
+    const int bitmapRows = std::sqrt(reservedCharacters);
     const int bitmapColumns = bitmapRows;
     const auto bitmapPixelWidth = fontHeight * bitmapRows;
     const auto bitmapPixelHeight = fontHeight * bitmapColumns;

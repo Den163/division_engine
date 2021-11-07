@@ -1,5 +1,6 @@
-#include <fstream>
 #include "file_utils.h"
+
+#include <fstream>
 
 std::vector<uint8_t> readBytes(const std::string& filePath)
 {

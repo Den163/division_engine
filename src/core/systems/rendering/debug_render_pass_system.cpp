@@ -1,6 +1,5 @@
 #include "debug_render_pass_system.h"
 
-
 void DebugRenderPassSystem::init(EngineState& engineState)
 {
     auto& renderPassUpdate = engineState.renderer.renderPass;

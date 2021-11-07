@@ -1,10 +1,11 @@
 #pragma once
 
 #include <cstdint>
-#include "shader_state.h"
-#include "shader_pipeline_state.h"
-#include "../configs/default_shaders_config.h"
-#include "../utils/engine_invariants.h"
+
+#include <configs/default_shaders_config.h>
+#include <states/shader_state.h>
+#include <states/shader_pipeline_state.h>
+#include <utils/engine_invariants.h>
 
 struct DefaultShaderState
 {

@@ -1,11 +1,12 @@
 #include "gl_gui_text_vertex_system.h"
 
-#include "../../components/gl_mesh.h"
-#include "../../components/gui_text.h"
-#include "../../utils/font_utils.h"
-#include "../../utils/color.h"
-#include "../../components/gl_texture.h"
-#include "../../utils/gl_utils.h"
+#include <components/gl_mesh.h>
+#include <components/gl_texture.h>
+#include <components/gui_text.h>
+#include <primitives/gui/gui_vertex.h>
+#include <utils/color.h>
+#include <utils/font_utils.h>
+#include <utils/gl_utils.h>
 
 constexpr size_t VERTICES_FOR_CHARACTER_ = 4;
 

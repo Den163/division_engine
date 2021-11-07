@@ -1,11 +1,12 @@
 #include "gl_gui_rect_vertex_system.h"
 
-#include "../../components/gl_mesh.h"
-#include "../../components/gui_mesh.h"
-#include "../../components/gui_rect.h"
-#include "../../utils/color.h"
-#include "../../utils/gl_utils.h"
-#include "../../components/gui_rect_color.h"
+#include <components/gl_mesh.h>
+#include <components/gui_mesh.h>
+#include <components/gui_rect.h>
+#include <components/gui_rect_color.h>
+#include <primitives/gui/gui_vertex.h>
+#include <utils/color.h>
+#include <utils/gl_utils.h>
 
 void GlGuiRectVertexSystem::update(EngineState& engineState)
 {

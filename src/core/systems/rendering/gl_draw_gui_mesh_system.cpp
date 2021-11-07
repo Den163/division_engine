@@ -1,9 +1,10 @@
 #include "gl_draw_gui_mesh_system.h"
-#include "../../components/gl_mesh.h"
-#include "../../components/gui_material.h"
-#include "../../components/gl_draw_indirect_command.h"
-#include "../../components/gl_texture.h"
-#include "../../components/gui_mesh.h"
+
+#include <components/gl_draw_indirect_command.h>
+#include <components/gl_mesh.h>
+#include <components/gl_texture.h>
+#include <components/gui_material.h>
+#include <components/gui_mesh.h>
 
 void GlDrawGuiMeshSystem::update(EngineState& engineState)
 {

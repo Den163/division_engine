@@ -1,29 +1,21 @@
 #pragma once
 
-#include <concepts>
 #include <iterator>
 #include <memory>
 #include <vector>
 
 inline constexpr size_t SPARSE_SET_NULL_INDEX = std::numeric_limits<uint32_t>::max();
 
-template<typename T> requires std::is_pod<T>::value
+template<typename T>
 struct DenseElement
 {
     uint32_t sparseIndex;
     T value;
 };
 
-template<typename TAlloc, typename T>
-concept AllocatorType = requires(TAlloc alloc, const size_t n, T* memPtr)
-{
-    { alloc.allocate(n) } -> std::same_as<T*>;
-    { alloc.deallocate(memPtr, n) };
-};
-
 template< typename T,
-          AllocatorType<uint32_t> TSparseAlloc = std::allocator<uint32_t>,
-          AllocatorType<DenseElement<T>> TDenseAlloc = std::allocator<DenseElement<T>> >
+          typename TSparseAlloc = std::allocator<uint32_t>,
+          typename TDenseAlloc = std::allocator<DenseElement<T>> >
 class SparseSet
 {
 public:
