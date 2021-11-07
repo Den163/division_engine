@@ -2,10 +2,6 @@
 
 #include "utils/disable_glm_warnings.h"
 
-#if defined(WIN32) || defined(_WIN32)
-#include <windows.h>
-#endif
-
 #include "configs/engine_config.h"
 #include "event_systems/on_gui_mesh_entity_created_event_system.h"
 #include "event_systems/on_gui_mesh_entity_destroyed_event_system.h"
