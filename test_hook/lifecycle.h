@@ -5,10 +5,10 @@
 
 namespace Lifecycle
 {
-    void init(GlobalState& state);
+    void init(EngineState& state);
 
-    void preRenderUpdate(GlobalState& state);
-    void postRenderUpdate(GlobalState& state);
+    void preRenderUpdate(EngineState& state);
+    void postRenderUpdate(EngineState& state);
 
-    void cleanup(GlobalState& state);
+    void cleanup(EngineState& state);
 }

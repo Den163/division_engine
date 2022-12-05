@@ -34,4 +34,5 @@ struct EngineState
     ResourcesState resources;
 
     entt::registry guiRegistry;
+    void* userState;
 };

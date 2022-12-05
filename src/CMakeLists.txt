@@ -77,7 +77,8 @@ add_custom_target(shaders DEPENDS ${SHADERS_OUTPUTS})
 #ENGINE
 
 set(DIVISION_ENGINE_SOURCES
-    core/utils/debug_utils.cpp core/utils/debug_utils.h core/states/engine_state.h core/engine_core.h
+    core/utils/debug_utils.cpp core/utils/debug_utils.h core/states/engine_state.h
+    core/engine_core.h core/engine_core.cpp
     core/systems/rendering/gl_shader_program_system.cpp core/systems/rendering/gl_shader_program_system.h
     core/utils/file_utils.cpp core/utils/file_utils.h
     core/systems/window/platform/glfw_window_system.cpp core/systems/window/platform/glfw_window_system.h

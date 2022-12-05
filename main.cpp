@@ -12,13 +12,10 @@ int main()
     rendererConfig.backgroundColor = { 0, 0, 0, 1 };
     rendererConfig.targetFps = 60;
 
-    GlobalState globalState {
-        EngineState {},
-        EngineConfig {
-            rendererConfig,
-            windowConfig,
-        },
-        LifecycleConfig<GlobalState> {
+    EngineConfig config {
+        rendererConfig,
+        windowConfig,
+        LifecycleConfig {
             Lifecycle::init,
             Lifecycle::preRenderUpdate,
             Lifecycle::postRenderUpdate,
@@ -26,7 +23,7 @@ int main()
         }
     };
 
-    EngineCore::run(globalState);
+    EngineCore::run(config, nullptr);
 
     return 0;
 }

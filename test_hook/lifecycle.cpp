@@ -15,14 +15,13 @@
 #include "../src/core/events/gui_mesh_create_event.h"
 #include "../src/core/gui_composer/gui_composer.h"
 
-static inline void checkMeshCreateByKeyPress(GlobalState& state);
+static inline void checkMeshCreateByKeyPress(EngineState& state);
 
-static inline void checkPrintCameraInfoByKeyPress(GlobalState& state);
+static inline void checkPrintCameraInfoByKeyPress(EngineState& state);
 static inline glm::vec3 randomPos(const glm::vec2& min, const glm::vec2& max);
 
-void Lifecycle::init(GlobalState& state)
+void Lifecycle::init(EngineState& engineState)
 {
-    auto& engineState = state.engineState;
     auto& guiRegistry = engineState.guiRegistry;
     const auto& texture = TextureUtils::loadFromFile("assets/images/img.jpg");
 
@@ -57,9 +56,8 @@ void Lifecycle::init(GlobalState& state)
     }
 }
 
-void Lifecycle::preRenderUpdate(GlobalState& state)
+void Lifecycle::preRenderUpdate(EngineState& engineState)
 {
-    auto& engineState = state.engineState;
     const auto& updateTime = std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(
         engineState.renderer.renderPass.deltaTime);
 
@@ -72,16 +70,14 @@ void Lifecycle::preRenderUpdate(GlobalState& state)
     }
 }
 
-void Lifecycle::postRenderUpdate(GlobalState& state)
+void Lifecycle::postRenderUpdate(EngineState& state)
 {
     checkPrintCameraInfoByKeyPress(state);
     checkMeshCreateByKeyPress(state);
 }
 
-void checkMeshCreateByKeyPress(GlobalState& state)
+void checkMeshCreateByKeyPress(EngineState& engineState)
 {
-    auto& engineState = state.engineState;
-
     if (!engineState.input.keyboardState.keyHasFlag('C', InputState::KEY_STATE_PRESSED)) return;
 
     const auto& windowState = engineState.window;
@@ -106,9 +102,8 @@ glm::vec3 randomPos(const glm::vec2& min, const glm::vec2& max)
     return v;
 }
 
-void checkPrintCameraInfoByKeyPress(GlobalState& state)
+void checkPrintCameraInfoByKeyPress(EngineState& engineState)
 {
-    auto& engineState = state.engineState;
     const auto& cameraState = engineState.camera;
 
     if (engineState.input.keyPressed('P'))
@@ -119,7 +114,7 @@ void checkPrintCameraInfoByKeyPress(GlobalState& state)
     }
 }
 
-void Lifecycle::cleanup(GlobalState& state)
+void Lifecycle::cleanup(EngineState& state)
 {
 
 }
